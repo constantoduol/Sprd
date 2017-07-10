@@ -14,6 +14,9 @@ export default class Sprd extends React.Component {
       showRowNumbers: true,
       showFormulaBar: true,
       showFooter: true,
+      autoGrow: false, //grow the spreadsheet as the user scrolls
+      defaultNumRows: 20, //in case no data is specified
+      defaultNumCols: 10 //in case no data is specified
       components: { //override components
 
       }
@@ -34,6 +37,8 @@ export default class Sprd extends React.Component {
     if(isObject(this.props.data)){
       let data = Map(this.props.data); //avoid modifying the original data
       this.setState({data: data, headers: Object.keys(this.props.data)});
+    } else if(this.props.data === null){
+      
     } else {
       console.warn("Unrecognized object passed into Sprd as data");
     }
