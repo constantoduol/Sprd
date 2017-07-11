@@ -11,6 +11,7 @@ export default class Sprd extends React.Component {
     data: null, //data is in format {header1: [value1, value2], header2: [value3, value4]}
     config:{
       showHeaderLetters: true, //show the letters at top A, B, C ... AA, AB
+      firstRowIsHeaders: false,
       showRowNumbers: true,
       showFormulaBar: true,
       showFooter: true,
@@ -30,15 +31,35 @@ export default class Sprd extends React.Component {
     } else {
       console.warn('No valid data passed to Sprd');
     }
+    this.state = {
+      data: {},
+      maxRow: this.props.defaultNumRows,
+      maxCol: this.props.defaultNumCols
+    };
+    this.EMPTY_VALUES = {null: null, undefined: undefined}; //what we consider empty
   }
 
-  //data is reorganized into format {header1: [], header2: [], ...}
   parseData(){
     if(isObject(this.props.data)){
-      let data = Map(this.props.data); //avoid modifying the original data
-      this.setState({data: data, headers: Object.keys(this.props.data)});
-    } else if(this.props.data === null){
-      
+      let data = {};
+      let headers = Object.keys(this.props.data); //there is no guarantee for header order
+      for(let col = 0, row = 0; col < headers.length; col++){
+        let headerData = this.props.data[headers[col]];
+        if(!data[row]) data[row] = {};
+
+        if(this.EMPTY_VALUES[headerData[row]] === headerData[row])//we don't store empty values
+        else data[row][col] = headerData[row]; 
+
+        if(col == headers.length){
+          col = 0;
+          row++;
+        }
+        if(row == headerData.length) break;
+      }   
+      this.setState({data: data, headers: headers});
+
+    } else if(!this.props.data){
+      //build an empty spreadsheet
     } else {
       console.warn("Unrecognized object passed into Sprd as data");
     }
@@ -52,12 +73,11 @@ export default class Sprd extends React.Component {
   }
 
   render(){
-    if(!this.props.data) return;
-    let HeaderContainer = 
     return (
       <div>
         <HeaderContainer 
-          headers={headers} 
+          headers={this.state.headers} 
+          firstRowIsHeaders={this.props.firstRowIsHeaders}
           showFormulaBar={this.props.showFormulaBar}
           showHeaderLetters={this.props.showHeaderLetters}/>
         <CellContainer data={this.state.data}/>
