@@ -58,7 +58,7 @@ export default class Sprd extends React.Component {
 
   render(){
     let style = {width: this.props.width};
-    style = merge(style, styles.div);
+    style = merge(style, styles.root);
     return (
       <div style={style}>
         {this.props.showFormulaBar ? <FormulaBar/> : null}
@@ -66,9 +66,12 @@ export default class Sprd extends React.Component {
           <HeaderContainer
             maxCol={this.state.maxCol}
             showHeaderLetters={this.props.showHeaderLetters}/>
-          <CellContainer data={this.state.data}/>
-          <Footer/>
+          <CellContainer 
+            data={this.state.data} 
+            maxCol={this.state.maxCol} 
+            maxRow={this.state.maxRow}/>
         </table>
+        <Footer/>
       </div>
     )
   }
@@ -80,8 +83,9 @@ const styles = {
     maxWidth: "100%",
     borderCollapse: "collapse"
   },
-  div: {
-    border: "1px solid #BDBDBD",
+  root: {
+    borderTop: "1px solid #BDBDBD",
+    borderBottom: "1px solid #BDBDBD",
     margin: 5
   }
 }
