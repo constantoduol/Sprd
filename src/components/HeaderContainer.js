@@ -1,16 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import FormulaBar from './FormulaBar';
 import Header from './Header';
 
-
 //renders the headers
-//renders the formula bar
 export default class HeaderContainer extends React.Component {
 
   static propTypes = {
-    showFormulaBar: PropTypes.bool,
     showHeaderLetters: PropTypes.bool,
     maxCol: PropTypes.number
   };
@@ -18,7 +14,7 @@ export default class HeaderContainer extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      width: 100
+      width: 50
     }
   }
 
@@ -53,11 +49,6 @@ export default class HeaderContainer extends React.Component {
 }
 
 const styles = {
-  th: {
-    width: 100,
-    fontSize: 14,
-    fontWeight: 500
-  },
   tr: {
     background: "#E0E0E0"
   }

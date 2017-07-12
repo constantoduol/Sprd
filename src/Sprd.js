@@ -1,8 +1,9 @@
 import React from 'react';
-import {isObject} from 'lodash';
+import {isObject, merge} from 'lodash';
 import Footer from './components/Footer';
 import HeaderContainer from './components/HeaderContainer';
 import CellContainer from './components/CellContainer';
+import FormulaBar from './components/FormulaBar';
 
 export default class Sprd extends React.Component {
 
@@ -12,14 +13,11 @@ export default class Sprd extends React.Component {
     firstRowIsHeaders: true,
     showRowNumbers: true,
     showFormulaBar: true,
+    infinite: true, //scroll infinitely in any directions
     showFooter: true,
-    autoGrow: false, //grow the spreadsheet as the user scrolls
-    defaultNumRows: 20, //in case no data is specified
-    defaultNumCols: 10, //in case no data is specified
-    components: { //override components
-
-    }
-    
+    autoGrowLeft: false, //grow the spreadsheet as the user scrolls
+    autoGrowRight: false,
+    width: 600
   }
 
   constructor(props){
@@ -29,8 +27,8 @@ export default class Sprd extends React.Component {
     this.state = {
       data: data,
       headers: headers,
-      maxRow: this.props.defaultNumRows,
-      maxCol: this.props.defaultNumCols
+      maxRow: 20,
+      maxCol: 10
     };
   }
 
@@ -58,31 +56,20 @@ export default class Sprd extends React.Component {
     return [data, headers];
   }
 
-  getHeaderContainer(){
-    return this.props.components['HeaderContainer'] || HeaderContainer;
-  }
-
-  getCellContainer(){
-    return this.props.components['CellContainer'] || CellContainer;
-  }
-
-  getFooter(){
-    return this.props.components['Footer'] || Footer;
-  }
-
   render(){
-    let HeaderContainer = this.getHeaderContainer();
-    let CellContainer = this.getCellContainer();
-    let Footer = this.getFooter();
+    let style = {width: this.props.width};
+    style = merge(style, styles.div);
     return (
-      <table style={styles.table}>
-        <HeaderContainer 
-          maxCol={this.props.maxCol}
-          showFormulaBar={this.props.showFormulaBar}
-          showHeaderLetters={this.props.showHeaderLetters}/>
-        <CellContainer data={this.state.data}/>
-        <Footer/>
-      </table>
+      <div style={style}>
+        {this.props.showFormulaBar ? <FormulaBar/> : null}
+        <table style={styles.table}>
+          <HeaderContainer
+            maxCol={this.state.maxCol}
+            showHeaderLetters={this.props.showHeaderLetters}/>
+          <CellContainer data={this.state.data}/>
+          <Footer/>
+        </table>
+      </div>
     )
   }
 }
@@ -92,5 +79,9 @@ const styles = {
     width: "100%",
     maxWidth: "100%",
     borderCollapse: "collapse"
+  },
+  div: {
+    border: "1px solid #BDBDBD",
+    margin: 5
   }
 }
