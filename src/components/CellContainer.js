@@ -7,7 +7,8 @@ export default class CellContainer extends React.Component {
   static propTypes = {
     data: PropTypes.object,
     maxRow: PropTypes.number,
-    maxCol: PropTypes.number
+    maxCol: PropTypes.number,
+    headerWidths: PropTypes.array
   };
 
   renderCells(){
@@ -17,9 +18,9 @@ export default class CellContainer extends React.Component {
     for(let row = 0; row < maxRow; row++){
       let currentRow = [];
       for(let col = 0; col < maxCol; col++){
-        currentRow.push(<Cell/>);
+        currentRow.push(<Cell headerWidth={this.props.headerWidths[col]} key={row + "_" + col}/>);
       }
-      allRows.push(<tr>{currentRow}</tr>);
+      allRows.push(<tr key={row}>{currentRow}</tr>);
     }
     return allRows;
   }

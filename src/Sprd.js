@@ -15,26 +15,28 @@ export default class Sprd extends React.Component {
     showFormulaBar: true,
     infinite: true, //scroll infinitely in any directions
     showFooter: true,
-    autoGrowLeft: false, //grow the spreadsheet as the user scrolls
-    autoGrowRight: false,
     width: 600
   }
 
   constructor(props){
     super(props);
     this.EMPTY_VALUES = {null: null, undefined: undefined}; //what we consider empty
-    let [data, headers] = this.parseData();
+    this.DEFAULT_HEADER_WIDTH = 50; //pixels
+    let maxCol = 10, maxRow = 20; 
+    let [data, headers, headerWidths] = this.parseData(maxRow, maxCol);
     this.state = {
       data: data,
       headers: headers,
-      maxRow: 20,
-      maxCol: 10
+      headerWidths: headerWidths,
+      maxRow: maxRow,
+      maxCol: maxCol
     };
   }
 
-  parseData(){
+  parseData(maxRow, maxCol){
     let data = {};
     let headers = [];
+    let headerWidths = [];
     if(isObject(this.props.data)){
       headers = Object.keys(this.props.data); //there is no guarantee for header order
       for(let col = 0, row = 0; col < headers.length; col++){
@@ -53,7 +55,8 @@ export default class Sprd extends React.Component {
     } else if(this.props.data) {
       console.warn("Unrecognized object passed into Sprd as data");
     }
-    return [data, headers];
+    for(let x = 0; x < maxCol; x++) headerWidths.push(this.DEFAULT_HEADER_WIDTH);
+    return [data, headers, headerWidths];
   }
 
   render(){
@@ -65,8 +68,10 @@ export default class Sprd extends React.Component {
         <table style={styles.table}>
           <HeaderContainer
             maxCol={this.state.maxCol}
+            headerWidths={this.state.headerWidths}
             showHeaderLetters={this.props.showHeaderLetters}/>
           <CellContainer 
+            headerWidths={this.state.headerWidths}
             data={this.state.data} 
             maxCol={this.state.maxCol} 
             maxRow={this.state.maxRow}/>
