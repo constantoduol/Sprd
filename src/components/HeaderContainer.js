@@ -48,6 +48,7 @@ export default class HeaderContainer extends React.Component {
 
 const styles = {
   tr: {
-    background: "#E0E0E0"
+    background: "#E0E0E0",
+    height: 20
   }
 };

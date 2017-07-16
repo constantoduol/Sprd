@@ -8,16 +8,27 @@ export default class NumberCell extends React.Component {
   }
 
   render(){
-    return <td style={styles.td}>{this.props.num}</td>
+    return (
+      <td style={styles.numberCell}>
+        {this.props.num}
+        <div style={styles.resize}></div>
+      </td>
+    );
   }
 }
 
 const styles = {
-  td: {
+  numberCell: {
     border: "1px solid #BDBDBD",
     fontSize: 14,
     fontWeight: 500,
     background: "#EEEEEE",
     textAlign: "center"
+  },
+  resize: {
+    height: 5,
+    float: "right",
+    cursor: "row-resize",
+    width: 50
   }
 }

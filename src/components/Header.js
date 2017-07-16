@@ -11,16 +11,27 @@ export default class Header extends React.Component {
 
   render(){
     let style = {width: this.props.width};
-    style = merge(style, styles.th);
-    return <th style={style}>{this.props.title}</th>
+    style = merge(style, styles.header);
+    return (
+      <th style={style}>
+        {this.props.title}
+        <div style={styles.resize}></div>
+      </th>
+    );
   }
 }
 
 const styles = {
-  th: {
+  header: {
     borderLeft: "1px solid #BDBDBD",
     borderRight: "1px solid #BDBDBD",
     fontSize: 12,
     fontWeight: 500
+  },
+  resize: {
+    height: 20,
+    float: "right",
+    cursor: "col-resize",
+    width: 10
   }
 }

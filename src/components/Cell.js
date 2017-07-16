@@ -57,13 +57,12 @@ export default class Cell extends React.Component {
   }
 
   renderInnerCell(){
-    let style = {width: this.props.headerWidth - 5};
     return (
       <input 
         type='text' 
         onBlur={this.inputNotActive}
         ref={(input) => { this.input = input; }}
-        style={merge(styles.input_active, style)}/>
+        style={styles.input_active}/>
     );
   }
   
@@ -84,6 +83,7 @@ const styles = {
   input_active: {
     border: "none",
     borderStyle: "none",
+    width: "95%",
     padding: 0,
     margin: 0,
     zIndex: 100
