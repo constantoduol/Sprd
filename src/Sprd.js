@@ -15,14 +15,17 @@ export default class Sprd extends React.Component {
     showFormulaBar: true,
     infinite: true, //scroll infinitely in any directions
     showFooter: true,
-    width: 600
+    width: 800,
+    height: 600
   }
 
   constructor(props){
     super(props);
     this.EMPTY_VALUES = {null: null, undefined: undefined}; //what we consider empty
-    this.DEFAULT_HEADER_WIDTH = 50; //pixels
-    let maxCol = 10, maxRow = 20; 
+    this.DEFAULT_HEADER_WIDTH = 80; //pixels
+    this.DEFAULT_ROW_HEIGHT = 25; //pixels
+    let maxCol = parseInt(this.props.width/this.DEFAULT_HEADER_WIDTH);
+    let maxRow = parseInt(this.props.height/this.DEFAULT_ROW_HEIGHT); 
     let [data, headers, headerWidths] = this.parseData(maxRow, maxCol);
     this.state = {
       data: data,
@@ -45,7 +48,6 @@ export default class Sprd extends React.Component {
 
         if(this.EMPTY_VALUES[headerData[row]] !== headerData[row])//we don't store empty values
           data[row][col] = headerData[row]; 
-
         if(col === headers.length){
           col = 0;
           row++;
@@ -53,9 +55,15 @@ export default class Sprd extends React.Component {
         if(row === headerData.length) break;
       }   
     } else if(this.props.data) {
+
       console.warn("Unrecognized object passed into Sprd as data");
     }
-    for(let x = 0; x < maxCol; x++) headerWidths.push(this.DEFAULT_HEADER_WIDTH);
+    for(let col = 0; col < maxCol; col++) headerWidths.push(this.DEFAULT_HEADER_WIDTH);
+    for(let row = 0; row < maxRow; row++){
+      if(!data[row]) data[row] = {};
+      data[row]['height'] = this.DEFAULT_ROW_HEIGHT;
+    }
+
     return [data, headers, headerWidths];
   }
 
@@ -86,7 +94,8 @@ const styles = {
   table: {
     width: "100%",
     maxWidth: "100%",
-    borderCollapse: "collapse"
+    borderCollapse: "collapse",
+    borderSpacing: 0
   },
   root: {
     borderTop: "1px solid #BDBDBD",

@@ -16,12 +16,12 @@ export default class Cell extends React.Component {
       EDITING: "editing"
     };
     this.state = {
-      mode: this.CELL_MODES.INACTIVE,
-      height: 15
+      mode: this.CELL_MODES.INACTIVE
     };
 
     this.cellClicked = this.cellClicked.bind(this);
     this.cellDoubleClicked = this.cellDoubleClicked.bind(this);
+    this.cellKeyDown = this.cellKeyDown.bind(this);
   }
 
   cellClicked(){
@@ -29,7 +29,15 @@ export default class Cell extends React.Component {
   }
 
   cellDoubleClicked(){
-    this.setState({mode: this.CELL_MODES.EDITING})
+    this.setState({mode: this.CELL_MODES.EDITING}, () => {
+      this.input.focus();
+    })
+  }
+
+  cellKeyDown(){
+    this.setState({mode: this.CELL_MODES.EDITING}, () => {
+      this.input.focus();
+    });
   }
 
   currentCellStyle(){
@@ -44,19 +52,23 @@ export default class Cell extends React.Component {
   }
 
   renderInnerCell(){
-    return <input type='text' style={styles.input_active}/>
+    let style = {width: this.props.headerWidth};
+    return (
+      <input 
+        type='text' 
+        ref={(input) => { this.input = input; }}
+        style={merge(styles.input_active, style)}/>
+    );
   }
   
   render(){
-    let style = {height: this.state.height};
-    style = merge(this.currentCellStyle(), style);
-    let {mode} = this.state;
     return (
       <td 
         onDoubleClick={this.cellDoubleClicked}
+        onKeyDown={this.cellKeyDown}
         onClick={this.cellClicked}
-        style={style}>
-        {mode === this.CELL_MODES.ACTIVE ? this.renderInnerCell() : null}
+        style={this.currentCellStyle()}>
+        {this.state.mode === this.CELL_MODES.EDITING ? this.renderInnerCell() : null}
       </td>
     )
   }
@@ -64,20 +76,18 @@ export default class Cell extends React.Component {
 
 const styles = {
   input_active: {
-    border: "2px solid #2196F3",
-    width: "95%",
-    padding: 0
+    border: "none",
+    borderStyle: "none",
+    padding: 0,
+    margin: 0
   },
   td_active: {
-    border: "1px solid rgb(189, 189, 189)",
-    height: "15px",
-    margin: 0,
-    padding: 0
+    border: "2px solid #2196F3",
   },
   td_inactive: {
     border: "1px solid #BDBDBD",
   },
   td_editing: {
-    border: "1px solid #2196F3"
+   border: "2px solid #2196F3"
   }
 }

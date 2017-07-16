@@ -14,13 +14,15 @@ export default class CellContainer extends React.Component {
   renderCells(){
     let maxRow = this.props.maxRow;
     let maxCol = this.props.maxCol;
+    let {data, headerWidths} = this.props;
     let allRows = [];
     for(let row = 0; row < maxRow; row++){
       let currentRow = [];
       for(let col = 0; col < maxCol; col++){
-        currentRow.push(<Cell headerWidth={this.props.headerWidths[col]} key={row + "_" + col}/>);
+        currentRow.push(<Cell headerWidth={headerWidths[col]} key={row + "_" + col}/>);
       }
-      allRows.push(<tr key={row}>{currentRow}</tr>);
+      let rowStyle = {height: data[row]['height']};
+      allRows.push(<tr style={rowStyle} key={row}>{currentRow}</tr>);
     }
     return allRows;
   }
