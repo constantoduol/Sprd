@@ -8,7 +8,7 @@ export default class HeaderContainer extends React.Component {
 
   static propTypes = {
     showHeaderLetters: PropTypes.bool,
-    maxCol: PropTypes.number,
+    colNums: PropTypes.number,
     headerWidths: PropTypes.array
   };
 
@@ -24,9 +24,8 @@ export default class HeaderContainer extends React.Component {
   }
 
   renderHeaderLetters(){
-    console.log(this.props.headerWidths)
-    let headers = [];
-    for(let x = 1; x <= this.props.maxCol; x++){
+    let headers = [<Header title="" width={50}/>]; //the first header is for the numbers to the left
+    for(let x = 1; x <= this.props.colNums; x++){
       let colLetter = this.toExcelColName(x);
       headers.push(
         <Header key={x} title={colLetter} width={this.props.headerWidths[x - 1]}/>

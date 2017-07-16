@@ -22,6 +22,11 @@ export default class Cell extends React.Component {
     this.cellClicked = this.cellClicked.bind(this);
     this.cellDoubleClicked = this.cellDoubleClicked.bind(this);
     this.cellKeyDown = this.cellKeyDown.bind(this);
+    this.inputNotActive = this.inputNotActive.bind(this);
+  }
+
+  inputNotActive(){
+    this.setState({mode: this.CELL_MODES.INACTIVE});
   }
 
   cellClicked(){
@@ -52,10 +57,11 @@ export default class Cell extends React.Component {
   }
 
   renderInnerCell(){
-    let style = {width: this.props.headerWidth};
+    let style = {width: this.props.headerWidth - 5};
     return (
       <input 
         type='text' 
+        onBlur={this.inputNotActive}
         ref={(input) => { this.input = input; }}
         style={merge(styles.input_active, style)}/>
     );
@@ -79,7 +85,15 @@ const styles = {
     border: "none",
     borderStyle: "none",
     padding: 0,
-    margin: 0
+    margin: 0,
+    zIndex: 100
+  },
+  input_inactive: {
+    border: "none",
+    borderStyle: "none",
+    padding: 0,
+    margin: 0,
+    textAlign: "right"
   },
   td_active: {
     border: "2px solid #2196F3",

@@ -24,19 +24,19 @@ export default class Sprd extends React.Component {
     this.EMPTY_VALUES = {null: null, undefined: undefined}; //what we consider empty
     this.DEFAULT_HEADER_WIDTH = 80; //pixels
     this.DEFAULT_ROW_HEIGHT = 25; //pixels
-    let maxCol = parseInt(this.props.width/this.DEFAULT_HEADER_WIDTH);
-    let maxRow = parseInt(this.props.height/this.DEFAULT_ROW_HEIGHT); 
-    let [data, headers, headerWidths] = this.parseData(maxRow, maxCol);
+    let colNums = parseInt(this.props.width/this.DEFAULT_HEADER_WIDTH);
+    let rowNums = parseInt(this.props.height/this.DEFAULT_ROW_HEIGHT); 
+    let [data, headers, headerWidths] = this.parseData(rowNums, colNums);
     this.state = {
       data: data,
       headers: headers,
       headerWidths: headerWidths,
-      maxRow: maxRow,
-      maxCol: maxCol
+      rowNums: rowNums,
+      colNums: colNums,
     };
   }
 
-  parseData(maxRow, maxCol){
+  parseData(rowNums, colNums){
     let data = {};
     let headers = [];
     let headerWidths = [];
@@ -58,8 +58,8 @@ export default class Sprd extends React.Component {
 
       console.warn("Unrecognized object passed into Sprd as data");
     }
-    for(let col = 0; col < maxCol; col++) headerWidths.push(this.DEFAULT_HEADER_WIDTH);
-    for(let row = 0; row < maxRow; row++){
+    for(let col = 0; col < colNums; col++) headerWidths.push(this.DEFAULT_HEADER_WIDTH);
+    for(let row = 0; row < rowNums; row++){
       if(!data[row]) data[row] = {};
       data[row]['height'] = this.DEFAULT_ROW_HEIGHT;
     }
@@ -75,14 +75,14 @@ export default class Sprd extends React.Component {
         {this.props.showFormulaBar ? <FormulaBar/> : null}
         <table style={styles.table}>
           <HeaderContainer
-            maxCol={this.state.maxCol}
+            colNums={this.state.colNums}
             headerWidths={this.state.headerWidths}
             showHeaderLetters={this.props.showHeaderLetters}/>
           <CellContainer 
             headerWidths={this.state.headerWidths}
             data={this.state.data} 
-            maxCol={this.state.maxCol} 
-            maxRow={this.state.maxRow}/>
+            colNums={this.state.colNums} 
+            rowNums={this.state.rowNums}/>
         </table>
         <Footer/>
       </div>
@@ -95,7 +95,8 @@ const styles = {
     width: "100%",
     maxWidth: "100%",
     borderCollapse: "collapse",
-    borderSpacing: 0
+    borderSpacing: 0,
+    tableLayout: "fixed"
   },
   root: {
     borderTop: "1px solid #BDBDBD",

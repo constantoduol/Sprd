@@ -1,27 +1,30 @@
 import React from 'react';
-import Cell from './Cell';
 import PropTypes from 'prop-types';
+import Cell from './Cell';
+import NumberCell from './NumberCell';
+
 
 export default class CellContainer extends React.Component {
 
   static propTypes = {
     data: PropTypes.object,
-    maxRow: PropTypes.number,
-    maxCol: PropTypes.number,
+    rowNums: PropTypes.number,
+    colNums: PropTypes.number,
     headerWidths: PropTypes.array
   };
 
   renderCells(){
-    let maxRow = this.props.maxRow;
-    let maxCol = this.props.maxCol;
+    let rowNums = this.props.rowNums;
+    let colNums = this.props.colNums;
     let {data, headerWidths} = this.props;
     let allRows = [];
-    for(let row = 0; row < maxRow; row++){
+    for(let row = 0; row < rowNums; row++){
       let currentRow = [];
-      for(let col = 0; col < maxCol; col++){
-        currentRow.push(<Cell headerWidth={headerWidths[col]} key={row + "_" + col}/>);
-      }
       let rowStyle = {height: data[row]['height']};
+      currentRow.push(<NumberCell num={row + 1}/>);
+      for(let col = 0; col < colNums; col++){
+        currentRow.push(<Cell headerWidth={headerWidths[col]} row={row} col={col} height={data[row]['height']} key={row + "_" + col}/>);
+      }
       allRows.push(<tr style={rowStyle} key={row}>{currentRow}</tr>);
     }
     return allRows;
@@ -35,3 +38,4 @@ export default class CellContainer extends React.Component {
     );
   }
 }
+
