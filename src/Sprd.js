@@ -4,6 +4,7 @@ import Footer from './components/Footer';
 import HeaderContainer from './components/HeaderContainer';
 import CellContainer from './components/CellContainer';
 import FormulaBar from './components/FormulaBar';
+import {DEFAULT_HEADER_WIDTH, DEFAULT_ROW_HEIGHT} from './Constants'; 
 
 export default class Sprd extends React.Component {
 
@@ -22,10 +23,8 @@ export default class Sprd extends React.Component {
   constructor(props){
     super(props);
     this.EMPTY_VALUES = {null: null, undefined: undefined}; //what we consider empty
-    this.DEFAULT_HEADER_WIDTH = 80; //pixels
-    this.DEFAULT_ROW_HEIGHT = 25; //pixels
-    let colNums = parseInt(this.props.width/this.DEFAULT_HEADER_WIDTH);
-    let rowNums = parseInt(this.props.height/this.DEFAULT_ROW_HEIGHT); 
+    let colNums = parseInt(this.props.width/DEFAULT_HEADER_WIDTH);
+    let rowNums = parseInt(this.props.height/DEFAULT_ROW_HEIGHT); 
     let [data, headers, headerWidths] = this.parseData(rowNums, colNums);
     this.state = {
       data: data,
@@ -58,10 +57,10 @@ export default class Sprd extends React.Component {
 
       console.warn("Unrecognized object passed into Sprd as data");
     }
-    for(let col = 0; col < colNums; col++) headerWidths.push(this.DEFAULT_HEADER_WIDTH);
+    for(let col = 0; col < colNums; col++) headerWidths.push(DEFAULT_HEADER_WIDTH);
     for(let row = 0; row < rowNums; row++){
       if(!data[row]) data[row] = {};
-      data[row]['height'] = this.DEFAULT_ROW_HEIGHT;
+      data[row]['height'] = DEFAULT_ROW_HEIGHT;
     }
 
     return [data, headers, headerWidths];
