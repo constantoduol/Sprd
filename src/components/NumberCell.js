@@ -11,7 +11,7 @@ export default class NumberCell extends React.Component {
     return (
       <td style={styles.numberCell}>
         {this.props.num}
-        <div style={styles.resize}></div>
+        <div className="resize" style={styles.resize}></div>
       </td>
     );
   }

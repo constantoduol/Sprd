@@ -16,7 +16,7 @@ export default class Sprd extends React.Component {
     showFormulaBar: true,
     infinite: true, //scroll infinitely in any directions
     showFooter: true,
-    width: 800,
+    width: 600,
     height: 600
   }
 
@@ -24,7 +24,7 @@ export default class Sprd extends React.Component {
     super(props);
     this.EMPTY_VALUES = {null: null, undefined: undefined}; //what we consider empty
     let colNums = parseInt(this.props.width/DEFAULT_HEADER_WIDTH);
-    let rowNums = parseInt(this.props.height/DEFAULT_ROW_HEIGHT); 
+    let rowNums = parseInt(this.props.height/DEFAULT_ROW_HEIGHT) - 2; //-2 for header and footer 
     let [data, headers, headerWidths] = this.parseData(rowNums, colNums);
     this.state = {
       data: data,
@@ -94,8 +94,7 @@ const styles = {
     width: "100%",
     maxWidth: "100%",
     borderCollapse: "collapse",
-    borderSpacing: 0,
-    tableLayout: "fixed"
+    borderSpacing: 0
   },
   root: {
     borderTop: "1px solid #BDBDBD",

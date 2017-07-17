@@ -7,3 +7,7 @@ body {
 td > input:focus {
     outline: none;
 }
+
+.resize:hover {
+	background:  #2196F3;
+}
