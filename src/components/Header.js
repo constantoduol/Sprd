@@ -27,19 +27,19 @@ export default class Header extends React.Component {
     let {left, previousPos, width} = this.state
     let newLeft = left;
     if(pos.x > previousPos) newLeft += 1;
-    else if(pos.x < previousPos) newLeft -= 1;
-    let newWidth = parseInt(this.resizeHandler.style.left);
-    if(newWidth < width) width = Math.max(newWidth, MIN_HEADER_WIDTH); 
+    else if(pos.x < previousPos) newLeft -= 1; 
     this.setState({
       resizeMode: this.RESIZE_MODES.RESIZING, 
       left: newLeft,
-      previousPos: pos.x,
-      width: newWidth
+      previousPos: pos.x
     });
   }
 
-  headerResizeStopped(e){
-    console.log("resize stopped");
+  headerResizeStopped(pos){
+    let {width} = this.state;
+    let newWidth = parseInt(this.resizeHandler.style.left);
+    if(newWidth < width) newWidth = Math.max(newWidth, MIN_HEADER_WIDTH);
+    this.setState({width: newWidth, resizeMode: this.RESIZE_MODES.STILL});
   }
 
   resizeStyle(){
@@ -58,11 +58,13 @@ export default class Header extends React.Component {
     return (
       <th style={style}>
         {this.props.title}
-        <Draggable onMove={pos => this.headerResizing(pos)}>
-          <div 
-            ref={resizeHandler => { this.resizeHandler = resizeHandler}}
-            className="resize" 
-            style={this.resizeStyle()}></div>
+        <Draggable 
+          onMove={pos => this.headerResizing(pos)} 
+          onStop={pos => this.headerResizeStopped(pos)}>
+            <div 
+              ref={resizeHandler => { this.resizeHandler = resizeHandler}}
+              className="resize" 
+              style={this.resizeStyle()}></div>
         </Draggable>
       </th>
     );

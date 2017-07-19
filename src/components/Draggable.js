@@ -25,6 +25,7 @@ var Draggable = React.createClass({
     document.removeEventListener('mousemove', this.onMouseMove);
     document.removeEventListener('mouseup', this.onMouseUp);
     e.preventDefault();
+    if(this.props.onStop) this.props.onStop({x: this.state.relX, y: this.state.relY});
   },
   onMouseMove(e) {
     this.props.onMove({
