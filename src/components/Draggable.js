@@ -39,7 +39,7 @@ var Draggable = React.createClass({
       style={{
         position: 'absolute',
         left: this.props.x,
-        top: this.props.y
+        top: 0
       }}
       ref="handle"
     >{this.props.children}</div>;
