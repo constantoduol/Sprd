@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "immutable": "^3.8.1",
+    "alt": "^0.18.6",
+    "alt-utils": "^1.0.0",
+    "babel-plugin-transform-decorators-legacy": "^1.3.4",
     "lodash": "^4.17.4",
     "prop-types": "^15.5.10",
     "react": "^15.6.1",

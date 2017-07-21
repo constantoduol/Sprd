@@ -1,7 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {merge} from 'lodash';
+import connectToStores from 'alt-utils/lib/connectToStores';
+import Store from '../Store';
 
+@connectToStores
 export default class Cell extends React.Component {
 
   static propTypes = {
@@ -15,6 +18,7 @@ export default class Cell extends React.Component {
       ACTIVE: "active", 
       EDITING: "editing"
     };
+
     this.state = {
       mode: this.CELL_MODES.INACTIVE
     };
@@ -23,6 +27,15 @@ export default class Cell extends React.Component {
     this.cellDoubleClicked = this.cellDoubleClicked.bind(this);
     this.cellKeyDown = this.cellKeyDown.bind(this);
     this.inputNotActive = this.inputNotActive.bind(this);
+  }
+
+  static getStores() {
+    return [Store];
+  }
+
+  static getPropsFromStores() {
+    var props = Store.getState();
+    return props;
   }
 
   inputNotActive(){

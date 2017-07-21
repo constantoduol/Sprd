@@ -7,11 +7,14 @@ export default class NumberCell extends React.Component {
     num: PropTypes.number
   }
 
+  numberCellClicked(){
+    
+  }
+
   render(){
     return (
       <td style={styles.numberCell}>
         {this.props.num}
-        <div className="resize" style={styles.resize}></div>
       </td>
     );
   }
@@ -23,12 +26,7 @@ const styles = {
     fontSize: 14,
     fontWeight: 500,
     background: "#EEEEEE",
-    textAlign: "center"
-  },
-  resize: {
-    height: 5,
-    float: "right",
-    cursor: "row-resize",
-    width: 50
+    textAlign: "center",
+    userSelect: "none"
   }
 }

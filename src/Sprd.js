@@ -16,7 +16,7 @@ export default class Sprd extends React.Component {
     showFormulaBar: true,
     infinite: true, //scroll infinitely in any directions
     showFooter: true,
-    width: 600,
+    width: 800,
     height: 600
   }
 

@@ -11,3 +11,7 @@ td > input:focus {
 .resize:hover {
 	background:  #2196F3;
 }
+
+.resize {
+	border: 1px solid;
+}
