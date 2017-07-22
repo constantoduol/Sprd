@@ -5,25 +5,16 @@ const alt = new Alt();
 class Store {
 
   constructor() {
-    this.bindActions(Actions);
-    this.selectedColumns = {};
-    this.selectedRows = {};
-    this.selectedCellRange = {}; 
-    this.activeCell = {};
+    this.selectedRange = {};
+    this.bindListeners({
+      handleSelectRange: Actions.SELECT_RANGE
+    });
   }
 
-  onSelectSingleColumn(){
-
+  handleSelectRange(range){
+    console.log("on select range");
+    this.selectedRange = range;
   }
-
-  onSelectSingleRow(){
-
-  }
-
-  onSetActiveCell(){
-
-  }
-
 
 }
 

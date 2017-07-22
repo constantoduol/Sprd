@@ -1,8 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {merge} from 'lodash';
-import {DEFAULT_HEADER_WIDTH, MIN_HEADER_WIDTH} from '../Constants';
-import Draggable from './Draggable';
 
 export default class Header extends React.Component {
 

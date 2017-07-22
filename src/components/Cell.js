@@ -3,12 +3,15 @@ import PropTypes from 'prop-types';
 import {merge} from 'lodash';
 import connectToStores from 'alt-utils/lib/connectToStores';
 import Store from '../Store';
+import Actions from '../Actions';
 
 @connectToStores
 export default class Cell extends React.Component {
 
   static propTypes = {
-    headerWidth: PropTypes.number
+    headerWidth: PropTypes.number,
+    row: PropTypes.number,
+    col: PropTypes.number
   };
 
   constructor(props){
@@ -34,8 +37,7 @@ export default class Cell extends React.Component {
   }
 
   static getPropsFromStores() {
-    var props = Store.getState();
-    return props;
+    return Store.getState();
   }
 
   inputNotActive(){
@@ -43,7 +45,8 @@ export default class Cell extends React.Component {
   }
 
   cellClicked(){
-    this.setState({mode: this.CELL_MODES.ACTIVE});
+    let {row, col} = this.props;
+    Actions.selectRange(new Range(row, col, row, col));
   }
 
   cellDoubleClicked(){

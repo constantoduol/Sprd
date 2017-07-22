@@ -1,21 +1,12 @@
 import Alt from 'alt';
+
 const alt = new Alt();
 
 class Actions {
 
-  constructor() {
-  }
-
-  selectSingleColumn(){
-
-  }
-
-  selectSingleRow(){
-    
-  }
-
-  setActiveCell(){
-
+  selectRange(r){
+    console.log("select range");
+    return r;
   }
 
 }

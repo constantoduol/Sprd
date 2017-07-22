@@ -21,9 +21,15 @@ export default class CellContainer extends React.Component {
     for(let row = 0; row < rowNums; row++){
       let currentRow = [];
       let rowStyle = {height: data[row]['height']};
-      currentRow.push(<NumberCell num={row + 1}/>);
+      currentRow.push(<NumberCell row={row}/>);
       for(let col = 0; col < colNums; col++){
-        currentRow.push(<Cell headerWidth={headerWidths[col]} row={row} col={col} height={data[row]['height']} key={row + "_" + col}/>);
+        currentRow.push(
+          <Cell 
+            headerWidth={headerWidths[col]} 
+            row={row} 
+            col={col} 
+            key={row + "_" + col}/>
+          );
       }
       allRows.push(<tr style={rowStyle} key={row}>{currentRow}</tr>);
     }
