@@ -1,12 +1,11 @@
-import Alt from 'alt';
+import alt from './altConfig';
 
-const alt = new Alt();
 
 class Actions {
 
-  selectRange(r){
+  selectRange(range){
     console.log("select range");
-    return r;
+    return range;
   }
 
 }

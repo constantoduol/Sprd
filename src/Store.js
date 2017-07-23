@@ -1,19 +1,22 @@
 import Alt from 'alt';
 import Actions from './Actions';
-const alt = new Alt();
+import alt from './altConfig';
 
 class Store {
 
   constructor() {
-    this.selectedRange = {};
     this.bindListeners({
-      handleSelectRange: Actions.SELECT_RANGE
+      onSelectRange: Actions.selectRange
     });
+
+    this.state = {
+      selectedRange: []
+    };
   }
 
-  handleSelectRange(range){
+  onSelectRange(range){
     console.log("on select range");
-    this.selectedRange = range;
+    this.setState({selectedRange: range});
   }
 
 }
