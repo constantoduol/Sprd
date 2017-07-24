@@ -6,6 +6,7 @@ import Store from '../Store';
 import Actions from '../Actions';
 import SprdRange from '../SprdRange';
 
+//it is debatable whether we should listen to store here or in cell container
 @connectToStores
 export default class Cell extends React.Component {
 
@@ -32,7 +33,6 @@ export default class Cell extends React.Component {
     this.cellClicked = this.cellClicked.bind(this);
     this.cellDoubleClicked = this.cellDoubleClicked.bind(this);
     this.cellKeyDown = this.cellKeyDown.bind(this);
-    this.inputNotActive = this.inputNotActive.bind(this);
   }
 
   static getStores() {
@@ -45,31 +45,39 @@ export default class Cell extends React.Component {
 
   componentWillReceiveProps(nextProps){
     let {selectedRange, row, col} = nextProps;
+    let {mode} = this.state;
     for(let range of selectedRange){
-      if(range && range.isCellSelected(row, col))
+      if(range.isCellSelected(row, col)){
         this.setState({mode: this.CELL_MODES.ACTIVE});
-      else if(range && range.isNumberCellSelected(row, col))
+      } else if(range.isNumberCellSelected(row, col)){
         this.setState({mode: this.CELL_MODES.HORIZONTAL_HIGHLIGHT});
-      else if(range && range.isHeaderSelected(col))
+      } else if(range.isHeaderSelected(col)){
         this.setState({mode: this.CELL_MODES.VERTICAL_HIGHLIGHT});
-      else
+      } else if(mode !== this.CELL_MODES.INACTIVE){
         this.setState({mode: this.CELL_MODES.INACTIVE});
+      }
     }
   }
 
-
-
-  inputNotActive(){
-    Actions.clearSelectedRange();
+  shouldComponentUpdate(nextProps, nextState){
+    if(nextState.mode === this.state.mode) return false;
+    return true;
   }
 
+  //this called twice when cell is double clicked
+  //to prevent that we check if the current cell is already selected
   cellClicked(){
-    let {row, col} = this.props;
-    Actions.selectRange(new SprdRange(row, col, row, col));
+    let {row, col, selectedRange} = this.props;
+    let thisCellSelected = false;
+    for(let range of selectedRange){
+      thisCellSelected =  range.isCellSelected(row, col);
+      if(thisCellSelected) break;
+    }
+    if(!thisCellSelected)
+      Actions.selectRange(new SprdRange(row, col, row, col));
   }
 
   cellDoubleClicked(){
-    Actions.clearSelectedRange();
     this.setState({mode: this.CELL_MODES.EDITING}, () => {
       this.input.focus();
     })
@@ -100,7 +108,6 @@ export default class Cell extends React.Component {
     return (
       <input 
         type='text' 
-        onBlur={this.inputNotActive}
         ref={(input) => { this.input = input; }}
         style={styles.input_active}/>
     );

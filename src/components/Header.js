@@ -6,7 +6,7 @@ import Actions from '../Actions';
 import Store from '../Store';
 import SprdRange from '../SprdRange';
 
-
+//it is debatable whether we should listen to store here or in header container
 @connectToStores
 export default class Header extends React.Component {
 
