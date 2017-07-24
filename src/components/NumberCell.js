@@ -33,7 +33,7 @@ export default class NumberCell extends React.Component {
   currentStyle(){
     let {selectedRange, row} = this.props;
     for(let range of selectedRange){
-      if(range && range.startCol === 0 && range.stopCol === -1 && range.startRow === row)
+      if(range && range.isNumberCellSelected(row))
         return styles.numberCellSelected;
     }
     return styles.numberCell;

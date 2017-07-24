@@ -48,7 +48,7 @@ export default class Cell extends React.Component {
     for(let range of selectedRange){
       if(range && range.isCellSelected(row, col))
         this.setState({mode: this.CELL_MODES.ACTIVE});
-      else if(range && range.isHorizontalHighlight(row, col))
+      else if(range && range.isNumberCellSelected(row, col))
         this.setState({mode: this.CELL_MODES.HORIZONTAL_HIGHLIGHT});
       else if(range && range.isHeaderSelected(col))
         this.setState({mode: this.CELL_MODES.VERTICAL_HIGHLIGHT});
