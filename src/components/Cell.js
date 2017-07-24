@@ -4,6 +4,7 @@ import {merge} from 'lodash';
 import connectToStores from 'alt-utils/lib/connectToStores';
 import Store from '../Store';
 import Actions from '../Actions';
+import SprdRange from '../SprdRange';
 
 @connectToStores
 export default class Cell extends React.Component {
@@ -19,7 +20,9 @@ export default class Cell extends React.Component {
     this.CELL_MODES = {
       INACTIVE: "inactive", 
       ACTIVE: "active", 
-      EDITING: "editing"
+      EDITING: "editing",
+      HORIZONTAL_HIGHLIGHT: "horizontal_higlight",
+      VERTICAL_HIGHLIGHT: "vertical_higlight"
     };
 
     this.state = {
@@ -40,16 +43,33 @@ export default class Cell extends React.Component {
     return Store.getState();
   }
 
+  componentWillReceiveProps(nextProps){
+    let {selectedRange, row, col} = nextProps;
+    for(let range of selectedRange){
+      if(range && range.isCellSelected(row, col))
+        this.setState({mode: this.CELL_MODES.ACTIVE});
+      else if(range && range.isHorizontalHighlight(row, col))
+        this.setState({mode: this.CELL_MODES.HORIZONTAL_HIGHLIGHT});
+      else if(range && range.isHeaderSelected(col))
+        this.setState({mode: this.CELL_MODES.VERTICAL_HIGHLIGHT});
+      else
+        this.setState({mode: this.CELL_MODES.INACTIVE});
+    }
+  }
+
+
+
   inputNotActive(){
-    this.setState({mode: this.CELL_MODES.INACTIVE});
+    Actions.clearSelectedRange();
   }
 
   cellClicked(){
     let {row, col} = this.props;
-    Actions.selectRange(new Range(row, col, row, col));
+    Actions.selectRange(new SprdRange(row, col, row, col));
   }
 
   cellDoubleClicked(){
+    Actions.clearSelectedRange();
     this.setState({mode: this.CELL_MODES.EDITING}, () => {
       this.input.focus();
     })
@@ -61,7 +81,7 @@ export default class Cell extends React.Component {
     });
   }
 
-  currentCellStyle(){
+  currentStyle(){
     switch(this.state.mode){
       case this.CELL_MODES.INACTIVE:
         return styles.td_inactive;
@@ -69,6 +89,10 @@ export default class Cell extends React.Component {
         return styles.td_active;
       case this.CELL_MODES.EDITING:
         return styles.td_editing;
+      case this.CELL_MODES.HORIZONTAL_HIGHLIGHT:
+        return styles.td_horizontal_highlight;
+      case this.CELL_MODES.VERTICAL_HIGHLIGHT:
+        return styles.td_vertical_highlight;
     }
   }
 
@@ -88,7 +112,7 @@ export default class Cell extends React.Component {
         onDoubleClick={this.cellDoubleClicked}
         onKeyDown={this.cellKeyDown}
         onClick={this.cellClicked}
-        style={this.currentCellStyle()}>
+        style={this.currentStyle()}>
         {this.state.mode === this.CELL_MODES.EDITING ? this.renderInnerCell() : null}
       </td>
     )
@@ -111,11 +135,26 @@ const styles = {
     margin: 0,
     textAlign: "right"
   },
+  td_horizontal_highlight: {
+    borderTop: "1px solid #2196F3",
+    borderBottom: "1px solid #2196F3",
+    borderLeft: "1px solid #BDBDBD",
+    borderRight: "1px solid #BDBDBD",
+    background: "rgba(33, 150, 243, 0.1)"
+  },
+  td_vertical_highlight: {
+    borderLeft: "1px solid #2196F3",
+    borderRight: "1px solid #2196F3",
+    borderTop: "1px solid #BDBDBD",
+    borderBottom: "1px solid #BDBDBD",
+    background: "rgba(33, 150, 243, 0.1)"
+  },
   td_active: {
     border: "2px solid #2196F3",
   },
   td_inactive: {
-    border: "1px solid #BDBDBD",
+    borderTop: "1px solid #BDBDBD",
+    borderLeft: "1px solid #BDBDBD",
   },
   td_editing: {
    border: "2px solid #2196F3"

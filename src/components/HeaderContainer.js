@@ -28,7 +28,7 @@ export default class HeaderContainer extends React.Component {
     for(let x = 1; x <= this.props.colNums; x++){
       let colLetter = this.toExcelColName(x);
       headers.push(
-        <Header key={x} title={colLetter} width={this.props.headerWidths[x - 1]}/>
+        <Header key={x} col={x - 1} title={colLetter} width={this.props.headerWidths[x - 1]}/>
       );
     }
     return headers;

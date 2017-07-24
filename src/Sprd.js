@@ -99,6 +99,7 @@ const styles = {
   root: {
     borderTop: "1px solid #BDBDBD",
     borderBottom: "1px solid #BDBDBD",
+    borderRight: "1px solid #BDBDBD",
     margin: 5
   }
 }

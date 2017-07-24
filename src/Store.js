@@ -1,12 +1,13 @@
-import Alt from 'alt';
 import Actions from './Actions';
 import alt from './altConfig';
+import {isArray} from 'lodash';
 
 class Store {
 
   constructor() {
     this.bindListeners({
-      onSelectRange: Actions.selectRange
+      onSelectRange: Actions.selectRange,
+      onClearSelectedRange: Actions.clearSelectedRange
     });
 
     this.state = {
@@ -15,8 +16,14 @@ class Store {
   }
 
   onSelectRange(range){
-    console.log("on select range");
-    this.setState({selectedRange: range});
+    if(isArray(range))
+      this.setState({selectedRange: range});
+    else
+      this.setState({selectedRange: [range]});
+  }
+
+  onClearSelectedRange(){
+    this.setState({selectedRange: []});
   }
 
 }

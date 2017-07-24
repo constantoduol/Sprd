@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Actions from '../Actions';
-import Range from '../Range';
+import SprdRange from '../SprdRange';
 import Store from '../Store';
 import connectToStores from 'alt-utils/lib/connectToStores';
 
@@ -27,13 +27,23 @@ export default class NumberCell extends React.Component {
 
   numberCellClicked(){
     let {row} = this.props;
-    Actions.selectRange(new Range(row, 0, row, -1));
+    Actions.selectRange(new SprdRange(row, 0, row, -1));
+  }
+
+  currentStyle(){
+    let {selectedRange, row} = this.props;
+    for(let range of selectedRange){
+      if(range && range.startCol === 0 && range.stopCol === -1 && range.startRow === row)
+        return styles.numberCellSelected;
+    }
+    return styles.numberCell;
   }
 
   render(){
+    let num = this.props.row + 1;
     return (
-      <td style={styles.numberCell} onClick={this.numberCellClicked}>
-        {this.props.row + 1}
+      <td style={this.currentStyle()} onClick={this.numberCellClicked} key={num}>
+        {num}
       </td>
     );
   }
@@ -45,6 +55,13 @@ const styles = {
     fontSize: 14,
     fontWeight: 500,
     background: "#EEEEEE",
+    textAlign: "center",
+    userSelect: "none"
+  },
+  numberCellSelected: {
+    background: "gray",
+    fontSize: 14,
+    fontWeight: 500,
     textAlign: "center",
     userSelect: "none"
   }
