@@ -2,27 +2,17 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Actions from '../Actions';
 import SprdRange from '../SprdRange';
-import Store from '../Store';
-import connectToStores from 'alt-utils/lib/connectToStores';
 
-@connectToStores
 export default class NumberCell extends React.Component {
 
   static propTypes = {
-    row: PropTypes.number
+    row: PropTypes.number,
+    selectedRange: PropTypes.array
   }
 
   constructor(props){
     super(props);
     this.numberCellClicked = this.numberCellClicked.bind(this);
-  }
-
-  static getStores() {
-    return [Store];
-  }
-
-  static getPropsFromStores() {
-    return Store.getState();
   }
 
   numberCellClicked(){

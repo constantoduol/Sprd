@@ -1,19 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {merge} from 'lodash';
-import connectToStores from 'alt-utils/lib/connectToStores';
-import Store from '../Store';
 import Actions from '../Actions';
 import SprdRange from '../SprdRange';
 
-//it is debatable whether we should listen to store here or in cell container
-@connectToStores
 export default class Cell extends React.Component {
 
   static propTypes = {
     headerWidth: PropTypes.number,
     row: PropTypes.number,
-    col: PropTypes.number
+    col: PropTypes.number,
+    selectedRange: PropTypes.array
   };
 
   constructor(props){
@@ -33,14 +30,6 @@ export default class Cell extends React.Component {
     this.cellClicked = this.cellClicked.bind(this);
     this.cellDoubleClicked = this.cellDoubleClicked.bind(this);
     this.cellKeyDown = this.cellKeyDown.bind(this);
-  }
-
-  static getStores() {
-    return [Store];
-  }
-
-  static getPropsFromStores() {
-    return Store.getState();
   }
 
   componentWillReceiveProps(nextProps){

@@ -17,7 +17,7 @@ export default class SprdRange {
   }
 
   isHeaderSelected(col){
-    return this.startCol === col && this.stopCol === col && this.startRow == -1 && this.stopRow === -1;
+    return this.startCol === col && this.stopCol === col && this.startRow === -1 && this.stopRow === -1;
   }
 
 }

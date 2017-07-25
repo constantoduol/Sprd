@@ -1,19 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {merge} from 'lodash';
-import connectToStores from 'alt-utils/lib/connectToStores';
 import Actions from '../Actions';
-import Store from '../Store';
 import SprdRange from '../SprdRange';
 
-//it is debatable whether we should listen to store here or in header container
-@connectToStores
 export default class Header extends React.Component {
 
   static propTypes = {
     width: PropTypes.number,
     col: PropTypes.number,
-    title: PropTypes.string
+    title: PropTypes.string,
+    selectedRange: PropTypes.array
   }
 
   constructor(props){
@@ -22,14 +19,6 @@ export default class Header extends React.Component {
       width: this.props.width
     };
     this.headerClicked = this.headerClicked.bind(this);
-  }
-
-  static getStores() {
-    return [Store];
-  }
-
-  static getPropsFromStores() {
-    return Store.getState();
   }
 
   headerClicked(){

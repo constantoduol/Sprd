@@ -9,7 +9,8 @@ export default class HeaderContainer extends React.Component {
   static propTypes = {
     showHeaderLetters: PropTypes.bool,
     colNums: PropTypes.number,
-    headerWidths: PropTypes.array
+    headerWidths: PropTypes.array,
+    selectedRange: PropTypes.array
   };
 
   constructor(props){
@@ -24,11 +25,24 @@ export default class HeaderContainer extends React.Component {
   }
 
   renderHeaderLetters(){
-    let headers = [<Header title="" width={50}/>]; //the first header is for the numbers to the left
+    let {selectedRange} = this.props;
+    let headers = [
+      <Header 
+        title="" 
+        selectedRange={selectedRange} 
+        width={50}
+      />
+    ]; //the first header is for the numbers to the left
     for(let x = 1; x <= this.props.colNums; x++){
       let colLetter = this.toExcelColName(x);
       headers.push(
-        <Header key={x} col={x - 1} title={colLetter} width={this.props.headerWidths[x - 1]}/>
+        <Header 
+          key={x} 
+          col={x - 1} 
+          title={colLetter} 
+          selectedRange={selectedRange} 
+          width={this.props.headerWidths[x - 1]}
+        />
       );
     }
     return headers;
