@@ -22,7 +22,7 @@ export default class CellContainer extends React.Component {
     for(let row = 0; row < rowNums; row++){
       let currentRow = [];
       let rowStyle = {height: data[row]['height']};
-      currentRow.push(<NumberCell selectedRange={selectedRange} row={row}/>);
+      currentRow.push(<NumberCell key={row} selectedRange={selectedRange} row={row}/>);
       for(let col = 0; col < colNums; col++){
         currentRow.push(
           <Cell 

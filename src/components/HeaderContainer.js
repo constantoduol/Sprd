@@ -29,6 +29,7 @@ export default class HeaderContainer extends React.Component {
     let headers = [
       <Header 
         title="" 
+        key="num_header"
         selectedRange={selectedRange} 
         width={50}
       />
