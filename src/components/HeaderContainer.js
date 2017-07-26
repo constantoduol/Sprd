@@ -1,16 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import {difference} from 'lodash';
 
 import Header from './Header';
+import Actions from '../Actions';
 
-//renders the headers
 export default class HeaderContainer extends React.Component {
 
   static propTypes = {
     showHeaderLetters: PropTypes.bool,
-    colNums: PropTypes.number,
-    headerWidths: PropTypes.array,
-    selectedRange: PropTypes.array
+    colNums: PropTypes.number
   };
 
   constructor(props){
@@ -25,13 +24,11 @@ export default class HeaderContainer extends React.Component {
   }
 
   renderHeaderLetters(){
-    let {selectedRange} = this.props;
     let headers = [
       <Header 
         title="" 
+        col={0}
         key="num_header"
-        selectedRange={selectedRange} 
-        width={50}
       />
     ]; //the first header is for the numbers to the left
     for(let x = 1; x <= this.props.colNums; x++){
@@ -39,10 +36,8 @@ export default class HeaderContainer extends React.Component {
       headers.push(
         <Header 
           key={x} 
-          col={x - 1} 
+          col={x} 
           title={colLetter} 
-          selectedRange={selectedRange} 
-          width={this.props.headerWidths[x - 1]}
         />
       );
     }
@@ -50,7 +45,7 @@ export default class HeaderContainer extends React.Component {
   }
 
   render(){ 
-    if(!this.props.showHeaderLetters) return;
+    if(!this.props.showHeaderLetters) return null;
     return (
       <thead>
         <tr style={styles.tr}>

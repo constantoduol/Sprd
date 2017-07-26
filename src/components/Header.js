@@ -1,24 +1,41 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {merge} from 'lodash';
+import connectToStores from 'alt-utils/lib/connectToStores';
+
 import Actions from '../Actions';
 import SprdRange from '../SprdRange';
+import Store from '../Store';
 
+
+@connectToStores
 export default class Header extends React.Component {
 
   static propTypes = {
-    width: PropTypes.number,
     col: PropTypes.number,
-    title: PropTypes.string,
-    selectedRange: PropTypes.array
+    title: PropTypes.string
   }
 
   constructor(props){
     super(props);
     this.state = {
-      width: this.props.width
+      width: 0
     };
     this.headerClicked = this.headerClicked.bind(this);
+  }
+
+  static getStores() {
+    return [Store];
+  }
+
+  static getPropsFromStores() {
+    return Store.getState();
+  }
+
+  componentWillReceiveProps(nextProps){
+    let {col} = this.props;
+    if(nextProps.headerWidths[col] !== this.state.width)
+      this.setState({width: nextProps.headerWidths[col]});
   }
 
   headerClicked(){

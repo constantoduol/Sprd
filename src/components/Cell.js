@@ -1,16 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {merge} from 'lodash';
+import connectToStores from 'alt-utils/lib/connectToStores';
+
 import Actions from '../Actions';
 import SprdRange from '../SprdRange';
+import Store from '../Store';
 
+@connectToStores
 export default class Cell extends React.Component {
 
   static propTypes = {
-    headerWidth: PropTypes.number,
     row: PropTypes.number,
     col: PropTypes.number,
-    selectedRange: PropTypes.array
   };
 
   constructor(props){
@@ -30,6 +32,15 @@ export default class Cell extends React.Component {
     this.cellClicked = this.cellClicked.bind(this);
     this.cellDoubleClicked = this.cellDoubleClicked.bind(this);
     this.cellKeyDown = this.cellKeyDown.bind(this);
+    this.inputValueChanged = this.inputValueChanged.bind(this);
+  }
+
+  static getStores() {
+    return [Store];
+  }
+
+  static getPropsFromStores() {
+    return Store.getState();
   }
 
   componentWillReceiveProps(nextProps){
@@ -93,14 +104,29 @@ export default class Cell extends React.Component {
     }
   }
 
+  inputValueChanged(e){
+    let {row, col} = this.props;
+    console.log(e.target.value);
+    Actions.setValue(e.target.value, new SprdRange(row, col, row, col));
+  }
+
   renderInnerCell(){
     return (
       <input 
+        onChange={this.inputValueChanged}
         type='text' 
+        value={this.props.value}
         ref={(input) => { this.input = input; }}
         style={styles.input_active}/>
     );
   }
+
+  renderOuterCell(){
+    return (
+      <span>{this.props.value}</span>
+    );
+  }
+
   
   render(){
     return (
@@ -109,7 +135,8 @@ export default class Cell extends React.Component {
         onKeyDown={this.cellKeyDown}
         onClick={this.cellClicked}
         style={this.currentStyle()}>
-        {this.state.mode === this.CELL_MODES.EDITING ? this.renderInnerCell() : null}
+        {this.state.mode === this.CELL_MODES.EDITING 
+          ? this.renderInnerCell() : this.renderOuterCell()}
       </td>
     )
   }

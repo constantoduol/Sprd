@@ -7,11 +7,15 @@ class Store {
   constructor() {
     this.bindListeners({
       onSelectRange: Actions.selectRange,
-      onClearSelectedRange: Actions.clearSelectedRange
+      onClearSelectedRange: Actions.clearSelectedRange,
+      onParseData: Actions.parseData,
+      onSetValue: Actions.setValue
     });
 
     this.state = {
-      selectedRange: []
+      selectedRange: [],
+      data: {},
+      headerWidths: []
     };
   }
 
@@ -24,6 +28,16 @@ class Store {
 
   onClearSelectedRange(){
     this.setState({selectedRange: []});
+  }
+
+  onParseData(params){
+    let [data, headers, headerWidths] = params
+    this.setState({data: data, headerWidths: headerWidths});
+  }
+
+  onSetValue(valueAndRange){
+    let [value, range] = valueAndRange;
+
   }
 
 }
