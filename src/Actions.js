@@ -25,11 +25,15 @@ class Actions {
     return headerWidths;
   }
 
+  setViewPort(rowNums, colNums){ 
+    return [rowNums, colNums];
+  }
+
 
   parseData(rawData, rowNums, colNums){
     let data = {};
     let headers = [];
-    let headerWidths = [50];
+    let headerWidths = [];
     if(isObject(rawData)){
       headers = Object.keys(rawData); //there is no guarantee for header order
       for(let col = 0, row = 0; col < headers.length; col++){

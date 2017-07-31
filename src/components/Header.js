@@ -5,37 +5,19 @@ import connectToStores from 'alt-utils/lib/connectToStores';
 
 import Actions from '../Actions';
 import SprdRange from '../SprdRange';
-import Store from '../Store';
 
-
-@connectToStores
 export default class Header extends React.Component {
 
   static propTypes = {
     col: PropTypes.number,
-    title: PropTypes.string
+    title: PropTypes.string,
+    selectedRange: PropTypes.array,
+    width: PropTypes.number
   }
 
   constructor(props){
     super(props);
-    this.state = {
-      width: 0
-    };
     this.headerClicked = this.headerClicked.bind(this);
-  }
-
-  static getStores() {
-    return [Store];
-  }
-
-  static getPropsFromStores() {
-    return Store.getState();
-  }
-
-  componentWillReceiveProps(nextProps){
-    let {col} = this.props;
-    if(nextProps.headerWidths[col] !== this.state.width)
-      this.setState({width: nextProps.headerWidths[col]});
   }
 
   headerClicked(){
@@ -44,8 +26,8 @@ export default class Header extends React.Component {
   }
 
   currentStyle(){
-    let {selectedRange, col} = this.props;
-    let style = {width: this.state.width};
+    let {selectedRange, col, width} = this.props;
+    let style = {width: width};
     for(let range of selectedRange){
       if(range && range.isHeaderSelected(col))
         return merge(style, styles.headerSelected);

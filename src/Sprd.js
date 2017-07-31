@@ -7,7 +7,6 @@ import Footer from './components/Footer';
 import HeaderContainer from './components/HeaderContainer';
 import CellContainer from './components/CellContainer';
 import FormulaBar from './components/FormulaBar';
-import {DEFAULT_HEADER_WIDTH, DEFAULT_ROW_HEIGHT} from './Constants'; 
 import Actions from './Actions';
 import SprdRange from './SprdRange';
 import Store from './Store';
@@ -17,26 +16,9 @@ const DIRECTIONS = {UP: "up", DOWN: "down", LEFT: "left", RIGHT: "right"};
 @connectToStores
 export default class Sprd extends React.Component {
 
-  static defaultProps = {
-    data: null, //data is in format {header1: [value1, value2], header2: [value3, value4]}
-    showHeaderLetters: true, //show the letters at top A, B, C ... AA, AB
-    showRowNumbers: true,
-    showFormulaBar: true,
-    infinite: true, //scroll infinitely in any directions
-    showFooter: true,
-    width: 800,
-    height: 600
-  }
+  static propTypes = {
 
-  constructor(props){
-    super(props);
-    let colNums = parseInt(this.props.width/DEFAULT_HEADER_WIDTH);
-    let rowNums = parseInt(this.props.height/DEFAULT_ROW_HEIGHT) - 2; //-2 for header and footer 
-    this.state = {
-      rowNums: rowNums,
-      colNums: colNums,
-    };
-  }
+  };
 
   static getStores() {
     return [Store];
@@ -47,8 +29,6 @@ export default class Sprd extends React.Component {
   }
 
   componentDidMount(){
-    let {rowNums, colNums} = this.state;
-    Actions.parseData(this.props.data, rowNums, colNums);
     this.setupKeyBindings();
   }
 
@@ -76,16 +56,21 @@ export default class Sprd extends React.Component {
   render(){
     let style = {width: this.props.width};
     style = merge(style, styles.root);
+    let {colNums, rowNums, showFormulaBar, headerWidths, selectedRange, showHeaderLetters, data} = this.props;
     return (
       <div style={style}>
-        {this.props.showFormulaBar ? <FormulaBar/> : null}
+        {showFormulaBar ? <FormulaBar/> : null}
         <table style={styles.table}>
           <HeaderContainer
-            colNums={this.state.colNums}
-            showHeaderLetters={this.props.showHeaderLetters}/>
+            colNums={colNums}
+            headerWidths={headerWidths}
+            selectedRange={selectedRange}
+            showHeaderLetters={showHeaderLetters}/>
           <CellContainer 
-            colNums={this.state.colNums} 
-            rowNums={this.state.rowNums}/>
+            colNums={colNums} 
+            data={data}
+            selectedRange={selectedRange}
+            rowNums={rowNums}/>
         </table>
         <Footer/>
       </div>

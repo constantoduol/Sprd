@@ -20,4 +20,11 @@ export default class SprdRange {
     return this.startCol === col && this.stopCol === col && this.startRow === -1 && this.stopRow === -1;
   }
 
+  isEqual(otherRange){
+    let {startRow, stopRow, startCol, stopCol} = otherRange;
+    if(startRow === this.startRow && stopRow === this.stopRow && startCol === this.startCol && stopCol === this.stopCol)
+      return true
+    return false;
+  }
+
 }

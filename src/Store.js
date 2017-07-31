@@ -9,13 +9,16 @@ class Store {
       onSelectRange: Actions.selectRange,
       onClearSelectedRange: Actions.clearSelectedRange,
       onParseData: Actions.parseData,
-      onSetValue: Actions.setValue
+      onSetValue: Actions.setValue,
+      onSetViewPort: Actions.setViewPort
     });
 
     this.state = {
       selectedRange: [],
       data: {},
-      headerWidths: []
+      headerWidths: [],
+      colNums: 0,
+      rowNums: 0
     };
   }
 
@@ -38,6 +41,11 @@ class Store {
   onSetValue(valueAndRange){
     let [value, range] = valueAndRange;
 
+  }
+
+  onSetViewPort(params){
+    let [rowNums, colNums] = params;
+    this.setState({rowNums: rowNums, colNums: colNums});
   }
 
 }

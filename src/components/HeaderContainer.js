@@ -9,12 +9,10 @@ export default class HeaderContainer extends React.Component {
 
   static propTypes = {
     showHeaderLetters: PropTypes.bool,
-    colNums: PropTypes.number
+    colNums: PropTypes.number,
+    selectedRange: PropTypes.array,
+    headerWidths: PropTypes.array
   };
-
-  constructor(props){
-    super(props);
-  }
 
   toExcelColName(num){
     for (var ret = '', a = 1, b = 26; (num -= a) >= 0; a = b, b *= 26) {
@@ -23,20 +21,31 @@ export default class HeaderContainer extends React.Component {
     return ret;
   }
 
+  shouldComponentUpdate(nextProps, nextState){
+    //update only if range changes or header widths change
+    let shouldUpdate = difference(nextProps.headerWidths, this.props.headerWidths).length > 0;
+    return shouldUpdate;
+  }
+
   renderHeaderLetters(){
+    let {selectedRange, headerWidths, colNums} = this.props;
     let headers = [
       <Header 
         title="" 
         col={0}
+        width={50}
+        selectedRange={selectedRange}
         key="num_header"
       />
     ]; //the first header is for the numbers to the left
-    for(let x = 1; x <= this.props.colNums; x++){
-      let colLetter = this.toExcelColName(x);
+    for(let x = 0; x < colNums; x++){
+      let colLetter = this.toExcelColName(x + 1);
       headers.push(
         <Header 
           key={x} 
           col={x} 
+          width={headerWidths[x]}
+          selectedRange={selectedRange}
           title={colLetter} 
         />
       );
@@ -45,7 +54,9 @@ export default class HeaderContainer extends React.Component {
   }
 
   render(){ 
+    console.log("re-render")
     if(!this.props.showHeaderLetters) return null;
+    console.log("re-render");
     return (
       <thead>
         <tr style={styles.tr}>

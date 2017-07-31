@@ -10,28 +10,30 @@ export default class CellContainer extends React.Component {
 
   static propTypes = {
     rowNums: PropTypes.number,
-    colNums: PropTypes.number
+    colNums: PropTypes.number,
+    data: PropTypes.object,
+    selectedRange: PropTypes.array
   };
 
   renderCells(){
-    let rowNums = this.props.rowNums;
-    let colNums = this.props.colNums;
-    let {data, selectedRange} = this.props;
+    let {data, selectedRange, rowNums, colNums} = this.props;
     let allRows = [];
     for(let row = 0; row < rowNums; row++){
       let currentRow = [];
       currentRow.push(
-        <NumberCell row={row}/>
+        <NumberCell key={"num_" + row} row={row} selectedRange={selectedRange}/>
       );
       for(let col = 0; col < colNums; col++){
         currentRow.push(
           <Cell 
             row={row} 
             col={col} 
+            selectedRange={selectedRange}
             key={row + "_" + col}/>
         );
       }
-      allRows.push(<TableRow rowData={currentRow} row={row}/>);
+      let rowStyle = {height: data[row]['height']};
+      allRows.push(<tr key={"row_" + row} style={rowStyle}>{currentRow}</tr>);
     }
     return allRows;
   }
