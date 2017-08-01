@@ -27,4 +27,18 @@ export default class SprdRange {
     return false;
   }
 
+  //verify whether a list of two ranges is the same
+  static areEqual(ranges1, ranges2){
+    let allFound = true;
+    for(let range1 of ranges1){
+      let oneFound = true;
+      for(let range2 of ranges2){
+         oneFound = oneFound && range1.isEqual(range2);
+         if(oneFound) break;
+      }
+      allFound = allFound && oneFound; 
+    }
+    return allFound;
+  }
+
 }

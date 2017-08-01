@@ -4,6 +4,7 @@ import {difference} from 'lodash';
 
 import Header from './Header';
 import Actions from '../Actions';
+import SprdRange from '../SprdRange';
 
 export default class HeaderContainer extends React.Component {
 
@@ -22,9 +23,19 @@ export default class HeaderContainer extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState){
+    console.log(nextProps.headerWidths, this.props.headerWidths);
     //update only if range changes or header widths change
-    let shouldUpdate = difference(nextProps.headerWidths, this.props.headerWidths).length > 0;
-    return shouldUpdate;
+    if(this.areAnyHeadersSelected(nextProps)) return true;//there was a change in the selected range
+    //there was a change in header widths
+    return difference(nextProps.headerWidths, this.props.headerWidths).length > 0;
+  }
+
+  areAnyHeadersSelected(nextProps){
+    for(let range of nextProps.selectedRange){
+      if(range.startCol === range.stopCol && range.startRow === range.stopRow && range.stopRow === -1)
+        return true;
+    }
+    return false;
   }
 
   renderHeaderLetters(){
@@ -32,7 +43,7 @@ export default class HeaderContainer extends React.Component {
     let headers = [
       <Header 
         title="" 
-        col={0}
+        col={-1}
         width={50}
         selectedRange={selectedRange}
         key="num_header"
@@ -55,8 +66,6 @@ export default class HeaderContainer extends React.Component {
 
   render(){ 
     console.log("re-render")
-    if(!this.props.showHeaderLetters) return null;
-    console.log("re-render");
     return (
       <thead>
         <tr style={styles.tr}>

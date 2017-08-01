@@ -1,5 +1,5 @@
 import React from 'react';
-import {merge} from 'lodash';
+import {merge, difference} from 'lodash';
 import Mousetrap from 'mousetrap';
 import connectToStores from 'alt-utils/lib/connectToStores';
 
@@ -30,6 +30,16 @@ export default class Sprd extends React.Component {
 
   componentDidMount(){
     this.setupKeyBindings();
+  }
+
+
+  shouldComponentUpdate(nextProps, nextState){
+    console.log(nextProps.selectedRange, this.props.selectedRange);
+    //there was a change in header widths
+    let shouldUpdate = SprdRange.areEqual(nextProps.selectedRange, this.props.selectedRange);
+    console.log(shouldUpdate);
+    if(shouldUpdate) return true;
+    return difference(nextProps.headerWidths, this.props.headerWidths).length > 0;
   }
 
   setupKeyBindings(){
