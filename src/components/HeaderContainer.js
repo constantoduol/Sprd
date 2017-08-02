@@ -23,19 +23,10 @@ export default class HeaderContainer extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState){
-    console.log(nextProps.headerWidths, this.props.headerWidths);
-    //update only if range changes or header widths change
-    if(this.areAnyHeadersSelected(nextProps)) return true;//there was a change in the selected range
+    let shouldUpdate = !SprdRange.areEqual(nextProps.selectedRange, this.props.selectedRange);
+    if(shouldUpdate) return true;//there was a change in the selected range
     //there was a change in header widths
     return difference(nextProps.headerWidths, this.props.headerWidths).length > 0;
-  }
-
-  areAnyHeadersSelected(nextProps){
-    for(let range of nextProps.selectedRange){
-      if(range.startCol === range.stopCol && range.startRow === range.stopRow && range.stopRow === -1)
-        return true;
-    }
-    return false;
   }
 
   renderHeaderLetters(){
@@ -65,7 +56,7 @@ export default class HeaderContainer extends React.Component {
   }
 
   render(){ 
-    console.log("re-render")
+    console.log("header container re-render")
     return (
       <thead>
         <tr style={styles.tr}>

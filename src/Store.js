@@ -39,8 +39,20 @@ class Store {
   }
 
   onSetValue(valueAndRange){
-    let [value, range] = valueAndRange;
-
+    let [value, ranges] = valueAndRange;
+    console.log(value);
+    let {data} = this.state;
+    if(!isArray(ranges)) ranges = [ranges];
+    for(let range of ranges){
+      let {startRow, stopRow, startCol, stopCol} = range;
+      for(let row = startRow; row <= stopRow; row++){
+        if(!data[row]) data[row] = {};
+        for(let col = startCol; col <= stopCol; col++){
+          if(value) data[row][col] = value;
+        }
+      }
+    }
+    this.setState({data: data});
   }
 
   onSetViewPort(params){

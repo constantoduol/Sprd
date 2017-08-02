@@ -16,10 +16,6 @@ const DIRECTIONS = {UP: "up", DOWN: "down", LEFT: "left", RIGHT: "right"};
 @connectToStores
 export default class Sprd extends React.Component {
 
-  static propTypes = {
-
-  };
-
   static getStores() {
     return [Store];
   }
@@ -34,10 +30,8 @@ export default class Sprd extends React.Component {
 
 
   shouldComponentUpdate(nextProps, nextState){
-    console.log(nextProps.selectedRange, this.props.selectedRange);
     //there was a change in header widths
-    let shouldUpdate = SprdRange.areEqual(nextProps.selectedRange, this.props.selectedRange);
-    console.log(shouldUpdate);
+    let shouldUpdate = !SprdRange.areEqual(nextProps.selectedRange, this.props.selectedRange);
     if(shouldUpdate) return true;
     return difference(nextProps.headerWidths, this.props.headerWidths).length > 0;
   }

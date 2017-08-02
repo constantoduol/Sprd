@@ -13,8 +13,8 @@ class Actions {
     return [];
   }
 
-  setValue(value, range){
-    return [value, range];
+  setValue(value, ranges){
+    return [value, ranges];
   }
 
   setData(data){
@@ -40,7 +40,7 @@ class Actions {
         let headerData = rawData[headers[col]];
         if(!data[row]) data[row] = {};
 
-        if(this.EMPTY_VALUES[headerData[row]] !== headerData[row])//we don't store empty values
+        if(headerData[row])//we don't store empty values
           data[row][col] = headerData[row]; 
         if(col === headers.length){
           col = 0;

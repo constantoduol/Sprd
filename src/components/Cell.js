@@ -11,6 +11,7 @@ export default class Cell extends React.Component {
   static propTypes = {
     row: PropTypes.number,
     col: PropTypes.number,
+    value: PropTypes.string,
     selectedRange: PropTypes.array
   };
 
@@ -117,7 +118,6 @@ export default class Cell extends React.Component {
       <span>{this.props.value}</span>
     );
   }
-
   
   render(){
     return (

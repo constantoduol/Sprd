@@ -54,6 +54,7 @@ const styles = {
     fontSize: 14,
     fontWeight: 500,
     textAlign: "center",
-    userSelect: "none"
+    userSelect: "none",
+    color: "white"
   }
 }
