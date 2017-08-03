@@ -35,21 +35,29 @@ export default class Cell extends React.Component {
 
     this.cellClicked = this.cellClicked.bind(this);
     this.cellDoubleClicked = this.cellDoubleClicked.bind(this);
-    this.cellKeyDown = this.cellKeyDown.bind(this);
     this.inputValueChanged = this.inputValueChanged.bind(this);
     this.saveInputValue = this.saveInputValue.bind(this);
   }
 
   componentDidMount(){
     Mousetrap(this.input).bind("enter", () => {
-      SprdNavigator.move(this.props.selectedRange, DIRECTION.DOWN);
       this.setState({mode: this.CELL_MODES.INACTIVE});
+      SprdNavigator.move(this.props.selectedRange, DIRECTION.DOWN);
     });
   }
 
   componentWillReceiveProps(nextProps){
-    let {selectedRange, row, col} = nextProps;
+    this.maybeChangeCellMode(nextProps);
+  }
+
+  shouldComponentUpdate(nextProps, nextState){
+    if(nextState.value !== this.state.value) return true;
+    return nextState.mode !== this.state.mode;
+  }
+
+  maybeChangeCellMode(props){
     let {mode} = this.state;
+    let {selectedRange, row, col} = props;
     for(let range of selectedRange){
       if(range.isCellSelected(row, col)){
         this.setState({mode: this.CELL_MODES.ACTIVE});
@@ -61,11 +69,6 @@ export default class Cell extends React.Component {
         this.setState({mode: this.CELL_MODES.INACTIVE});
       }
     }
-  }
-
-  shouldComponentUpdate(nextProps, nextState){
-    if(nextState.value !== this.state.value) return true;
-    return nextState.mode !== this.state.mode;
   }
 
   //this called twice when cell is double clicked
@@ -85,12 +88,6 @@ export default class Cell extends React.Component {
     this.setState({mode: this.CELL_MODES.EDITING}, () => {
       this.input.focus();
     })
-  }
-
-  cellKeyDown(){
-    this.setState({mode: this.CELL_MODES.EDITING}, () => {
-      this.input.focus();
-    });
   }
 
   currentStyle(){
@@ -147,7 +144,6 @@ export default class Cell extends React.Component {
     return (
       <td 
         onDoubleClick={this.cellDoubleClicked}
-        onKeyDown={this.cellKeyDown}
         onClick={this.cellClicked}
         style={this.currentStyle()}>
           {[this.renderInnerCell(), this.renderOuterCell()]}
