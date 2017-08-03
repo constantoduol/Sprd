@@ -1,9 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {merge} from 'lodash';
+import Mousetrap from 'mousetrap';
 
 import Actions from '../Actions';
 import SprdRange from '../SprdRange';
+import SprdNavigator from '../SprdNavigator';
+import {DIRECTION} from '../Constants';
 
 
 export default class Cell extends React.Component {
@@ -26,13 +29,22 @@ export default class Cell extends React.Component {
     };
 
     this.state = {
-      mode: this.CELL_MODES.INACTIVE
+      mode: this.CELL_MODES.INACTIVE,
+      value: this.props.value
     };
 
     this.cellClicked = this.cellClicked.bind(this);
     this.cellDoubleClicked = this.cellDoubleClicked.bind(this);
     this.cellKeyDown = this.cellKeyDown.bind(this);
     this.inputValueChanged = this.inputValueChanged.bind(this);
+    this.saveInputValue = this.saveInputValue.bind(this);
+  }
+
+  componentDidMount(){
+    Mousetrap(this.input).bind("enter", () => {
+      SprdNavigator.move(this.props.selectedRange, DIRECTION.DOWN);
+      this.setState({mode: this.CELL_MODES.INACTIVE});
+    });
   }
 
   componentWillReceiveProps(nextProps){
@@ -52,8 +64,8 @@ export default class Cell extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState){
-    if(nextState.mode === this.state.mode) return false;
-    return true;
+    if(nextState.value !== this.state.value) return true;
+    return nextState.mode !== this.state.mode;
   }
 
   //this called twice when cell is double clicked
@@ -97,37 +109,48 @@ export default class Cell extends React.Component {
   }
 
   inputValueChanged(e){
+    this.setState({value: e.target.value});
+  }
+
+  saveInputValue(){
     let {row, col} = this.props;
-    console.log(e.target.value);
-    Actions.setValue(e.target.value, new SprdRange(row, col, row, col));
+    Actions.setValue(this.state.value, new SprdRange(row, col, row, col));
   }
 
   renderInnerCell(){
+    let {mode, value} = this.state;
     return (
       <input 
         onChange={this.inputValueChanged}
+        hidden={mode !== this.CELL_MODES.EDITING}
         type='text' 
-        value={this.props.value}
+        onBlur={this.saveInputValue}
+        value={value}
         ref={(input) => { this.input = input; }}
         style={styles.input_active}/>
     );
   }
 
   renderOuterCell(){
+    let {mode, value} = this.state;
     return (
-      <span>{this.props.value}</span>
+      <div 
+        hidden={mode === this.CELL_MODES.EDITING}
+        style={styles.outer_cell}>
+          {this.state.value}
+      </div>
     );
   }
   
   render(){
+    console.log("cell re-render");
     return (
       <td 
         onDoubleClick={this.cellDoubleClicked}
         onKeyDown={this.cellKeyDown}
         onClick={this.cellClicked}
         style={this.currentStyle()}>
-        {this.state.mode === this.CELL_MODES.EDITING 
-          ? this.renderInnerCell() : this.renderOuterCell()}
+          {[this.renderInnerCell(), this.renderOuterCell()]}
       </td>
     )
   }
@@ -140,13 +163,8 @@ const styles = {
     width: "95%",
     padding: 0,
     margin: 0,
-    zIndex: 100
-  },
-  input_inactive: {
-    border: "none",
-    borderStyle: "none",
-    padding: 0,
-    margin: 0,
+    zIndex: 100,
+    fontSize:14,
     textAlign: "right"
   },
   td_horizontal_highlight: {
@@ -172,5 +190,9 @@ const styles = {
   },
   td_editing: {
    border: "2px solid #2196F3"
+  },
+  outer_cell: {
+    fontSize: 14,
+    textAlign: "right"
   }
 }

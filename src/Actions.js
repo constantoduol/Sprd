@@ -1,6 +1,7 @@
 import alt from './altConfig';
 import {DEFAULT_HEADER_WIDTH, DEFAULT_ROW_HEIGHT} from './Constants'; 
 import {isObject} from 'lodash';
+import {Map} from 'immutable';
 
 
 class Actions {
@@ -31,17 +32,17 @@ class Actions {
 
 
   parseData(rawData, rowNums, colNums){
-    let data = {};
+    let data = Map({});
     let headers = [];
     let headerWidths = [];
     if(isObject(rawData)){
       headers = Object.keys(rawData); //there is no guarantee for header order
       for(let col = 0, row = 0; col < headers.length; col++){
         let headerData = rawData[headers[col]];
-        if(!data[row]) data[row] = {};
+        if(!data.get(row)) data = data.set(row, Map({}));
 
         if(headerData[row])//we don't store empty values
-          data[row][col] = headerData[row]; 
+          data.get(row).set(col, headerData[row]);
         if(col === headers.length){
           col = 0;
           row++;
@@ -49,13 +50,14 @@ class Actions {
         if(row === headerData.length) break;
       }   
     } else if(rawData) {
-
       console.warn("Unrecognized object passed into Sprd as data");
     }
     for(let col = 0; col < colNums; col++) headerWidths.push(DEFAULT_HEADER_WIDTH);
     for(let row = 0; row < rowNums; row++){
-      if(!data[row]) data[row] = {};
-      data[row]['height'] = DEFAULT_ROW_HEIGHT;
+      if(!data.get(row)) data = data.set(row, Map({}));
+      let rowData = data.get(row);
+      rowData = rowData.set('height', DEFAULT_ROW_HEIGHT);
+      data = data.set(row, rowData);
     }
 
     return [data, headers, headerWidths];

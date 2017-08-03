@@ -1,6 +1,7 @@
 import Actions from './Actions';
 import alt from './altConfig';
 import {isArray} from 'lodash';
+import {Map} from 'immutable';
 
 class Store {
 
@@ -15,7 +16,7 @@ class Store {
 
     this.state = {
       selectedRange: [],
-      data: {},
+      data: Map({}),
       headerWidths: [],
       colNums: 0,
       rowNums: 0
@@ -40,15 +41,18 @@ class Store {
 
   onSetValue(valueAndRange){
     let [value, ranges] = valueAndRange;
-    console.log(value);
     let {data} = this.state;
     if(!isArray(ranges)) ranges = [ranges];
     for(let range of ranges){
       let {startRow, stopRow, startCol, stopCol} = range;
       for(let row = startRow; row <= stopRow; row++){
-        if(!data[row]) data[row] = {};
+        if(!data.get(row)) data = data.set(row, Map({}));
         for(let col = startCol; col <= stopCol; col++){
-          if(value) data[row][col] = value;
+          if(value){
+             let rowData = data.get(row);
+             rowData = rowData.set(col, value);
+             data = data.set(row, rowData);
+          }
         }
       }
     }

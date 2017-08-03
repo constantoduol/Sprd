@@ -10,8 +10,8 @@ import FormulaBar from './components/FormulaBar';
 import Actions from './Actions';
 import SprdRange from './SprdRange';
 import Store from './Store';
-
-const DIRECTIONS = {UP: "up", DOWN: "down", LEFT: "left", RIGHT: "right"};
+import SprdNavigator from './SprdNavigator';
+import {DIRECTION} from './Constants';
 
 @connectToStores
 export default class Sprd extends React.Component {
@@ -30,6 +30,7 @@ export default class Sprd extends React.Component {
 
 
   shouldComponentUpdate(nextProps, nextState){
+    if(nextProps.data !== this.props.data) return true;
     //there was a change in header widths
     let shouldUpdate = !SprdRange.areEqual(nextProps.selectedRange, this.props.selectedRange);
     if(shouldUpdate) return true;
@@ -44,17 +45,20 @@ export default class Sprd extends React.Component {
       console.log("paste");
     });
     Mousetrap.bind("up", () => {
-      Navigator.move(this.props.selectedRange, DIRECTIONS.UP);
+      SprdNavigator.move(this.props.selectedRange, DIRECTION.UP);
     });
     Mousetrap.bind("down", () => {
-      Navigator.move(this.props.selectedRange, DIRECTIONS.DOWN);
+      SprdNavigator.move(this.props.selectedRange, DIRECTION.DOWN);
     });
     Mousetrap.bind("right", () => {
-      Navigator.move(this.props.selectedRange, DIRECTIONS.RIGHT);
+      SprdNavigator.move(this.props.selectedRange, DIRECTION.RIGHT);
     });
     Mousetrap.bind("left", () => {
-      Navigator.move(this.props.selectedRange, DIRECTIONS.LEFT);
+      SprdNavigator.move(this.props.selectedRange, DIRECTION.LEFT);
     });    
+    Mousetrap.bind("enter", () => {
+      SprdNavigator.move(this.props.selectedRange, DIRECTION.DOWN);
+    });  
   }
 
   render(){
@@ -80,29 +84,6 @@ export default class Sprd extends React.Component {
       </div>
     )
   }
-}
-
-//used to handle arrow key movements
-class Navigator {
-
-  static move(currentSelectedRange, direction){
-    let {startRow, stopRow, startCol, stopCol} = currentSelectedRange[0];
-    if(direction === DIRECTIONS.UP){
-      if(startRow > 0) startRow--;
-      if(stopRow > 0) stopRow--;
-    } else if(direction === DIRECTIONS.DOWN){
-      startRow++;
-      stopRow++;
-    } else if(direction === DIRECTIONS.LEFT){
-      if(startCol > 0)startCol--;
-      if(stopCol > 0) stopCol--;
-    } else if(direction === DIRECTIONS.RIGHT){
-      startCol++;
-      stopCol++;
-    }
-    Actions.selectRange(new SprdRange(startRow, startCol, stopRow, stopCol));
-  }
-
 }
 
 const styles = {

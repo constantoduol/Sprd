@@ -17,6 +17,7 @@ export default class CellContainer extends React.Component {
   };
 
   shouldComponentUpdate(nextProps, nextState){
+    if(nextProps.data !== this.props.data) return true;
     if(nextProps.rowNums !== this.props.rowNums || nextProps.colNums !== this.props.colNums)
       return true;
     return !SprdRange.areEqual(nextProps.selectedRange, this.props.selectedRange);
@@ -47,7 +48,7 @@ export default class CellContainer extends React.Component {
             key={row + "_" + col}/>
         );
       }
-      let rowStyle = {height: data[row]['height']};
+      let rowStyle = {height: data.get(row).get('height')};
       allRows.push(<tr key={"row_" + row} style={rowStyle}>{currentRow}</tr>);
     }
     return allRows;

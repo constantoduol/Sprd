@@ -16,6 +16,18 @@ export default class NumberCell extends React.Component {
     this.numberCellClicked = this.numberCellClicked.bind(this);
   }
 
+  shouldComponentUpdate(nextProps, nextState){
+    for(let range of nextProps.selectedRange){
+      if(range.isNumberCellSelected(this.props.row)) 
+        return true;
+    }
+    for(let range of this.props.selectedRange){
+      if(range.isNumberCellSelected(this.props.row)) 
+        return true;
+    }
+    return false;
+  }
+
   numberCellClicked(){
     let {row} = this.props;
     Actions.selectRange(new SprdRange(row, 0, row, -1));
@@ -31,6 +43,7 @@ export default class NumberCell extends React.Component {
   }
 
   render(){
+    console.log("number cell re-render");
     let num = this.props.row + 1;
     return (
       <td style={this.currentStyle()} onClick={this.numberCellClicked} key={num}>
