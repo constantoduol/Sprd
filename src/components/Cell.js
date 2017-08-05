@@ -57,7 +57,11 @@ export default class Cell extends React.Component {
 
   maybeChangeCellMode(props){
     let {mode} = this.state;
-    let {selectedRange, row, col} = props;
+    let {selectedRange, row, col, focusedCell} = props;
+    if(focusedCell.isCellSelected(row, col)){
+      this.cellDoubleClicked();
+      return;
+    }
     for(let range of selectedRange){
       if(range.isCellSelected(row, col)){
         this.setState({mode: this.CELL_MODES.ACTIVE});
@@ -71,7 +75,7 @@ export default class Cell extends React.Component {
     }
   }
 
-  //this called twice when cell is double clicked
+  //this is called twice when cell is double clicked
   //to prevent that we check if the current cell is already selected
   cellClicked(){
     let {row, col, selectedRange} = this.props;
@@ -160,8 +164,7 @@ const styles = {
     padding: 0,
     margin: 0,
     zIndex: 100,
-    fontSize:14,
-    textAlign: "right"
+    fontSize:14
   },
   td_horizontal_highlight: {
     borderTop: "1px solid #2196F3",

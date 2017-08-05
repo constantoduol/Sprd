@@ -30,6 +30,10 @@ class Actions {
     return [rowNums, colNums];
   }
 
+  setFocusedCell(range){
+    return range;
+  }
+
 
   parseData(rawData, rowNums, colNums){
     let data = Map({});

@@ -1,7 +1,10 @@
-import Actions from './Actions';
 import alt from './altConfig';
 import {isArray} from 'lodash';
 import {Map} from 'immutable';
+
+import Actions from './Actions';
+import SprdRange from './SprdRange';
+
 
 class Store {
 
@@ -11,23 +14,28 @@ class Store {
       onClearSelectedRange: Actions.clearSelectedRange,
       onParseData: Actions.parseData,
       onSetValue: Actions.setValue,
-      onSetViewPort: Actions.setViewPort
+      onSetViewPort: Actions.setViewPort,
+      onSetFocusedCell: Actions.setFocusedCell
     });
+
+    this.NO_FOCUSED_CELL = new SprdRange(-1,-1,-1,-1);
 
     this.state = {
       selectedRange: [],
+      focusedCell: this.NO_FOCUSED_CELL,
       data: Map({}),
       headerWidths: [],
       colNums: 0,
       rowNums: 0
     };
+
   }
 
   onSelectRange(range){
     if(isArray(range))
-      this.setState({selectedRange: range});
+      this.setState({selectedRange: range, focusedCell: this.NO_FOCUSED_CELL});
     else
-      this.setState({selectedRange: [range]});
+      this.setState({selectedRange: [range], focusedCell: this.NO_FOCUSED_CELL});
   }
 
   onClearSelectedRange(){
@@ -37,6 +45,10 @@ class Store {
   onParseData(params){
     let [data, headers, headerWidths] = params
     this.setState({data: data, headerWidths: headerWidths});
+  }
+
+  onSetFocusedCell(range){
+    this.setState({focusedCell: range});
   }
 
   onSetValue(valueAndRange){

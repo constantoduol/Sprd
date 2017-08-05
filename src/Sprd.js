@@ -30,6 +30,8 @@ export default class Sprd extends React.Component {
 
 
   shouldComponentUpdate(nextProps, nextState){
+    //there was a change in data
+    if(!nextProps.focusedCell.isEqual(this.props.focusedCell)) return true;
     if(nextProps.data !== this.props.data) return true;
     //there was a change in header widths
     let shouldUpdate = !SprdRange.areEqual(nextProps.selectedRange, this.props.selectedRange);
@@ -57,14 +59,16 @@ export default class Sprd extends React.Component {
       SprdNavigator.move(this.props.selectedRange, DIRECTION.LEFT);
     });    
     Mousetrap.bind("enter", () => {
-      SprdNavigator.move(this.props.selectedRange, DIRECTION.DOWN);
+      Actions.setFocusedCell(this.props.selectedRange[0]);
     });  
   }
 
   render(){
     let style = {width: this.props.width};
     style = merge(style, styles.root);
-    let {colNums, rowNums, showFormulaBar, headerWidths, selectedRange, showHeaderLetters, data} = this.props;
+    let {
+      colNums, rowNums, showFormulaBar, headerWidths, 
+      selectedRange, showHeaderLetters, data, focusedCell} = this.props;
     return (
       <div style={style}>
         {showFormulaBar ? <FormulaBar/> : null}
@@ -78,6 +82,7 @@ export default class Sprd extends React.Component {
             colNums={colNums} 
             data={data}
             selectedRange={selectedRange}
+            focusedCell={focusedCell}
             rowNums={rowNums}/>
         </table>
         <Footer/>

@@ -18,6 +18,7 @@ export default class CellContainer extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState){
     if(nextProps.data !== this.props.data) return true;
+    if(!nextProps.focusedCell.isEqual(this.props.focusedCell)) return true;
     if(nextProps.rowNums !== this.props.rowNums || nextProps.colNums !== this.props.colNums)
       return true;
     return !SprdRange.areEqual(nextProps.selectedRange, this.props.selectedRange);
@@ -31,7 +32,7 @@ export default class CellContainer extends React.Component {
   }
 
   renderCells(){
-    let {data, selectedRange, rowNums, colNums} = this.props;
+    let {data, selectedRange, rowNums, colNums, focusedCell} = this.props;
     let allRows = [];
     for(let row = 0; row < rowNums; row++){
       let currentRow = [];
@@ -45,6 +46,7 @@ export default class CellContainer extends React.Component {
             col={col} 
             value={this.getCellValue(row, col)}
             selectedRange={selectedRange}
+            focusedCell={focusedCell}
             key={row + "_" + col}/>
         );
       }
