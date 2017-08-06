@@ -23,10 +23,12 @@ class Store {
     this.state = {
       selectedRange: [],
       focusedCell: this.NO_FOCUSED_CELL,
-      data: Map({}),
+      data: Map(),
       headerWidths: [],
       colNums: 0,
-      rowNums: 0
+      rowNums: 0,
+      minCol: 0, //rendering of headers starts from minCol to minCol + colNums
+      minRow: 0 //rendering of rows starts from minRow to minRow + rowNums
     };
 
   }

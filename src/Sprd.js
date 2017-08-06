@@ -101,8 +101,9 @@ export default class Sprd extends React.Component {
     let style = {width: this.props.width};
     style = merge(style, styles.root);
     let {
-      colNums, rowNums, showFormulaBar, headerWidths, 
-      selectedRange, showHeaderLetters, data, focusedCell} = this.props;
+      colNums, rowNums, showFormulaBar, 
+      headerWidths, selectedRange, showHeaderLetters, 
+      data, focusedCell, minCol, minRow} = this.props;
     return (
       <div style={style} >
         {showFormulaBar ? <FormulaBar/> : null}
@@ -111,9 +112,12 @@ export default class Sprd extends React.Component {
             colNums={colNums}
             headerWidths={headerWidths}
             selectedRange={selectedRange}
+            minCol={minCol}
             showHeaderLetters={showHeaderLetters}/>
           <CellContainer 
             colNums={colNums} 
+            minCol={minCol}
+            minRow={minRow}
             data={data}
             selectedRange={selectedRange}
             focusedCell={focusedCell}

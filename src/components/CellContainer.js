@@ -13,13 +13,17 @@ export default class CellContainer extends React.Component {
     rowNums: PropTypes.number,
     colNums: PropTypes.number,
     data: PropTypes.object,
-    selectedRange: PropTypes.array
+    selectedRange: PropTypes.array,
+    minCol: PropTypes.number,
+    minRow: PropTypes.number
   };
 
   shouldComponentUpdate(nextProps, nextState){
     if(nextProps.data !== this.props.data) return true;
     if(!nextProps.focusedCell.isEqual(this.props.focusedCell)) return true;
     if(nextProps.rowNums !== this.props.rowNums || nextProps.colNums !== this.props.colNums)
+      return true;
+    if(nextProps.minCol !== this.props.minCol || nextProps.minRow !== this.props.minRow)
       return true;
     return !SprdRange.areEqual(nextProps.selectedRange, this.props.selectedRange);
   }
@@ -32,14 +36,14 @@ export default class CellContainer extends React.Component {
   }
 
   renderCells(){
-    let {data, selectedRange, rowNums, colNums, focusedCell} = this.props;
+    let {data, selectedRange, rowNums, colNums, focusedCell, minRow, minCol} = this.props;
     let allRows = [];
-    for(let row = 0; row < rowNums; row++){
+    for(let row = minRow; row < rowNums + minRow; row++){
       let currentRow = [];
       currentRow.push(
         <NumberCell key={"num_" + row} row={row} selectedRange={selectedRange}/>
       );
-      for(let col = 0; col < colNums; col++){
+      for(let col = minCol; col < colNums + minCol; col++){
         currentRow.push(
           <Cell 
             row={row} 
@@ -50,7 +54,7 @@ export default class CellContainer extends React.Component {
             key={row + "_" + col}/>
         );
       }
-      let rowStyle = {height: data.get(row).get('height')};
+      let rowStyle = {height: data.get(row % rowNums).get('height')};
       allRows.push(<tr key={"row_" + row} style={rowStyle}>{currentRow}</tr>);
     }
     return allRows;
