@@ -16,6 +16,11 @@ import {DIRECTION} from './Constants';
 @connectToStores
 export default class Sprd extends React.Component {
 
+  constructor(props){
+    super(props);
+    this.keyDown = this.keyDown.bind(this);
+  }
+
   static getStores() {
     return [Store];
   }
@@ -39,28 +44,43 @@ export default class Sprd extends React.Component {
     return difference(nextProps.headerWidths, this.props.headerWidths).length > 0;
   }
 
+  keyDown(e){
+    let key = e.key.toLowerCase();
+    console.log(key)
+    if(key !== "enter"){
+      Actions.setFocusedCell(this.props.selectedRange[0]);
+    }
+  }
+
   setupKeyBindings(){
-    Mousetrap.bind(["ctrl+c", "command+c"], () => {
+    Mousetrap.bind("mod+c", () => {
       console.log("copy");
     });
-    Mousetrap.bind(["ctrl+v", "command+v"], () => {
+
+    Mousetrap.bind("mod+v", () => {
       console.log("paste");
     });
+
     Mousetrap.bind("up", () => {
       SprdNavigator.move(this.props.selectedRange, DIRECTION.UP);
     });
+
     Mousetrap.bind("down", () => {
       SprdNavigator.move(this.props.selectedRange, DIRECTION.DOWN);
     });
+
     Mousetrap.bind("right", () => {
       SprdNavigator.move(this.props.selectedRange, DIRECTION.RIGHT);
     });
+
     Mousetrap.bind("left", () => {
       SprdNavigator.move(this.props.selectedRange, DIRECTION.LEFT);
-    });    
-    Mousetrap.bind("enter", () => {
+    });
+
+    document.onkeydown = (e) => {
       Actions.setFocusedCell(this.props.selectedRange[0]);
-    });  
+    }
+
   }
 
   render(){
@@ -70,7 +90,7 @@ export default class Sprd extends React.Component {
       colNums, rowNums, showFormulaBar, headerWidths, 
       selectedRange, showHeaderLetters, data, focusedCell} = this.props;
     return (
-      <div style={style}>
+      <div style={style} >
         {showFormulaBar ? <FormulaBar/> : null}
         <table style={styles.table}>
           <HeaderContainer
