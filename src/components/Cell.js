@@ -36,7 +36,6 @@ export default class Cell extends React.Component {
     this.cellClicked = this.cellClicked.bind(this);
     this.cellDoubleClicked = this.cellDoubleClicked.bind(this);
     this.inputValueChanged = this.inputValueChanged.bind(this);
-    this.saveInputValue = this.saveInputValue.bind(this);
   }
 
   componentDidMount(){
@@ -110,13 +109,12 @@ export default class Cell extends React.Component {
   }
 
   inputValueChanged(e){
-    this.setState({value: e.target.value});
+    this.setState({value: e.target.value}, () => {
+      let {row, col} = this.props;
+      Actions.setValue(this.state.value, new SprdRange(row, col, row, col));
+    });
   }
 
-  saveInputValue(){
-    let {row, col} = this.props;
-    Actions.setValue(this.state.value, new SprdRange(row, col, row, col));
-  }
 
   renderInnerCell(){
     let {mode, value} = this.state;
@@ -125,7 +123,6 @@ export default class Cell extends React.Component {
         onChange={this.inputValueChanged}
         hidden={mode !== this.CELL_MODES.EDITING}
         type='text' 
-        onBlur={this.saveInputValue}
         value={value}
         ref={(input) => { this.input = input; }}
         style={styles.input_active}/>

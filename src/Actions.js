@@ -36,7 +36,7 @@ class Actions {
 
 
   parseData(rawData, rowNums, colNums){
-    let data = Map({});
+    let data = Map();
     let headers = [];
     let headerWidths = [];
     if(isObject(rawData)){
@@ -44,7 +44,7 @@ class Actions {
       headers = Object.keys(rawData); //there is no guarantee for header order
       for(let col = 0, row = 0; col < headers.length; col++){
         let headerData = rawData[headers[col]];
-        if(!data.get(row)) data = data.set(row, Map({}));
+        if(!data.get(row)) data = data.set(row, Map());
 
         if(headerData[row])//we don't store empty values
           data.get(row).set(col, headerData[row]);
@@ -59,12 +59,11 @@ class Actions {
     }
     for(let col = 0; col < colNums; col++) headerWidths.push(DEFAULT_HEADER_WIDTH);
     for(let row = 0; row < rowNums; row++){
-      if(!data.get(row)) data = data.set(row, Map({}));
+      if(!data.get(row)) data = data.set(row, Map());
       let rowData = data.get(row);
       rowData = rowData.set('height', DEFAULT_ROW_HEIGHT);
       data = data.set(row, rowData);
     }
-    console.log(data);
     return [data, headers, headerWidths];
   }
 
