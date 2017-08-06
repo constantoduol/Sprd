@@ -19,6 +19,13 @@ export default class Sprd extends React.Component {
   constructor(props){
     super(props);
     this.keyDown = this.keyDown.bind(this);
+    this.KEY_DOWN_IGNORE_KEYS = {
+      enter: "enter", 
+      arrowleft: "arrowleft", 
+      arrowdown: "arrowdown", 
+      arrowright: "arrowright",
+      arrowup: "arrowup"
+    };
   }
 
   static getStores() {
@@ -77,8 +84,15 @@ export default class Sprd extends React.Component {
       SprdNavigator.move(this.props.selectedRange, DIRECTION.LEFT);
     });
 
-    document.onkeydown = (e) => {
+    Mousetrap.bind("enter", () => {
       Actions.setFocusedCell(this.props.selectedRange[0]);
+    });
+
+    document.onkeydown = (e) => {
+      let key = e.key.toLowerCase();
+      if(!this.KEY_DOWN_IGNORE_KEYS[key]){
+        Actions.setFocusedCell(this.props.selectedRange[0]);
+      }
     }
 
   }
