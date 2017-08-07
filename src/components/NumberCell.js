@@ -18,14 +18,20 @@ export default class NumberCell extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState){
     for(let range of nextProps.selectedRange){
-      if(range.isNumberCellSelected(this.props.row)) 
+      if(this.numberCellIsActive(range)) 
         return true;
     }
     for(let range of this.props.selectedRange){
-      if(range.isNumberCellSelected(this.props.row)) 
+      if(this.numberCellIsActive(range)) 
         return true;
     }
     return false;
+  }
+
+  numberCellIsActive(range){
+    let {startRow, stopRow} = range;
+    if(startRow === stopRow && stopRow === this.props.row)
+      return true;
   }
 
   numberCellClicked(){
@@ -34,9 +40,9 @@ export default class NumberCell extends React.Component {
   }
 
   currentStyle(){
-    let {selectedRange, row} = this.props;
+    let {selectedRange} = this.props;
     for(let range of selectedRange){
-      if(range && range.isNumberCellSelected(row))
+      if(this.numberCellIsActive(range))
         return styles.numberCellSelected;
     }
     return styles.numberCell;

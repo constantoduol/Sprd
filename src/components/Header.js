@@ -22,14 +22,18 @@ export default class Header extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState){
     for(let range of nextProps.selectedRange){
-      if(range.isHeaderSelected(this.props.col)) 
-        return true;
+      if(this.headerIsActive(range)) return true;
     }
     for(let range of this.props.selectedRange){
-      if(range.isHeaderSelected(this.props.col)) 
-        return true;
+      if(this.headerIsActive(range)) return true;
     }
     return false;
+  }
+
+  headerIsActive(range){
+    let {startCol, stopCol} = range;
+    if(startCol === stopCol && stopCol === this.props.col)
+      return true;
   }
 
   headerClicked(){
@@ -38,10 +42,10 @@ export default class Header extends React.Component {
   }
 
   currentStyle(){
-    let {selectedRange, col, width} = this.props;
+    let {selectedRange, width} = this.props;
     let style = {width: width};
     for(let range of selectedRange){
-      if(range && range.isHeaderSelected(col))
+      if(this.headerIsActive(range))
         return merge(style, styles.headerSelected);
     }
     return merge(style, styles.header);
