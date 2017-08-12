@@ -24,7 +24,8 @@ export default class Sprd extends React.Component {
       arrowleft: "arrowleft", 
       arrowdown: "arrowdown", 
       arrowright: "arrowright",
-      arrowup: "arrowup"
+      arrowup: "arrowup",
+      alt: "alt"
     };
   }
 
@@ -69,19 +70,19 @@ export default class Sprd extends React.Component {
     });
 
     Mousetrap.bind("up", () => {
-      SprdNavigator.move(this.props.selectedRange, DIRECTION.UP);
+      SprdNavigator.move(this.props, DIRECTION.UP);
     });
 
     Mousetrap.bind("down", () => {
-      SprdNavigator.move(this.props.selectedRange, DIRECTION.DOWN);
+      SprdNavigator.move(this.props, DIRECTION.DOWN);
     });
 
     Mousetrap.bind("right", () => {
-      SprdNavigator.move(this.props.selectedRange, DIRECTION.RIGHT);
+      SprdNavigator.move(this.props, DIRECTION.RIGHT);
     });
 
     Mousetrap.bind("left", () => {
-      SprdNavigator.move(this.props.selectedRange, DIRECTION.LEFT);
+      SprdNavigator.move(this.props, DIRECTION.LEFT);
     });
 
     Mousetrap.bind("enter", () => {

@@ -58,7 +58,7 @@ export default class HeaderContainer extends React.Component {
   }
 
   render(){ 
-    console.log("header container re-render")
+    //console.log("header container re-render")
     return (
       <thead>
         <tr style={styles.tr}>

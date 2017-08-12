@@ -52,7 +52,7 @@ export default class Header extends React.Component {
   }
 
   render(){
-    console.log("header re-render")
+    //console.log("header re-render")
     return (
       <th style={this.currentStyle()} onClick={this.headerClicked}>
         {this.props.title}

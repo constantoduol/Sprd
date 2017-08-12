@@ -26,8 +26,8 @@ class Actions {
     return headerWidths;
   }
 
-  setViewPort(rowNums, colNums){ 
-    return [rowNums, colNums];
+  setViewPort(rowNums, colNums, minRow, minCol){ 
+    return [rowNums, colNums, minRow, minCol];
   }
 
   setFocusedCell(range){

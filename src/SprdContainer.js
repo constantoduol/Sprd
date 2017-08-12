@@ -23,7 +23,7 @@ export default class SprdContainer extends React.Component {
     let colNums = parseInt(this.props.width/DEFAULT_HEADER_WIDTH);
     let rowNums = parseInt(this.props.height/DEFAULT_ROW_HEIGHT) - 2; //-2 for header and footer
     Actions.parseData(this.props.data, rowNums, colNums);
-    Actions.setViewPort(rowNums, colNums);
+    Actions.setViewPort(rowNums, colNums, 0, 0);
   }
 
   render(){

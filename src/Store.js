@@ -74,8 +74,13 @@ class Store {
   }
 
   onSetViewPort(params){
-    let [rowNums, colNums] = params;
-    this.setState({rowNums: rowNums, colNums: colNums});
+    let [rowNums, colNums, minRow, minCol] = params;
+    this.setState({
+      rowNums: rowNums, 
+      colNums: colNums, 
+      minRow: minRow, 
+      minCol: minCol
+    });
   }
 
 }

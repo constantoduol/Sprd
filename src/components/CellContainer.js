@@ -40,28 +40,43 @@ export default class CellContainer extends React.Component {
     let allRows = [];
     for(let row = minRow; row < rowNums + minRow; row++){
       let currentRow = [];
+      let modRow = row % rowNums; //modular row
       currentRow.push(
-        <NumberCell key={"num_" + row} row={row} selectedRange={selectedRange}/>
+        <NumberCell 
+          key={"num_" + modRow} 
+          row={row} 
+          selectedRange={selectedRange}/>
       );
+
       for(let col = minCol; col < colNums + minCol; col++){
+        let modCol = col % colNums; //modular column
         currentRow.push(
           <Cell 
             row={row} 
             col={col} 
+            minRow={minRow}
+            minCol={minCol}
+            rowNums={rowNums}
+            colNums={colNums}
             value={this.getCellValue(row, col)}
             selectedRange={selectedRange}
             focusedCell={focusedCell}
-            key={row + "_" + col}/>
+            key={modRow + "_" + modCol}/>
         );
       }
-      let rowStyle = {height: data.get(row % rowNums).get('height')};
-      allRows.push(<tr key={"row_" + row} style={rowStyle}>{currentRow}</tr>);
+      let height = data.get(modRow).get('height');
+      allRows.push(
+        <TableRow 
+          key={"row_"+modRow} 
+          rowData={currentRow} 
+          height={height}/>
+      );
     }
     return allRows;
   }
 
   render(){
-    console.log("cell container re-render");
+    //console.log("cell container re-render");
     return (
       <tbody>
         {this.renderCells()}

@@ -14,6 +14,10 @@ export default class Cell extends React.Component {
   static propTypes = {
     row: PropTypes.number,
     col: PropTypes.number,
+    minRow: PropTypes.number,
+    minCol: PropTypes.number,
+    rowNums: PropTypes.number,
+    colNums: PropTypes.number,
     value: PropTypes.string,
     selectedRange: PropTypes.array
   };
@@ -41,7 +45,7 @@ export default class Cell extends React.Component {
   componentDidMount(){
     Mousetrap(this.input).bind("enter", () => {
       this.setState({mode: this.CELL_MODES.INACTIVE});
-      SprdNavigator.move(this.props.selectedRange, DIRECTION.DOWN);
+      SprdNavigator.move(this.props, DIRECTION.DOWN);
     });
   }
 
@@ -120,6 +124,7 @@ export default class Cell extends React.Component {
     let {mode, value} = this.state;
     return (
       <input 
+        key={0}
         onChange={this.inputValueChanged}
         hidden={mode !== this.CELL_MODES.EDITING}
         type='text' 
@@ -133,6 +138,7 @@ export default class Cell extends React.Component {
     let {mode, value} = this.state;
     return (
       <div 
+        key={1}
         hidden={mode === this.CELL_MODES.EDITING}
         style={styles.outer_cell}>
           {this.state.value}
@@ -141,7 +147,7 @@ export default class Cell extends React.Component {
   }
   
   render(){
-    console.log("cell re-render");
+    //console.log("cell re-render");
     return (
       <td 
         onDoubleClick={this.cellDoubleClicked}
