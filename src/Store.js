@@ -25,10 +25,10 @@ class Store {
       focusedCell: this.NO_FOCUSED_CELL,
       data: Map(),
       headerWidths: [],
-      colNums: 0,
-      rowNums: 0,
-      minCol: 0, //rendering of headers starts from minCol to minCol + colNums
-      minRow: 0 //rendering of rows starts from minRow to minRow + rowNums
+      cols: 0,
+      rows: 0,
+      minCol: 0, //rendering of headers starts from minCol to minCol + cols
+      minRow: 0 //rendering of rows starts from minRow to minRow + rows
     };
 
   }
@@ -45,8 +45,13 @@ class Store {
   }
 
   onParseData(params){
-    let [data, headers, headerWidths] = params
-    this.setState({data: data, headerWidths: headerWidths});
+    let [data, headers, headerWidths, rows, cols] = params
+    this.setState({
+      data: data, 
+      headerWidths: headerWidths, 
+      rows: rows, 
+      cols: cols
+    });
   }
 
   onSetFocusedCell(range){
@@ -74,10 +79,8 @@ class Store {
   }
 
   onSetViewPort(params){
-    let [rowNums, colNums, minRow, minCol] = params;
+    let [minRow, minCol] = params;
     this.setState({
-      rowNums: rowNums, 
-      colNums: colNums, 
       minRow: minRow, 
       minCol: minCol
     });

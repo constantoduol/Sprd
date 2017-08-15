@@ -26,8 +26,8 @@ class Actions {
     return headerWidths;
   }
 
-  setViewPort(rowNums, colNums, minRow, minCol){ 
-    return [rowNums, colNums, minRow, minCol];
+  setViewPort(minRow, minCol){ 
+    return [minRow, minCol];
   }
 
   setFocusedCell(range){
@@ -35,7 +35,7 @@ class Actions {
   }
 
 
-  parseData(rawData, rowNums, colNums){
+  parseData(rawData, rows, cols){
     let data = Map();
     let headers = [];
     let headerWidths = [];
@@ -57,14 +57,14 @@ class Actions {
     } else if(rawData) {
       console.warn("Unrecognized object passed into Sprd as data");
     }
-    for(let col = 0; col < colNums; col++) headerWidths.push(DEFAULT_HEADER_WIDTH);
-    for(let row = 0; row < rowNums; row++){
+    for(let col = 0; col < cols; col++) headerWidths.push(DEFAULT_HEADER_WIDTH);
+    for(let row = 0; row < rows; row++){
       if(!data.get(row)) data = data.set(row, Map());
       let rowData = data.get(row);
       rowData = rowData.set('height', DEFAULT_ROW_HEIGHT);
       data = data.set(row, rowData);
     }
-    return [data, headers, headerWidths];
+    return [data, headers, headerWidths, rows, cols];
   }
 
 }

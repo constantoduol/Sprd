@@ -10,8 +10,8 @@ import SprdRange from '../SprdRange';
 export default class CellContainer extends React.Component {
 
   static propTypes = {
-    rowNums: PropTypes.number,
-    colNums: PropTypes.number,
+    rows: PropTypes.number,
+    cols: PropTypes.number,
     data: PropTypes.object,
     selectedRange: PropTypes.array,
     minCol: PropTypes.number,
@@ -21,7 +21,7 @@ export default class CellContainer extends React.Component {
   shouldComponentUpdate(nextProps, nextState){
     if(nextProps.data !== this.props.data) return true;
     if(!nextProps.focusedCell.isEqual(this.props.focusedCell)) return true;
-    if(nextProps.rowNums !== this.props.rowNums || nextProps.colNums !== this.props.colNums)
+    if(nextProps.rows !== this.props.rows || nextProps.cols !== this.props.cols)
       return true;
     if(nextProps.minCol !== this.props.minCol || nextProps.minRow !== this.props.minRow)
       return true;
@@ -36,11 +36,12 @@ export default class CellContainer extends React.Component {
   }
 
   renderCells(){
-    let {data, selectedRange, rowNums, colNums, focusedCell, minRow, minCol} = this.props;
+    let {data, selectedRange, rows, cols, focusedCell, minRow, minCol} = this.props;
     let allRows = [];
-    for(let row = minRow; row < rowNums + minRow; row++){
+    console.log(rows);
+    for(let row = minRow; row < rows + minRow; row++){
       let currentRow = [];
-      let modRow = row % rowNums; //modular row
+      let modRow = row % rows; //modular row
       currentRow.push(
         <NumberCell 
           key={"num_" + row} 
@@ -48,17 +49,17 @@ export default class CellContainer extends React.Component {
           selectedRange={selectedRange}/>
       );
 
-      for(let col = minCol; col < colNums + minCol; col++){
+      for(let col = minCol; col < cols + minCol; col++){
         console.log("happened")
-        let modCol = col % colNums; //modular column
+        let modCol = col % cols; //modular column
         currentRow.push(
           <Cell 
             row={row} 
             col={col} 
             minRow={minRow}
             minCol={minCol}
-            rowNums={rowNums}
-            colNums={colNums}
+            rows={rows}
+            cols={cols}
             value={this.getCellValue(row, col)}
             selectedRange={selectedRange}
             focusedCell={focusedCell}

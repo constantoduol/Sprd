@@ -19,6 +19,7 @@ export default class Sprd extends React.Component {
   constructor(props){
     super(props);
     this.keyDown = this.keyDown.bind(this);
+    this.dragStart = this.dragStart.bind(this);
     this.KEY_DOWN_IGNORE_KEYS = {
       enter: "enter", 
       arrowleft: "arrowleft", 
@@ -50,6 +51,10 @@ export default class Sprd extends React.Component {
     let shouldUpdate = !SprdRange.areEqual(nextProps.selectedRange, this.props.selectedRange);
     if(shouldUpdate) return true;
     return difference(nextProps.headerWidths, this.props.headerWidths).length > 0;
+  }
+
+  dragStart(){
+    console.log("dragging started");
   }
 
   keyDown(e){
@@ -102,27 +107,27 @@ export default class Sprd extends React.Component {
     let style = {width: this.props.width};
     style = merge(style, styles.root);
     let {
-      colNums, rowNums, showFormulaBar, 
+      cols, rows, showFormulaBar, 
       headerWidths, selectedRange, showHeaderLetters, 
       data, focusedCell, minCol, minRow} = this.props;
     return (
-      <div style={style} >
+      <div style={style} onDragStart={this.dragStart}>
         {showFormulaBar ? <FormulaBar/> : null}
         <table style={styles.table}>
           <HeaderContainer
-            colNums={colNums}
+            cols={cols}
             headerWidths={headerWidths}
             selectedRange={selectedRange}
             minCol={minCol}
             showHeaderLetters={showHeaderLetters}/>
           <CellContainer 
-            colNums={colNums} 
+            cols={cols} 
             minCol={minCol}
             minRow={minRow}
             data={data}
             selectedRange={selectedRange}
             focusedCell={focusedCell}
-            rowNums={rowNums}/>
+            rows={rows}/>
         </table>
         <Footer/>
       </div>

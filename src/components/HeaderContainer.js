@@ -10,7 +10,7 @@ export default class HeaderContainer extends React.Component {
 
   static propTypes = {
     showHeaderLetters: PropTypes.bool,
-    colNums: PropTypes.number,
+    cols: PropTypes.number,
     selectedRange: PropTypes.array,
     headerWidths: PropTypes.array,
     minCol: PropTypes.number
@@ -32,7 +32,7 @@ export default class HeaderContainer extends React.Component {
   }
 
   renderHeaderLetters(){
-    let {selectedRange, headerWidths, colNums, minCol} = this.props;
+    let {selectedRange, headerWidths, cols, minCol} = this.props;
     let headers = [
       <Header 
         title="" 
@@ -42,13 +42,13 @@ export default class HeaderContainer extends React.Component {
         key="num_header"
       />
     ]; //the first header is for the numbers to the left
-    for(let x = minCol; x < colNums + minCol; x++){
+    for(let x = minCol; x < cols + minCol; x++){
       let colLetter = this.toExcelColName(x + 1);
       headers.push(
         <Header 
           key={x} 
           col={x} 
-          width={headerWidths[x % colNums]}
+          width={headerWidths[x % cols]}
           selectedRange={selectedRange}
           title={colLetter} 
         />
