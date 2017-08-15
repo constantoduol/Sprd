@@ -47,6 +47,7 @@ export default class Cell extends React.Component {
       this.setState({mode: this.CELL_MODES.INACTIVE});
       SprdNavigator.move(this.props, DIRECTION.DOWN);
     });
+    this.maybeChangeCellMode(this.props);
   }
 
   componentWillReceiveProps(nextProps){

@@ -43,12 +43,13 @@ export default class CellContainer extends React.Component {
       let modRow = row % rowNums; //modular row
       currentRow.push(
         <NumberCell 
-          key={"num_" + modRow} 
+          key={"num_" + row} 
           row={row} 
           selectedRange={selectedRange}/>
       );
 
       for(let col = minCol; col < colNums + minCol; col++){
+        console.log("happened")
         let modCol = col % colNums; //modular column
         currentRow.push(
           <Cell 
@@ -61,13 +62,13 @@ export default class CellContainer extends React.Component {
             value={this.getCellValue(row, col)}
             selectedRange={selectedRange}
             focusedCell={focusedCell}
-            key={modRow + "_" + modCol}/>
+            key={row + "_" + col}/>
         );
       }
       let height = data.get(modRow).get('height');
       allRows.push(
         <TableRow 
-          key={"row_"+modRow} 
+          key={"row_"+row} 
           rowData={currentRow} 
           height={height}/>
       );
