@@ -1,11 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import {Map} from 'immutable';
 
 import Cell from './Cell';
 import NumberCell from './NumberCell';
 import TableRow from './TableRow';
 import Actions from '../Actions';
 import SprdRange from '../SprdRange';
+import {DEFAULT_ROW_HEIGHT} from '../Constants';
 
 export default class CellContainer extends React.Component {
 
@@ -13,17 +15,13 @@ export default class CellContainer extends React.Component {
     rows: PropTypes.number,
     cols: PropTypes.number,
     data: PropTypes.object,
-    selectedRange: PropTypes.array,
-    minCol: PropTypes.number,
-    minRow: PropTypes.number
+    selectedRange: PropTypes.array
   };
 
   shouldComponentUpdate(nextProps, nextState){
     if(nextProps.data !== this.props.data) return true;
     if(!nextProps.focusedCell.isEqual(this.props.focusedCell)) return true;
     if(nextProps.rows !== this.props.rows || nextProps.cols !== this.props.cols)
-      return true;
-    if(nextProps.minCol !== this.props.minCol || nextProps.minRow !== this.props.minRow)
       return true;
     return !SprdRange.areEqual(nextProps.selectedRange, this.props.selectedRange);
   }
@@ -35,13 +33,24 @@ export default class CellContainer extends React.Component {
     return "";
   }
 
+  getOrSetHeight(row, data){
+    let rowData = data.get(row);
+    if(!rowData){
+      data = data.set(row, Map());
+      rowData = data.get(row);
+    }
+    if(rowData && !rowData.get('height')) {
+      rowData.set('height', DEFAULT_ROW_HEIGHT);
+      data.set(row, rowData);
+    }
+    return rowData.get('height');
+  }
+
   renderCells(){
-    let {data, selectedRange, rows, cols, focusedCell, minRow, minCol} = this.props;
+    let {data, selectedRange, rows, cols, focusedCell} = this.props;
     let allRows = [];
-    console.log(rows);
-    for(let row = minRow; row < rows + minRow; row++){
+    for(let row = 0; row < rows; row++){
       let currentRow = [];
-      let modRow = row % rows; //modular row
       currentRow.push(
         <NumberCell 
           key={"num_" + row} 
@@ -49,15 +58,11 @@ export default class CellContainer extends React.Component {
           selectedRange={selectedRange}/>
       );
 
-      for(let col = minCol; col < cols + minCol; col++){
-        console.log("happened")
-        let modCol = col % cols; //modular column
+      for(let col = 0; col < cols; col++){
         currentRow.push(
           <Cell 
             row={row} 
             col={col} 
-            minRow={minRow}
-            minCol={minCol}
             rows={rows}
             cols={cols}
             value={this.getCellValue(row, col)}
@@ -66,7 +71,8 @@ export default class CellContainer extends React.Component {
             key={row + "_" + col}/>
         );
       }
-      let height = data.get(modRow).get('height');
+      let height = this.getOrSetHeight(row, data);
+      console.log(height)
       allRows.push(
         <TableRow 
           key={"row_"+row} 
@@ -76,6 +82,7 @@ export default class CellContainer extends React.Component {
     }
     return allRows;
   }
+
 
   render(){
     //console.log("cell container re-render");

@@ -14,16 +14,16 @@ export default class SprdContainer extends React.Component {
     showFormulaBar: true,
     infinite: true, //scroll infinitely in any directions
     showFooter: true,
-    width: 1200,
-    height: 1200
+    width: 400,
+    height: 300
   };
 
   componentDidMount(){
     let {width, height} = this.props;
     let cols = parseInt(this.props.width/DEFAULT_HEADER_WIDTH);
     let rows = parseInt(this.props.height/DEFAULT_ROW_HEIGHT) - 2; //-2 for header and footer
+    Actions.setViewPort(rows, cols);
     Actions.parseData(this.props.data, rows, cols);
-    Actions.setViewPort(0, 0);
   }
 
   render(){

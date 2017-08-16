@@ -14,8 +14,6 @@ export default class Cell extends React.Component {
   static propTypes = {
     row: PropTypes.number,
     col: PropTypes.number,
-    minRow: PropTypes.number,
-    minCol: PropTypes.number,
     rows: PropTypes.number,
     cols: PropTypes.number,
     value: PropTypes.string,
