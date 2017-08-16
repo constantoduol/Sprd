@@ -104,7 +104,7 @@ export default class Sprd extends React.Component {
   }
 
   render(){
-    let style = {width: this.props.width};
+    let style = {width: this.props.width, height: this.props.height};
     style = merge(style, styles.root);
     let {
       cols, rows, showFormulaBar, headerWidths, 
@@ -143,6 +143,7 @@ const styles = {
     borderTop: "1px solid #BDBDBD",
     borderBottom: "1px solid #BDBDBD",
     borderRight: "1px solid #BDBDBD",
-    margin: 5
+    margin: 5,
+    overflow: "auto"
   }
 }
