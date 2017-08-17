@@ -58,7 +58,7 @@ export default class HeaderContainer extends React.Component {
   render(){ 
     //console.log("header container re-render")
     return (
-      <thead>
+      <thead style={styles.thead}>
         <tr style={styles.tr}>
           {this.renderHeaderLetters()}
         </tr>
@@ -71,5 +71,11 @@ const styles = {
   tr: {
     background: "#E0E0E0",
     height: 20
+  },
+  thead: {
+    borderTop: "1px solid #BDBDBD",
+    borderBottom: "1px solid #BDBDBD",
+    position: "fixed",
+    top: 10
   }
 };

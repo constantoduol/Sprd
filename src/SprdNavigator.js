@@ -30,11 +30,8 @@ export default class SprdNavigator {
         stopCol++;
     }
 
-    if(startRow === rows) rows++;
-    // else if( (startRow + 1) === minRow && minRow !== 0) minRow--;
-
+    if(startRow + 2 === rows) rows++;
     if(startCol === cols) cols++;
-    // else if( (startCol + 1) === minCol && minCol !== 0) minCol--;
 
     
     if(previousRows !== rows || previousCols !== cols){

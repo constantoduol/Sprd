@@ -7,7 +7,7 @@ import NumberCell from './NumberCell';
 import TableRow from './TableRow';
 import Actions from '../Actions';
 import SprdRange from '../SprdRange';
-import {DEFAULT_ROW_HEIGHT} from '../Constants';
+import {DEFAULT_ROW_HEIGHT, DEFAULT_NUM_HEADER_WIDTH, DEFAULT_HEADER_WIDTH} from '../Constants';
 
 export default class CellContainer extends React.Component {
 
@@ -55,6 +55,7 @@ export default class CellContainer extends React.Component {
         <NumberCell 
           key={"num_" + row} 
           row={row} 
+          width={DEFAULT_NUM_HEADER_WIDTH}
           selectedRange={selectedRange}/>
       );
 
@@ -65,6 +66,7 @@ export default class CellContainer extends React.Component {
             col={col} 
             rows={rows}
             cols={cols}
+            width={DEFAULT_HEADER_WIDTH}
             value={this.getCellValue(row, col)}
             selectedRange={selectedRange}
             focusedCell={focusedCell}
@@ -87,10 +89,16 @@ export default class CellContainer extends React.Component {
   render(){
     //console.log("cell container re-render");
     return (
-      <tbody>
+      <tbody style={styles.tbody}>
         {this.renderCells()}
       </tbody>
     );
+  }
+}
+
+const styles = {
+  tbody: {
+    overflow: "auto"
   }
 }
 

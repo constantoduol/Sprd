@@ -14,7 +14,7 @@ export default class SprdContainer extends React.Component {
     showFormulaBar: true,
     infinite: true, //scroll infinitely in any directions
     showFooter: true,
-    width: 1200,
+    width: 900,
     height: 500,
     cols: 10,
     rows: 20
