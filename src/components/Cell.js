@@ -21,6 +21,7 @@ export default class Cell extends React.Component {
     rows: PropTypes.number,
     cols: PropTypes.number,
     value: PropTypes.string,
+    width: PropTypes.number,
     selectedRange: PropTypes.array
   };
 
@@ -152,11 +153,13 @@ export default class Cell extends React.Component {
   
   render(){
     //console.log("cell re-render");
+    let {width} = this.props;
+    let style = merge(this.currentStyle(), {width});
     return (
       <td 
         onDoubleClick={this.cellDoubleClicked}
         onClick={this.cellClicked}
-        style={this.currentStyle()}>
+        style={style}>
           {[this.renderInnerCell(), this.renderOuterCell()]}
       </td>
     )

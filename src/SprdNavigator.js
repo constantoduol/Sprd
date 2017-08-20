@@ -35,7 +35,6 @@ export default class SprdNavigator {
 
     if(startCol === minCol + cols) minCol++;
     else if( (startCol + 1) === minCol && minCol !== 0) minCol--;
-
     
     if(previousMinRow !== minRow || previousMinCol !== minCol){
       Actions.setViewPort(minRow, minCol);

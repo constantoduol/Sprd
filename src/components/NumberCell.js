@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import {merge} from 'lodash';
 
 import Actions from '../Actions';
 import SprdRange from '../SprdRange';
@@ -8,6 +9,7 @@ export default class NumberCell extends React.Component {
 
   static propTypes = {
     row: PropTypes.number,
+    width: PropTypes.number,
     selectedRange: PropTypes.array
   }
 
@@ -40,12 +42,12 @@ export default class NumberCell extends React.Component {
   }
 
   currentStyle(){
-    let {selectedRange} = this.props;
+    let {selectedRange, width} = this.props;
     for(let range of selectedRange){
       if(this.numberCellIsActive(range))
         return styles.numberCellSelected;
     }
-    return styles.numberCell;
+    return merge(styles.numberCell, {width});
   }
 
   render(){
