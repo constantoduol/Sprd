@@ -6,11 +6,11 @@ import Actions from './Actions';
 export default class SprdNavigator {
 
   static move(props, direction){
-    let {selectedRange, rows, cols} = props;
+    let {selectedRange, minCol, minRow, rows, cols} = props;
     let {startRow, stopRow, startCol, stopCol} = selectedRange[0]; //we assume its only one range selected
 
-    let previousRows = rows;
-    let previousCols = cols;
+    let previousMinCol = minCol;
+    let previousMinRow = minRow;
 
     switch(direction){
       case DIRECTION.UP:
@@ -30,15 +30,15 @@ export default class SprdNavigator {
         stopCol++;
     }
 
-    if(startRow === rows) rows++;
-    // else if( (startRow + 1) === minRow && minRow !== 0) minRow--;
+    if(startRow === minRow + rows) minRow++;
+    else if( (startRow + 1) === minRow && minRow !== 0) minRow--;
 
-    if(startCol === cols) cols++;
-    // else if( (startCol + 1) === minCol && minCol !== 0) minCol--;
+    if(startCol === minCol + cols) minCol++;
+    else if( (startCol + 1) === minCol && minCol !== 0) minCol--;
 
     
-    if(previousRows !== rows || previousCols !== cols){
-      Actions.setViewPort(rows, cols);
+    if(previousMinRow !== minRow || previousMinCol !== minCol){
+      Actions.setViewPort(minRow, minCol);
       Actions.selectRange(new SprdRange(startRow, startCol, stopRow, stopCol));
     } else {
       Actions.selectRange(new SprdRange(startRow, startCol, stopRow, stopCol));
