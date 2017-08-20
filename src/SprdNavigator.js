@@ -6,7 +6,7 @@ import Actions from './Actions';
 export default class SprdNavigator {
 
   static move(props, direction){
-    let {selectedRange, minCol, minRow, rows, cols} = props;
+    let {selectedRange, minCol, minRow, maxCol, maxRow, rows, cols} = props;
     let {startRow, stopRow, startCol, stopCol} = selectedRange[0]; //we assume its only one range selected
 
     let previousMinCol = minCol;

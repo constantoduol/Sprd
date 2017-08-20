@@ -16,6 +16,8 @@ export default class Cell extends React.Component {
     col: PropTypes.number,
     minRow: PropTypes.number,
     minCol: PropTypes.number,
+    maxRow: PropTypes.number,
+    maxCol: PropTypes.number,
     rows: PropTypes.number,
     cols: PropTypes.number,
     value: PropTypes.string,
@@ -43,6 +45,7 @@ export default class Cell extends React.Component {
   }
 
   componentDidMount(){
+    console.log("cell mount")
     Mousetrap(this.input).bind("enter", () => {
       this.setState({mode: this.CELL_MODES.INACTIVE});
       SprdNavigator.move(this.props, DIRECTION.DOWN);

@@ -18,6 +18,14 @@ export default class CellContainer extends React.Component {
     minRow: PropTypes.number
   };
 
+  constructor(props){
+    super(props);
+    this.state = {
+      cellCache: {},
+      rowCache: []
+    }
+  }
+
   shouldComponentUpdate(nextProps, nextState){
     if(nextProps.data !== this.props.data) return true;
     if(!nextProps.focusedCell.isEqual(this.props.focusedCell)) return true;
@@ -28,6 +36,12 @@ export default class CellContainer extends React.Component {
     return !SprdRange.areEqual(nextProps.selectedRange, this.props.selectedRange);
   }
 
+  componentWillReceiveProps(nextProps){
+    let {rowCache} = this.state;
+    if(nextProps.rows && nextProps.cols && !rowCache.length) 
+      this.generateCells(nextProps);
+  }
+
   getCellValue(row, col){
     let {data} = this.props;
     if(data.get(row) && data.getIn([row, col]))
@@ -35,8 +49,53 @@ export default class CellContainer extends React.Component {
     return "";
   }
 
+
+  generateCells(props){
+    console.log("cells generated")
+    let {data, selectedRange, rows, cols, focusedCell, minRow, minCol, maxRow, maxCol} = props;
+    let {cellCache, rowCache} = this.state;
+    let allRows = [];
+    for(let row = minRow; row < rows + minRow; row++){
+      let currentRow = [];
+      let modRow = row % rows; //modular row
+      if(!cellCache[modRow]) cellCache[modRow] = [];
+      cellCache[modRow].push(
+        <NumberCell 
+          key={"num_" + row} 
+          row={row} 
+          selectedRange={selectedRange}/>
+      );
+
+      for(let col = minCol; col < cols + minCol; col++){
+        let modCol = col % cols; //modular column
+        cellCache[modRow].push(
+          <Cell 
+            row={row} 
+            col={col} 
+            minRow={minRow}
+            minCol={minCol}
+            maxRow={maxRow}
+            maxCol={maxCol}
+            rows={rows}
+            cols={cols}
+            value={this.getCellValue(row, col)}
+            selectedRange={selectedRange}
+            focusedCell={focusedCell}
+            key={row + "_" + col}/>
+        );
+      }
+      let height = data.get(modRow).get('height');
+      rowCache.push(
+        <TableRow 
+          key={"row_"+row} 
+          rowData={currentRow} 
+          height={height}/>
+      );
+    }
+  }
+
   renderCells(){
-    let {data, selectedRange, rows, cols, focusedCell, minRow, minCol} = this.props;
+    let {data, selectedRange, rows, cols, focusedCell, minRow, minCol, maxRow, maxCol} = this.props;
     let allRows = [];
     for(let row = minRow; row < rows + minRow; row++){
       let currentRow = [];
@@ -56,6 +115,8 @@ export default class CellContainer extends React.Component {
             col={col} 
             minRow={minRow}
             minCol={minCol}
+            maxRow={maxRow}
+            maxCol={maxCol}
             rows={rows}
             cols={cols}
             value={this.getCellValue(row, col)}

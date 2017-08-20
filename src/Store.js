@@ -22,6 +22,7 @@ class Store {
 
     this.state = {
       selectedRange: [],
+      valueSetRange: [], //range of where data changed
       focusedCell: this.NO_FOCUSED_CELL,
       data: Map(),
       headerWidths: [],
@@ -73,7 +74,7 @@ class Store {
         }
       }
     }
-    this.setState({data: data});
+    this.setState({data: data, valueSetRange: ranges});
   }
 
   onSetViewPort(params){
