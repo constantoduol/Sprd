@@ -30,15 +30,14 @@ export default class CellContainer extends React.Component {
 
   getCellValue(row, col){
     let {data} = this.props;
-    if(data[row] && data[row][col])
-      return data[row][col];
+    if(data.get(row) && data.getIn([row, col]))
+      return data.getIn([row, col]);
     return "";
   }
 
   renderCells(){
     let {data, selectedRange, rows, cols, focusedCell, minRow, minCol} = this.props;
     let allRows = [];
-    console.log(rows);
     for(let row = minRow; row < rows + minRow; row++){
       let currentRow = [];
       let modRow = row % rows; //modular row
@@ -50,7 +49,6 @@ export default class CellContainer extends React.Component {
       );
 
       for(let col = minCol; col < cols + minCol; col++){
-        console.log("happened")
         let modCol = col % cols; //modular column
         currentRow.push(
           <Cell 

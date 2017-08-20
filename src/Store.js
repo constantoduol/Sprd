@@ -27,6 +27,8 @@ class Store {
       headerWidths: [],
       cols: 0,
       rows: 0,
+      maxCol: 0, //the max column we have reached
+      maxRow: 0, //the max row we have reached
       minCol: 0, //rendering of headers starts from minCol to minCol + cols
       minRow: 0 //rendering of rows starts from minRow to minRow + rows
     };
@@ -67,11 +69,7 @@ class Store {
       for(let row = startRow; row <= stopRow; row++){
         if(!data.get(row)) data = data.set(row, Map({}));
         for(let col = startCol; col <= stopCol; col++){
-          if(value){
-             let rowData = data.get(row);
-             rowData = rowData.set(col, value);
-             data = data.set(row, rowData);
-          }
+          if(value) data = data.setIn([row, col], value)
         }
       }
     }
