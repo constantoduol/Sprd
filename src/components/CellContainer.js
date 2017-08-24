@@ -26,20 +26,21 @@ export default class CellContainer extends React.Component {
     }
   }
 
-  shouldComponentUpdate(nextProps, nextState){
-    if(nextProps.data !== this.props.data) return true;
-    if(!nextProps.focusedCell.isEqual(this.props.focusedCell)) return true;
-    if(nextProps.rows !== this.props.rows || nextProps.cols !== this.props.cols)
-      return true;
-    if(nextProps.minCol !== this.props.minCol || nextProps.minRow !== this.props.minRow)
-      return true;
-    return !SprdRange.areEqual(nextProps.selectedRange, this.props.selectedRange);
-  }
+  // shouldComponentUpdate(nextProps, nextState){
+  //   if(nextProps.data !== this.props.data) return true;
+  //   if(!nextProps.focusedCell.isEqual(this.props.focusedCell)) return true;
+  //   if(nextProps.rows !== this.props.rows || nextProps.cols !== this.props.cols)
+  //     return true;
+  //   if(nextProps.minCol !== this.props.minCol || nextProps.minRow !== this.props.minRow)
+  //     return true;
+  //   return !SprdRange.areEqual(nextProps.selectedRange, this.props.selectedRange);
+  // }
 
   componentWillReceiveProps(nextProps){
     let {rowCache} = this.state;
     if(nextProps.rows && nextProps.cols && !rowCache.length) 
       this.generateCells(nextProps);
+    this.modifyCells(nextProps);
   }
 
   getCellValue(row, col){
@@ -49,6 +50,78 @@ export default class CellContainer extends React.Component {
     return "";
   }
 
+  //an imperative approach opposed to react's declarative approach
+  //to improve performance
+  modifyCells(nextProps){
+    let {valueSetRange, selectedRange, focusedCell, minRow, minCol, maxRow, maxCol, data} = nextProps;
+    let changed = false;
+    let cells = [];
+    if(data !== this.props.data) {
+      this.modifyCellsBasedOnRanges(valueSetRange, nextProps); 
+      changed = true;
+    }
+    if(!focusedCell.isEqual(this.props.focusedCell)){
+      this.modifyCellsBasedOnRanges([focusedCell], nextProps);
+      changed = true;
+    }
+    if(!SprdRange.areEqual(selectedRange, this.props.selectedRange)){
+      this.modifyCellsBasedOnRanges(selectedRange, nextProps);
+      changed = true;
+    }
+    if(changed) this.setState(this.state);//directly modifying state?
+  }
+
+  modifyCellsBasedOnRanges(ranges, nextProps){
+    console.log(ranges);
+    let {rows, cols} = nextProps;
+    let {cellCache, rowCache} = this.state; 
+    for(let range of ranges){
+      let {startRow, stopRow, startCol, stopCol} = range;
+      for(let row = startRow; row < stopRow; row++){
+        let modRow = row % rows;
+        for(let col = stopCol; col < stopCol; col++){
+          let modCol = col % cols;
+          cellCache[modRow][modCol] = this.generateCell(row, col, nextProps);
+        }
+        rowCache[modRow] = this.generateRow(row, nextProps, cellCache[modRow]);
+      }
+    }
+  }
+
+  generateCell(row, col, nextProps){
+    let {
+      minRow, minCol, maxRow, 
+      maxCol, rows, cols, selectedRange, focusedCell} = nextProps;
+    return(
+      <Cell 
+        row={row} 
+        col={col} 
+        minRow={minRow}
+        minCol={minCol}
+        maxRow={maxRow}
+        maxCol={maxCol}
+        rows={rows}
+        cols={cols}
+        value={this.getCellValue(row, col)}
+        selectedRange={selectedRange}
+        focusedCell={focusedCell}
+        key={row % rows + "_" + col % cols}/>
+    )
+  }
+
+  generateRow(row, nextProps, currentRow){
+    let {data, rows} = nextProps;
+    let modRow = row % rows;
+    let height = 0;
+    if(data.get(modRow))
+      height = data.get(modRow).get('height');
+    return (
+      <TableRow 
+        key={"row_"+modRow} 
+        rowData={currentRow} 
+        height={height}/>
+    );
+  }
 
   generateCells(props){
     console.log("cells generated")
@@ -61,7 +134,7 @@ export default class CellContainer extends React.Component {
       if(!cellCache[modRow]) cellCache[modRow] = [];
       cellCache[modRow].push(
         <NumberCell 
-          key={"num_" + row} 
+          key={"num_" + modRow} 
           row={row} 
           selectedRange={selectedRange}/>
       );
@@ -69,27 +142,11 @@ export default class CellContainer extends React.Component {
       for(let col = minCol; col < cols + minCol; col++){
         let modCol = col % cols; //modular column
         cellCache[modRow].push(
-          <Cell 
-            row={row} 
-            col={col} 
-            minRow={minRow}
-            minCol={minCol}
-            maxRow={maxRow}
-            maxCol={maxCol}
-            rows={rows}
-            cols={cols}
-            value={this.getCellValue(row, col)}
-            selectedRange={selectedRange}
-            focusedCell={focusedCell}
-            key={row + "_" + col}/>
+          this.generateCell(row, col, props)
         );
       }
-      let height = data.get(modRow).get('height');
       rowCache.push(
-        <TableRow 
-          key={"row_"+row} 
-          rowData={currentRow} 
-          height={height}/>
+        this.generateRow(row, props, cellCache[modRow])
       );
     }
   }
@@ -140,7 +197,7 @@ export default class CellContainer extends React.Component {
     //console.log("cell container re-render");
     return (
       <tbody>
-        {this.renderCells()}
+        {this.state.rowCache}
       </tbody>
     );
   }

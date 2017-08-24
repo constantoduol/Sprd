@@ -107,7 +107,7 @@ export default class Sprd extends React.Component {
     let {
       cols, rows, showFormulaBar, headerWidths, 
       selectedRange, showHeaderLetters, 
-      data, focusedCell, width, height, minRow, minCol} = this.props;
+      data, focusedCell, width, height, minRow, minCol, valueSetRange} = this.props;
     let style = merge(styles.root, {width});
     return (
       <div style={style} onDragStart={this.dragStart}>
@@ -124,6 +124,7 @@ export default class Sprd extends React.Component {
             minCol={minCol}
             minRow={minRow}
             data={data}
+            valueSetRange={valueSetRange}
             selectedRange={selectedRange}
             focusedCell={focusedCell}
             rows={rows}/>
