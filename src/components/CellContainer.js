@@ -72,16 +72,18 @@ export default class CellContainer extends React.Component {
   }
 
   modifyCellsBasedOnRanges(ranges, nextProps){
-    console.log(ranges);
     let {rows, cols} = nextProps;
     let {cellCache, rowCache} = this.state; 
+    //console.log(ranges, cellCache);
     for(let range of ranges){
       let {startRow, stopRow, startCol, stopCol} = range;
-      for(let row = startRow; row < stopRow; row++){
+      for(let row = startRow; row <= stopRow; row++){
         let modRow = row % rows;
-        for(let col = stopCol; col < stopCol; col++){
+        for(let col = stopCol; col <= stopCol; col++){
           let modCol = col % cols;
-          cellCache[modRow][modCol] = this.generateCell(row, col, nextProps);
+          console.log(row, col);
+          cellCache[modRow][0] = this.generateNumberCell(row, nextProps);
+          cellCache[modRow][modCol + 1] = this.generateCell(row, col, nextProps);
         }
         rowCache[modRow] = this.generateRow(row, nextProps, cellCache[modRow]);
       }
@@ -90,8 +92,8 @@ export default class CellContainer extends React.Component {
 
   generateCell(row, col, nextProps){
     let {
-      minRow, minCol, maxRow, 
-      maxCol, rows, cols, selectedRange, focusedCell} = nextProps;
+      minRow, minCol, maxRow, maxCol, rows, 
+      cols, selectedRange, focusedCell} = nextProps;
     return(
       <Cell 
         row={row} 
@@ -109,6 +111,16 @@ export default class CellContainer extends React.Component {
     )
   }
 
+  generateNumberCell(row, nextProps){
+    let {selectedRange, rows} = nextProps;
+    return (
+      <NumberCell 
+        key={"num_" + row % rows} 
+        row={row} 
+        selectedRange={selectedRange}/>
+    );
+  }
+
   generateRow(row, nextProps, currentRow){
     let {data, rows} = nextProps;
     let modRow = row % rows;
@@ -124,7 +136,6 @@ export default class CellContainer extends React.Component {
   }
 
   generateCells(props){
-    console.log("cells generated")
     let {data, selectedRange, rows, cols, focusedCell, minRow, minCol, maxRow, maxCol} = props;
     let {cellCache, rowCache} = this.state;
     let allRows = [];
@@ -133,10 +144,7 @@ export default class CellContainer extends React.Component {
       let modRow = row % rows; //modular row
       if(!cellCache[modRow]) cellCache[modRow] = [];
       cellCache[modRow].push(
-        <NumberCell 
-          key={"num_" + modRow} 
-          row={row} 
-          selectedRange={selectedRange}/>
+        this.generateNumberCell(row, props)
       );
 
       for(let col = minCol; col < cols + minCol; col++){
@@ -145,6 +153,7 @@ export default class CellContainer extends React.Component {
           this.generateCell(row, col, props)
         );
       }
+
       rowCache.push(
         this.generateRow(row, props, cellCache[modRow])
       );
