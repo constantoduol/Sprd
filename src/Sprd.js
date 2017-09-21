@@ -19,7 +19,6 @@ export default class Sprd extends React.Component {
   constructor(props){
     super(props);
     this.keyDown = this.keyDown.bind(this);
-    this.dragStart = this.dragStart.bind(this);
     this.KEY_DOWN_IGNORE_KEYS = {
       enter: "enter", 
       arrowleft: "arrowleft", 
@@ -51,10 +50,6 @@ export default class Sprd extends React.Component {
     let shouldUpdate = !SprdRange.areEqual(nextProps.selectedRange, this.props.selectedRange);
     if(shouldUpdate) return true;
     return difference(nextProps.headerWidths, this.props.headerWidths).length > 0;
-  }
-
-  dragStart(){
-    console.log("dragging started");
   }
 
   keyDown(e){
@@ -110,7 +105,7 @@ export default class Sprd extends React.Component {
       data, focusedCell, width, height, minRow, minCol, valueSetRange} = this.props;
     let style = merge(styles.root, {width});
     return (
-      <div style={style} onDragStart={this.dragStart}>
+      <div style={style}>
         {showFormulaBar ? <FormulaBar/> : null}
         <table style={styles.table}>
           <HeaderContainer

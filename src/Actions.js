@@ -34,6 +34,13 @@ class Actions {
     return range;
   }
 
+  dragChanged(dragging, dragOrigin){
+    return {dragging, dragOrigin};
+  }
+
+  dragEndChanged(dragEnd){ //where the cursor is currently when dragging
+    return dragEnd;
+  }
 
   parseData(rawData, rows, cols){
     let data = Map();
