@@ -15,7 +15,9 @@ class Store {
       onParseData: Actions.parseData,
       onSetValue: Actions.setValue,
       onSetViewPort: Actions.setViewPort,
-      onSetFocusedCell: Actions.setFocusedCell
+      onSetFocusedCell: Actions.setFocusedCell,
+      onDragChanged: Actions.dragChanged,
+      onDragEndChanged: Actions.dragEndChanged
     });
 
     this.NO_FOCUSED_CELL = new SprdRange(-1,-1,-1,-1);
@@ -26,6 +28,8 @@ class Store {
       focusedCell: this.NO_FOCUSED_CELL,
       data: Map(),
       headerWidths: [],
+      dragging: false, //current drag highlighting on going?
+      dragOrigin: null,
       cols: 0,
       rows: 0,
       maxCol: 0, //the max column we have reached
@@ -59,6 +63,16 @@ class Store {
 
   onSetFocusedCell(range){
     this.setState({focusedCell: range});
+  }
+
+  onDragChanged(drag){
+    let {dragging, dragOrigin} = drag;
+    this.dragging = dragging;
+    this.dragOrigin = dragOrigin;
+  }
+
+  onDragEndChanged(dragEnd){
+
   }
 
   onSetValue(valueAndRange){

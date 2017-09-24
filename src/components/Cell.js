@@ -40,6 +40,8 @@ export default class Cell extends React.Component {
       value: this.props.value
     };
 
+    this.dragStart = this.dragStart.bind(this);
+    this.dragStop = this.dragStop.bind(this);
     this.cellClicked = this.cellClicked.bind(this);
     this.cellDoubleClicked = this.cellDoubleClicked.bind(this);
     this.inputValueChanged = this.inputValueChanged.bind(this);
@@ -82,6 +84,19 @@ export default class Cell extends React.Component {
       }
     }
   }
+
+  dragStart(){
+    console.log("dragging started");
+    let {row, col} = this.props;
+    Actions.dragChanged(true, new SprdRange(row, col, row, col));
+  }
+
+
+  dragStop(){
+    console.log("dragging stopped");
+    Actions.dragChanged(false);
+  }
+
 
   //this is called twice when cell is double clicked
   //to prevent that we check if the current cell is already selected
@@ -157,6 +172,8 @@ export default class Cell extends React.Component {
     let style = merge(this.currentStyle(), {width});
     return (
       <td 
+        onDragStart={this.dragStart}
+        onDragEnd={this.dragStop}
         onDoubleClick={this.cellDoubleClicked}
         onClick={this.cellClicked}
         style={style}>
