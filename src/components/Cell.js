@@ -40,11 +40,14 @@ export default class Cell extends React.Component {
       value: this.props.value
     };
 
-    this.dragStart = this.dragStart.bind(this);
-    this.dragStop = this.dragStop.bind(this);
+    this.mouseUp = this.mouseUp.bind(this);
+    this.mouseDown = this.mouseDown.bind(this);
+    this.mouseMove = this.mouseMove.bind(this);
+
     this.cellClicked = this.cellClicked.bind(this);
     this.cellDoubleClicked = this.cellDoubleClicked.bind(this);
     this.inputValueChanged = this.inputValueChanged.bind(this);
+    this.mousePosition = {}; //track the mouse
   }
 
   componentDidMount(){
@@ -85,16 +88,30 @@ export default class Cell extends React.Component {
     }
   }
 
-  dragStart(){
-    console.log("dragging started");
-    let {row, col} = this.props;
-    Actions.dragChanged(true, new SprdRange(row, col, row, col));
+
+  mouseMove(){
+    console.log('mouse move')
+    this.mousePosition.mouseMove = true;
+    this.maybeStartDragging();
   }
 
+  mouseDown(){
+    console.log('mouse down')
+    this.mousePosition.mouseDown = true;
+    this.mousePosition.mouseUp = false;
+  }
 
-  dragStop(){
-    console.log("dragging stopped");
-    Actions.dragChanged(false);
+  mouseUp(){
+    console.log('mouse up')
+    this.mousePosition.mouseUp = true;
+    this.mousePosition.mouseDown = false;
+    console.log(this.mousePosition)
+  }
+
+  maybeStartDragging(){
+    if(this.mousePosition.mouseDown && !this.mousePosition.mouseUp){
+      console.log('dragging');
+    }
   }
 
 
@@ -172,8 +189,9 @@ export default class Cell extends React.Component {
     let style = merge(this.currentStyle(), {width});
     return (
       <td 
-        onDragStart={this.dragStart}
-        onDragEnd={this.dragStop}
+        onMouseDown={this.mouseDown}
+        onMouseMove={this.mouseMove}
+        onMouseUp={this.mouseUp}
         onDoubleClick={this.cellDoubleClicked}
         onClick={this.cellClicked}
         style={style}>
