@@ -74,7 +74,7 @@ export default class Cell extends React.Component {
     let {selectedRange, row, col, focusedCell, dragging} = props;
     let currentCell = new SprdRange(row, col, row, col); 
 
-    if(focusedCell.isCellSelected(row, col)){
+    if(focusedCell.isCellSelected(currentCell)){
       this.cellDoubleClicked();
       return;
     }
