@@ -22,9 +22,10 @@ export default class SprdRange {
 
   isEqual(otherRange){
     let {startRow, stopRow, startCol, stopCol} = otherRange;
-    if(startRow === this.startRow && stopRow === this.stopRow && startCol === this.startCol && stopCol === this.stopCol)
-      return true
-    return false;
+    return startRow === this.startRow 
+          && stopRow === this.stopRow 
+          && startCol === this.startCol 
+          && stopCol === this.stopCol;
   }
 
   //verify whether a list of two ranges is the same
@@ -40,6 +41,31 @@ export default class SprdRange {
       allFound = allFound && oneFound; 
     }
     return allFound;
+  }
+
+  toString(){
+    let {startCol, stopCol, startRow, stopRow} = this;
+    if(startCol === stopCol && startRow === stopRow)
+      return `${startRow}_${startCol}`;
+    return `${startRow}_${startCol}_${stopRow}_${stopCol}`;
+  }
+
+  /**
+  * finds one range that covers all the ranges
+  * @ranges - an array of SprdRange objects
+  */
+  static toSingleRange(ranges){
+    let minRow = Number.MAX_SAFE_INTEGER, minCol = Number.MAX_SAFE_INTEGER, maxRow = 0, maxCol = 0;
+    for(let range of ranges){
+      let {startCol, stopCol, startRow, stopRow} = range;
+      if(startCol < minCol) minCol = startCol;
+      if(stopCol > maxCol) maxCol = stopCol;
+
+      if(startRow < minRow) minRow = startRow;
+      if(stopRow > maxRow) maxRow = stopRow;
+    }
+
+    return new SprdRange(minRow, minCol, maxRow, maxCol);
   }
 
 }

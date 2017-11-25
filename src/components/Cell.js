@@ -22,7 +22,8 @@ export default class Cell extends React.Component {
     cols: PropTypes.number,
     value: PropTypes.string,
     width: PropTypes.number,
-    selectedRange: PropTypes.array
+    selectedRange: PropTypes.array,
+    dragging: PropTypes.bool
   };
 
   constructor(props){
@@ -42,12 +43,11 @@ export default class Cell extends React.Component {
 
     this.mouseUp = this.mouseUp.bind(this);
     this.mouseDown = this.mouseDown.bind(this);
-    this.mouseMove = this.mouseMove.bind(this);
+    this.mouseOver = this.mouseOver.bind(this);
 
     this.cellClicked = this.cellClicked.bind(this);
     this.cellDoubleClicked = this.cellDoubleClicked.bind(this);
     this.inputValueChanged = this.inputValueChanged.bind(this);
-    this.mousePosition = {}; //track the mouse
   }
 
   componentDidMount(){
@@ -88,32 +88,23 @@ export default class Cell extends React.Component {
     }
   }
 
-
-  mouseMove(){
-    console.log('mouse move')
-    this.mousePosition.mouseMove = true;
-    this.maybeStartDragging();
-  }
-
   mouseDown(){
-    console.log('mouse down')
-    this.mousePosition.mouseDown = true;
-    this.mousePosition.mouseUp = false;
+    let {row, col} = this.props;
+    Actions.dragStarted(new SprdRange(row, col, row, col));
   }
 
   mouseUp(){
-    console.log('mouse up')
-    this.mousePosition.mouseUp = true;
-    this.mousePosition.mouseDown = false;
-    console.log(this.mousePosition)
+    let {row, col} = this.props;
+    Actions.dragStopped(new SprdRange(row, col, row, col));
   }
 
-  maybeStartDragging(){
-    if(this.mousePosition.mouseDown && !this.mousePosition.mouseUp){
-      console.log('dragging');
+  mouseOver(){
+    let {dragging} = this.props;
+    if(dragging){
+      let {row, col} = this.props;
+      Actions.addDragZone(new SprdRange(row, col, row, col));
     }
   }
-
 
   //this is called twice when cell is double clicked
   //to prevent that we check if the current cell is already selected
@@ -190,8 +181,8 @@ export default class Cell extends React.Component {
     return (
       <td 
         onMouseDown={this.mouseDown}
-        onMouseMove={this.mouseMove}
         onMouseUp={this.mouseUp}
+        onMouseOver={this.mouseOver}
         onDoubleClick={this.cellDoubleClicked}
         onClick={this.cellClicked}
         style={style}>

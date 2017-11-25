@@ -25,7 +25,9 @@ export default class Sprd extends React.Component {
       arrowdown: "arrowdown", 
       arrowright: "arrowright",
       arrowup: "arrowup",
-      alt: "alt"
+      alt: "alt",
+      control: "control",
+      shift: "shift"
     };
   }
 
@@ -43,12 +45,14 @@ export default class Sprd extends React.Component {
 
 
   shouldComponentUpdate(nextProps, nextState){
-    //there was a change in data
+    //there was a change in the focussed cell
     if(!nextProps.focusedCell.isEqual(this.props.focusedCell)) return true;
+    //there was a change in data
     if(nextProps.data !== this.props.data) return true;
-    //there was a change in header widths
+    if(nextProps.dragging !== this.props.dragging) return true; //dragging is going on
     let shouldUpdate = !SprdRange.areEqual(nextProps.selectedRange, this.props.selectedRange);
     if(shouldUpdate) return true;
+    //there was a change in header widths
     return difference(nextProps.headerWidths, this.props.headerWidths).length > 0;
   }
 
@@ -102,10 +106,10 @@ export default class Sprd extends React.Component {
     let {
       cols, rows, showFormulaBar, headerWidths, 
       selectedRange, showHeaderLetters, 
-      data, focusedCell, width, height, minRow, minCol, valueSetRange} = this.props;
+      data, focusedCell, width, height, minRow, minCol, valueSetRange, dragging} = this.props;
     let style = merge(styles.root, {width});
     return (
-      <div style={style}>
+      <div style={style} draggable="false">
         {showFormulaBar ? <FormulaBar/> : null}
         <table style={styles.table}>
           <HeaderContainer
@@ -122,6 +126,7 @@ export default class Sprd extends React.Component {
             valueSetRange={valueSetRange}
             selectedRange={selectedRange}
             focusedCell={focusedCell}
+            dragging={dragging}
             rows={rows}/>
         </table>
         <Footer width={width}/>
@@ -133,11 +138,13 @@ export default class Sprd extends React.Component {
 const styles = {
   table: {
     borderCollapse: "collapse",
-    borderSpacing: 0
+    borderSpacing: 0,
+    userSelect: "none"
   },
   root: {
     borderBottom: "1px solid #BDBDBD",
     borderRight: "1px solid #BDBDBD",
-    margin: 5
+    margin: 5,
+    userSelect: "none"
   }
 }

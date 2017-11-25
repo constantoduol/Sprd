@@ -16,8 +16,9 @@ class Store {
       onSetValue: Actions.setValue,
       onSetViewPort: Actions.setViewPort,
       onSetFocusedCell: Actions.setFocusedCell,
-      onDragChanged: Actions.dragChanged,
-      onDragEndChanged: Actions.dragEndChanged
+      onDragStarted: Actions.dragStarted,
+      onDragStopped: Actions.dragStopped,
+      onAddDragZone: Actions.addDragZone
     });
 
     this.NO_FOCUSED_CELL = new SprdRange(-1,-1,-1,-1);
@@ -30,6 +31,7 @@ class Store {
       headerWidths: [],
       dragging: false, //current drag highlighting on going?
       dragOrigin: null,
+      dragZone: {}, //cells in the drag zone
       cols: 0,
       rows: 0,
       maxCol: 0, //the max column we have reached
@@ -65,14 +67,29 @@ class Store {
     this.setState({focusedCell: range});
   }
 
-  onDragChanged(drag){
-    let {dragging, dragOrigin} = drag;
-    this.dragging = dragging;
-    this.dragOrigin = dragOrigin;
+  onDragStarted(origin){
+    this.state.dragZone = {};
+    this.addDragZone(origin);
+    this.setState({dragging: true, dragZone: this.state.dragZone});
   }
 
-  onDragEndChanged(dragEnd){
+  onDragStopped(end){
+    this.addDragZone(end);
+    this.setState({dragging: false});
+  }
 
+  onAddDragZone(range){
+    this.addDragZone(range);
+    let {dragZone} = this.state;
+    let selectedRange = [SprdRange.toSingleRange(Object.values(dragZone))];
+    this.setState({dragZone: dragZone, selectedRange: selectedRange}); 
+  }
+
+  addDragZone(range){
+    let rangeString = range.toString();
+    let {dragZone} = this.state;
+    if(dragZone[rangeString]) return;
+    dragZone[rangeString] = range; //should we use an immutable?
   }
 
   onSetValue(valueAndRange){

@@ -15,12 +15,14 @@ export default class CellContainer extends React.Component {
     data: PropTypes.object,
     selectedRange: PropTypes.array,
     minCol: PropTypes.number,
-    minRow: PropTypes.number
+    minRow: PropTypes.number,
+    dragging: PropTypes.bool
   };
 
   shouldComponentUpdate(nextProps, nextState){
     if(nextProps.data !== this.props.data) return true;
     if(!nextProps.focusedCell.isEqual(this.props.focusedCell)) return true;
+    if(nextProps.dragging !== this.props.dragging) return true; //dragging is going on
     if(nextProps.rows !== this.props.rows || nextProps.cols !== this.props.cols)
       return true;
     if(nextProps.minCol !== this.props.minCol || nextProps.minRow !== this.props.minRow)
@@ -37,7 +39,7 @@ export default class CellContainer extends React.Component {
   }
 
   renderCells(){
-    let {data, selectedRange, rows, cols, focusedCell, minRow, minCol, maxRow, maxCol} = this.props;
+    let {data, selectedRange, rows, cols, focusedCell, minRow, minCol, maxRow, maxCol, dragging} = this.props;
     let allRows = [];
     for(let row = minRow; row < rows + minRow; row++){
       let currentRow = [];
@@ -64,6 +66,7 @@ export default class CellContainer extends React.Component {
             value={this.getCellValue(row, col)}
             selectedRange={selectedRange}
             focusedCell={focusedCell}
+            dragging={dragging}
             key={row + "_" + col}/>
         );
       }

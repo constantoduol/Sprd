@@ -34,12 +34,16 @@ class Actions {
     return range;
   }
 
-  dragChanged(dragging, dragOrigin){
-    return {dragging, dragOrigin};
+  dragStarted(dragOrigin){
+    return dragOrigin;
   }
 
-  dragEndChanged(dragEnd){ //where the cursor is currently when dragging
+  dragStopped(dragEnd){
     return dragEnd;
+  }
+
+  addDragZone(range){
+    return range;
   }
 
   parseData(rawData, rows, cols){
