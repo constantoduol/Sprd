@@ -70,7 +70,9 @@ class Store {
   onDragStarted(origin){
     this.state.dragZone = {};
     this.addDragZone(origin);
-    this.setState({dragging: true, dragZone: this.state.dragZone});
+    let {dragZone} = this.state;
+    this.setState({dragging: true, dragZone: dragZone});
+    
   }
 
   onDragStopped(end){

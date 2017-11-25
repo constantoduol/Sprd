@@ -8,16 +8,19 @@ export default class SprdRange {
     this.stopCol = stopCol; 
   }
 
-  isNumberCellSelected(row){
-    return this.startCol === 0 && this.stopCol === -1 && this.startRow === row;
+  isNumberCellSelected(range){
+    let {startRow} = range;
+    return this.startCol === 0 && this.stopCol === -1 && this.startRow === startRow;
   }
 
-  isCellSelected(row, col){
-    return this.startRow === row && this.startCol === col && this.stopRow === row && this.stopCol === col;
+  isCellSelected(range){
+    let {startCol, startRow, stopRow, stopCol} = range;
+    return this.startRow === startRow && this.startCol === startCol && this.stopRow === stopRow && this.stopCol === stopCol;
   }
 
-  isHeaderSelected(col){
-    return this.startCol === col && this.stopCol === col && this.startRow === -1 && this.stopRow === -1;
+  isHeaderSelected(range){
+    let {startCol} = range;
+    return this.startCol === startCol && this.stopCol === startCol && this.startRow === -1 && this.stopRow === -1;
   }
 
   isEqual(otherRange){
@@ -66,6 +69,14 @@ export default class SprdRange {
     }
 
     return new SprdRange(minRow, minCol, maxRow, maxCol);
+  }
+
+  /**
+  * verifies whether the current cell is within the given range
+  */
+  isWithinRange(range){
+    let {startRow, startCol, stopRow, stopCol} = range;
+    return this.startRow >= startRow && this.stopRow <= stopRow && this.startCol >= startCol && this.stopCol <= stopCol;
   }
 
 }

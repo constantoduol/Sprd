@@ -33,7 +33,8 @@ export default class Cell extends React.Component {
       ACTIVE: "active", 
       EDITING: "editing",
       HORIZONTAL_HIGHLIGHT: "horizontal_higlight",
-      VERTICAL_HIGHLIGHT: "vertical_higlight"
+      VERTICAL_HIGHLIGHT: "vertical_higlight",
+      DRAG_HIGHLIGHT: "drag_highlight"
     };
 
     this.state = {
@@ -70,19 +71,30 @@ export default class Cell extends React.Component {
 
   maybeChangeCellMode(props){
     let {mode} = this.state;
-    let {selectedRange, row, col, focusedCell} = props;
+    let {selectedRange, row, col, focusedCell, dragging} = props;
+    let currentCell = new SprdRange(row, col, row, col); 
+
     if(focusedCell.isCellSelected(row, col)){
       this.cellDoubleClicked();
       return;
     }
+
     for(let range of selectedRange){
-      if(range.isCellSelected(row, col)){
+
+      if(currentCell.isCellSelected(range)){
+
         this.setState({mode: this.CELL_MODES.ACTIVE});
-      } else if(range.isNumberCellSelected(row, col)){
+      } else if(currentCell.isNumberCellSelected(range)){
+
         this.setState({mode: this.CELL_MODES.HORIZONTAL_HIGHLIGHT});
-      } else if(range.isHeaderSelected(col)){
+      } else if(currentCell.isHeaderSelected(range)){
+
         this.setState({mode: this.CELL_MODES.VERTICAL_HIGHLIGHT});
+      } else if(currentCell.isWithinRange(range)) {
+
+        this.setState({mode: this.CELL_MODES.DRAG_HIGHLIGHT});
       } else if(mode !== this.CELL_MODES.INACTIVE){
+
         this.setState({mode: this.CELL_MODES.INACTIVE});
       }
     }
@@ -137,6 +149,8 @@ export default class Cell extends React.Component {
         return styles.td_horizontal_highlight;
       case this.CELL_MODES.VERTICAL_HIGHLIGHT:
         return styles.td_vertical_highlight;
+      case this.CELL_MODES.DRAG_HIGHLIGHT:
+        return styles.td_drag_highlight;
     }
   }
 
@@ -214,6 +228,13 @@ const styles = {
     borderRight: "1px solid #2196F3",
     borderTop: "1px solid #BDBDBD",
     borderBottom: "1px solid #BDBDBD",
+    background: "rgba(33, 150, 243, 0.1)"
+  },
+  td_drag_highlight: {
+    borderTop: "1px solid #BDBDBD",
+    borderBottom: "1px solid #BDBDBD",
+    borderLeft: "1px solid #BDBDBD",
+    borderRight: "1px solid #BDBDBD",
     background: "rgba(33, 150, 243, 0.1)"
   },
   td_active: {
