@@ -39,7 +39,7 @@ export default class CellContainer extends React.Component {
   }
 
   renderCells(){
-    let {data, selectedRange, rows, cols, focusedCell, minRow, minCol, maxRow, maxCol, dragging} = this.props;
+    let {data, selectedRange, rows, cols, focusedCell, minRow, minCol, dragging} = this.props;
     let allRows = [];
     for(let row = minRow; row < rows + minRow; row++){
       let currentRow = [];
@@ -59,8 +59,6 @@ export default class CellContainer extends React.Component {
             col={col} 
             minRow={minRow}
             minCol={minCol}
-            maxRow={maxRow}
-            maxCol={maxCol}
             rows={rows}
             cols={cols}
             value={this.getCellValue(row, col)}

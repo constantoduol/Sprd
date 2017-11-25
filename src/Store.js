@@ -34,8 +34,6 @@ class Store {
       dragZone: {}, //cells in the drag zone
       cols: 0,
       rows: 0,
-      maxCol: 0, //the max column we have reached
-      maxRow: 0, //the max row we have reached
       minCol: 0, //rendering of headers starts from minCol to minCol + cols
       minRow: 0 //rendering of rows starts from minRow to minRow + rows
     };

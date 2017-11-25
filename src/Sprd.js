@@ -7,6 +7,7 @@ import Footer from './components/Footer';
 import HeaderContainer from './components/HeaderContainer';
 import CellContainer from './components/CellContainer';
 import FormulaBar from './components/FormulaBar';
+import VirtualScrollBar from './components/VirtualScrollBar';
 import Actions from './Actions';
 import SprdRange from './SprdRange';
 import Store from './Store';
@@ -129,6 +130,11 @@ export default class Sprd extends React.Component {
             dragging={dragging}
             rows={rows}/>
         </table>
+        <VirtualScrollBar 
+          cols={cols} 
+          rows={rows} 
+          minCol={minCol} 
+          minRow={minRow}/>
         <Footer width={width}/>
       </div>
     )

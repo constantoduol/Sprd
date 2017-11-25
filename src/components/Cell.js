@@ -16,8 +16,6 @@ export default class Cell extends React.Component {
     col: PropTypes.number,
     minRow: PropTypes.number,
     minCol: PropTypes.number,
-    maxRow: PropTypes.number,
-    maxCol: PropTypes.number,
     rows: PropTypes.number,
     cols: PropTypes.number,
     value: PropTypes.string,
