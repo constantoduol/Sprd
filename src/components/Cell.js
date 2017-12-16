@@ -18,7 +18,10 @@ export default class Cell extends React.Component {
     minCol: PropTypes.number,
     rows: PropTypes.number,
     cols: PropTypes.number,
-    value: PropTypes.string,
+    value: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number
+    ]),
     width: PropTypes.number,
     selectedRange: PropTypes.array,
     dragging: PropTypes.bool
@@ -153,9 +156,11 @@ export default class Cell extends React.Component {
   }
 
   inputValueChanged(e){
-    this.setState({value: e.target.value}, () => {
+    let value = e.target.value;
+    value = isNaN(Number(value)) ? value : Number(value);
+    this.setState({value}, () => {
       let {row, col} = this.props;
-      Actions.setValue(this.state.value, new SprdRange(row, col, row, col));
+      Actions.setValue(value, new SprdRange(row, col, row, col));
     });
   }
 
@@ -176,11 +181,14 @@ export default class Cell extends React.Component {
 
   renderOuterCell(){
     let {mode, value} = this.state;
+    console.log(typeof value)
+    let textAlign = typeof value === "number" ? "right" : "left";
+    let style = merge({textAlign}, styles.outer_cell);
     return (
       <div 
         key={1}
         hidden={mode === this.CELL_MODES.EDITING}
-        style={styles.outer_cell}>
+        style={style}>
           {this.state.value}
       </div>
     );
@@ -246,7 +254,6 @@ const styles = {
    border: "2px solid #2196F3"
   },
   outer_cell: {
-    fontSize: 14,
-    textAlign: "right"
+    fontSize: 14
   }
 }
