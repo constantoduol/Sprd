@@ -72,6 +72,13 @@ export default class SprdRange {
   }
 
   /**
+  * returns a range with the drag origin as the extremity
+  */
+  static toDragRange(ranges, dragOrigin){
+
+  }
+
+  /**
   * verifies whether the current cell is within the given range
   */
   isWithinRange(range){

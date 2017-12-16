@@ -24,7 +24,8 @@ export default class Cell extends React.Component {
     ]),
     width: PropTypes.number,
     selectedRange: PropTypes.array,
-    dragging: PropTypes.bool
+    dragging: PropTypes.bool,
+    dragOrigin: PropTypes.object
   };
 
   constructor(props){
@@ -54,10 +55,26 @@ export default class Cell extends React.Component {
 
   componentDidMount(){
     console.log("cell mount")
-    Mousetrap(this.input).bind("enter", () => {
+    Mousetrap(this.input).bind(["enter", "down"], () => {
       this.setState({mode: this.CELL_MODES.INACTIVE});
       SprdNavigator.move(this.props, DIRECTION.DOWN);
     });
+
+    Mousetrap(this.input).bind("left", () => {
+      this.setState({mode: this.CELL_MODES.INACTIVE});
+      SprdNavigator.move(this.props, DIRECTION.LEFT);
+    });
+
+    Mousetrap(this.input).bind("right", () => {
+      this.setState({mode: this.CELL_MODES.INACTIVE});
+      SprdNavigator.move(this.props, DIRECTION.RIGHT);
+    });
+
+    Mousetrap(this.input).bind("up", () => {
+      this.setState({mode: this.CELL_MODES.INACTIVE});
+      SprdNavigator.move(this.props, DIRECTION.UP);
+    });
+
     this.maybeChangeCellMode(this.props);
   }
 
@@ -72,11 +89,16 @@ export default class Cell extends React.Component {
 
   maybeChangeCellMode(props){
     let {mode} = this.state;
-    let {selectedRange, row, col, focusedCell, dragging} = props;
+    let {selectedRange, row, col, focusedCell, dragging, dragOrigin} = props;
     let currentCell = new SprdRange(row, col, row, col); 
 
     if(focusedCell.isCellSelected(currentCell)){
       this.cellDoubleClicked();
+      return;
+    }
+
+    if(currentCell.isCellSelected(dragOrigin) && dragging){
+      this.setState({mode: this.CELL_MODES.ACTIVE});
       return;
     }
 
@@ -181,7 +203,6 @@ export default class Cell extends React.Component {
 
   renderOuterCell(){
     let {mode, value} = this.state;
-    console.log(typeof value)
     let textAlign = typeof value === "number" ? "right" : "left";
     let style = merge({textAlign}, styles.outer_cell);
     return (

@@ -30,7 +30,7 @@ class Store {
       data: Map(),
       headerWidths: [],
       dragging: false, //current drag highlighting on going?
-      dragOrigin: null,
+      dragOrigin: this.NO_FOCUSED_CELL,
       dragZone: {}, //cells in the drag zone
       cols: 0,
       rows: 0,
@@ -69,8 +69,7 @@ class Store {
     this.state.dragZone = {};
     this.addDragZone(origin);
     let {dragZone} = this.state;
-    this.setState({dragging: true, dragZone: dragZone});
-    
+    this.setState({dragging: true, dragZone: dragZone, dragOrigin: origin});
   }
 
   onDragStopped(end){
