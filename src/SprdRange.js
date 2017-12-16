@@ -73,9 +73,43 @@ export default class SprdRange {
 
   /**
   * returns a range with the drag origin as the extremity
+  * @ranges - an array consisting of sprd ranges representing the area covered by the drag
+  * @dragOrigin - the SprdRange representing the cell where dragging started
+  * @recentDragCell - a SprdRange representing the most recent cell covered by dragging, this helps determine the direction
+  *                  of drag relative to the drag origin
   */
-  static toDragRange(ranges, dragOrigin){
+  static toDragRange(ranges, dragOrigin, recentDragCell){
+    let {startCol: originStartCol, stopCol: originStopCol, startRow: originStartRow, stopRow: originStopRow} = dragOrigin;
+    let {startCol: recentStartCol, stopCol: recentStopCol, startRow: recentStartRow, stopRow: recentStopRow} = recentDragCell;
+    let singleRange = SprdRange.toSingleRange(ranges);
 
+    if(recentStartCol <= originStartCol && recentStartRow >= originStartRow){
+      //direction = DIRECTION.BOTTOM_LEFT;
+      singleRange.stopCol = originStopCol;
+      singleRange.startRow = originStartRow;
+      singleRange.startCol = recentStartCol;
+      singleRange.stopRow = recentStopRow;
+    } else if(recentStartCol <= originStartCol && recentStartRow <= originStartRow){
+      //direction = DIRECTION.TOP_LEFT;
+      singleRange.stopRow = originStopRow;
+      singleRange.stopCol = originStopCol;
+      singleRange.startCol = recentStartCol;
+      singleRange.startRow = recentStartRow;
+    } else if(recentStartCol >= originStartCol && recentStartRow <= originStartRow){
+      //direction = DIRECTION.TOP_RIGHT;
+      singleRange.startCol = originStartCol;
+      singleRange.stopRow = originStopRow;
+      singleRange.startRow = recentStartRow;
+      singleRange.stopCol = recentStopCol;
+    } else if(recentStartCol >= originStartCol && recentStartRow >= originStartRow){
+      //direction = DIRECTION.BOTTOM_RIGHT;
+      singleRange.startCol = originStartCol;
+      singleRange.startRow = originStartRow;
+      singleRange.stopRow = recentStopRow;
+      singleRange.stopCol = recentStopCol;
+    }
+
+    return singleRange;
   }
 
   /**

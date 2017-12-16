@@ -79,8 +79,8 @@ class Store {
 
   onAddDragZone(range){
     this.addDragZone(range);
-    let {dragZone} = this.state;
-    let selectedRange = [SprdRange.toSingleRange(Object.values(dragZone))];
+    let {dragZone, dragOrigin} = this.state;
+    let selectedRange = [SprdRange.toDragRange(Object.values(dragZone), dragOrigin, range)];
     this.setState({dragZone: dragZone, selectedRange: selectedRange}); 
   }
 
