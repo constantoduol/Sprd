@@ -31,6 +31,7 @@ class Store {
       headerWidths: [],
       dragging: false, //current drag highlighting on going?
       dragOrigin: this.NO_FOCUSED_CELL,
+      recentDragCell: this.NO_FOCUSED_CELL, //a sprd range representing the most recently covered cell when draggin
       dragZone: {}, //cells in the drag zone
       cols: 0,
       rows: 0,
@@ -81,7 +82,7 @@ class Store {
     this.addDragZone(range);
     let {dragZone, dragOrigin} = this.state;
     let selectedRange = [SprdRange.toDragRange(Object.values(dragZone), dragOrigin, range)];
-    this.setState({dragZone: dragZone, selectedRange: selectedRange}); 
+    this.setState({dragZone: dragZone, selectedRange: selectedRange, recentDragCell: range}); 
   }
 
   addDragZone(range){

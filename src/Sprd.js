@@ -108,7 +108,7 @@ export default class Sprd extends React.Component {
       cols, rows, showFormulaBar, headerWidths, 
       selectedRange, showHeaderLetters, 
       data, focusedCell, width, height, minRow, minCol, 
-      valueSetRange, dragging, dragOrigin} = this.props;
+      valueSetRange, dragging, dragOrigin, recentDragCell} = this.props;
     let style = merge(styles.root, {width});
     return (
       <div style={style} draggable="false">
@@ -130,6 +130,7 @@ export default class Sprd extends React.Component {
             focusedCell={focusedCell}
             dragging={dragging}
             dragOrigin={dragOrigin}
+            recentDragCell={recentDragCell}
             rows={rows}/>
         </table>
         <VirtualScrollBar 

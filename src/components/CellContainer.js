@@ -6,6 +6,8 @@ import NumberCell from './NumberCell';
 import TableRow from './TableRow';
 import Actions from '../Actions';
 import SprdRange from '../SprdRange';
+import SprdNavigator from '../SprdNavigator';
+import {DIRECTION} from '../Constants';
 
 export default class CellContainer extends React.Component {
 
@@ -17,7 +19,8 @@ export default class CellContainer extends React.Component {
     minCol: PropTypes.number,
     minRow: PropTypes.number,
     dragging: PropTypes.bool,
-    dragOrigin: PropTypes.object
+    dragOrigin: PropTypes.object,
+    recentDragCell: PropTypes.object
   };
 
   shouldComponentUpdate(nextProps, nextState){
@@ -31,6 +34,34 @@ export default class CellContainer extends React.Component {
     return !SprdRange.areEqual(nextProps.selectedRange, this.props.selectedRange);
   }
 
+  componentWillReceiveProps(nextProps){
+    let {recentDragCell} = nextProps;
+    this.maybeScrollIfRangeExceeded(recentDragCell);
+  }
+
+
+  /**
+  * when dragging happens and current screen view port
+  * range is exceeded, we scroll
+  * @recentCell - this is a sprd range representing the most recent cell
+  *               covered by dragging
+  */
+  maybeScrollIfRangeExceeded(recentCell){
+    let {minCol, minRow, cols, rows} = this.props;
+    let maxCol = minCol + cols;
+    let maxRow = minRow + rows
+    let {startCol, startRow, stopCol, stopRow} = recentCell;
+    const THRESHOLD = 3; 
+    if(startCol >  maxCol - THRESHOLD){
+      SprdNavigator.move({selectedRange: [recentCell], minCol, minRow, rows, cols}, DIRECTION.RIGHT);
+    } else if(startRow > maxRow - THRESHOLD){
+      SprdNavigator.move({selectedRange: [recentCell], minCol, minRow, rows, cols}, DIRECTION.DOWN);
+    } else if(startCol < minCol + THRESHOLD){
+      SprdNavigator.move({selectedRange: [recentCell], minCol, minRow, rows, cols}, DIRECTION.LEFT);
+    } else if(startRow > minRow + THRESHOLD){
+      SprdNavigator.move({selectedRange: [recentCell], minCol, minRow, rows, cols}, DIRECTION.UP);
+    }
+  }
 
   getCellValue(row, col){
     let {data} = this.props;
