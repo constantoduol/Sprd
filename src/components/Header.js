@@ -11,7 +11,7 @@ export default class Header extends React.Component {
   static propTypes = {
     col: PropTypes.number,
     title: PropTypes.string,
-    selectedRange: PropTypes.array,
+    ranges: PropTypes.object,
     width: PropTypes.number
   }
 
@@ -21,33 +21,27 @@ export default class Header extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState){
-    for(let range of nextProps.selectedRange){
-      if(this.headerIsActive(range)) return true;
-    }
-    for(let range of this.props.selectedRange){
-      if(this.headerIsActive(range)) return true;
-    }
-    return false;
+    let clickSelectedRange = SprdRange.fromImmutable('clickSelectedRange', nextProps.ranges);
+    let currClickSelectedRange = SprdRange.fromImmutable('clickSelectedRange', this.props.ranges);
+    return this.headerIsActive(clickSelectedRange) || this.headerIsActive(currClickSelectedRange);
   }
 
   headerIsActive(range){
     let {startCol, stopCol} = range;
-    if(startCol === stopCol && stopCol === this.props.col)
-      return true;
+    return startCol === stopCol && stopCol === this.props.col;
   }
 
   headerClicked(){
     let {col} = this.props;
-    Actions.selectRange(new SprdRange(-1, col, -1, col));
+    Actions.setRange({'clickSelectedRange': new SprdRange(-1, col, -1, col)});
   }
 
   currentStyle(){
-    let {selectedRange, width} = this.props;
+    let {ranges, width} = this.props;
+    let clickSelectedRange = SprdRange.fromImmutable('clickSelectedRange', ranges);
     let style = {width: width};
-    for(let range of selectedRange){
-      if(this.headerIsActive(range))
-        return merge(style, styles.headerSelected);
-    }
+    if(this.headerIsActive(clickSelectedRange))
+      return merge(style, styles.headerSelected);
     return merge(style, styles.header);
   }
 

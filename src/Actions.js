@@ -6,7 +6,7 @@ import {Map} from 'immutable';
 
 class Actions {
 
-  selectRange(range){
+  setRange(range){
     return range;
   }
 
@@ -28,10 +28,6 @@ class Actions {
 
   setViewPort(minRow, minCol){ 
     return [minRow, minCol];
-  }
-
-  setFocusedCell(range){
-    return range;
   }
 
   dragStarted(dragOrigin){

@@ -5,33 +5,34 @@ import {Map} from 'immutable';
 import Actions from './Actions';
 import SprdRange from './SprdRange';
 
+const OUT_OF_RANGE_CELL = new SprdRange(-1,-1,-1,-1);
 
 class Store {
 
   constructor() {
     this.bindListeners({
-      onSelectRange: Actions.selectRange,
-      onClearSelectedRange: Actions.clearSelectedRange,
+      onSetRange: Actions.setRange,
       onParseData: Actions.parseData,
       onSetValue: Actions.setValue,
       onSetViewPort: Actions.setViewPort,
-      onSetFocusedCell: Actions.setFocusedCell,
       onDragStarted: Actions.dragStarted,
       onDragStopped: Actions.dragStopped,
       onAddDragZone: Actions.addDragZone
     });
 
-    this.NO_FOCUSED_CELL = new SprdRange(-1,-1,-1,-1);
 
     this.state = {
-      selectedRange: [],
+      ranges: Map({
+        clickSelectedRange: OUT_OF_RANGE_CELL, //range selected by user click actions
+        dragSelectedRange: OUT_OF_RANGE_CELL, //range selected by user drag actions
+        focusedCellRange: OUT_OF_RANGE_CELL, //a range representing a single cell that is the currently focused cell
+        recentDragCellRange: OUT_OF_RANGE_CELL, //range representing a single cell that was most recently covered when dragging
+        dragOriginCellRange: OUT_OF_RANGE_CELL //range representing a single cell that is the origin of dragging
+      }),
       valueSetRange: [], //range of where data changed
-      focusedCell: this.NO_FOCUSED_CELL,
       data: Map(),
       headerWidths: [],
       dragging: false, //current drag highlighting on going?
-      dragOrigin: this.NO_FOCUSED_CELL,
-      recentDragCell: this.NO_FOCUSED_CELL, //a sprd range representing the most recently covered cell when draggin
       dragZone: {}, //cells in the drag zone
       cols: 0,
       rows: 0,
@@ -41,15 +42,14 @@ class Store {
 
   }
 
-  onSelectRange(range){
-    if(isArray(range))
-      this.setState({selectedRange: range, focusedCell: this.NO_FOCUSED_CELL});
-    else
-      this.setState({selectedRange: [range], focusedCell: this.NO_FOCUSED_CELL});
-  }
-
-  onClearSelectedRange(){
-    this.setState({selectedRange: []});
+  onSetRange(rangesToSet){
+    let {ranges} = this.state;
+    for(let [key, range] of Object.entries(rangesToSet)){
+      let currentRange = ranges.get(key);
+      if(!currentRange) continue;
+      ranges = ranges.set(key, range);
+    }
+    this.setState({ranges});
   }
 
   onParseData(params){
@@ -62,14 +62,11 @@ class Store {
     });
   }
 
-  onSetFocusedCell(range){
-    this.setState({focusedCell: range});
-  }
-
   onDragStarted(origin){
     this.state.dragZone = {};
     this.addDragZone(origin);
-    let {dragZone} = this.state;
+    let {dragZone, ranges} = this.state;
+    
     this.setState({dragging: true, dragZone: dragZone, dragOrigin: origin});
   }
 

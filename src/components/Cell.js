@@ -83,44 +83,41 @@ export default class Cell extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState){
-    if(nextState.value !== this.state.value) return true;
-    return nextState.mode !== this.state.mode;
+    let {mode, value} = this.state;
+    return nextState.mode !== mode || nextState.value !== value;
   }
 
   maybeChangeCellMode(props){
     let {mode} = this.state;
-    let {selectedRange, row, col, focusedCell, dragging, dragOrigin} = props;
-    let currentCell = new SprdRange(row, col, row, col); 
+    let {ranges, row, col, dragging} = props;
+    let currentCellRange = new SprdRange(row, col, row, col);
+    let {focusedCellRange, dragOriginCellRange, 
+      clickSelectedRange, dragSelectedRange} = SprdRange.fromImmutable(null, ranges); 
 
-    if(focusedCell.isCellSelected(currentCell)){
+    if(focusedCellRange.isCellSelected(currentCellRange)){
       this.cellDoubleClicked();
       return;
-    }
+    } 
 
-    if(currentCell.isCellSelected(dragOrigin) && dragging){
-      this.setState({mode: this.CELL_MODES.ACTIVE});
-      return;
-    }
-
-    for(let range of selectedRange){
-
-      if(currentCell.isCellSelected(range)){
-
+    if(dragging){
+      if(currentCellRange.isCellSelected(dragOriginCellRange)){
         this.setState({mode: this.CELL_MODES.ACTIVE});
-      } else if(currentCell.isNumberCellSelected(range)){
-
-        this.setState({mode: this.CELL_MODES.HORIZONTAL_HIGHLIGHT});
-      } else if(currentCell.isHeaderSelected(range)){
-
-        this.setState({mode: this.CELL_MODES.VERTICAL_HIGHLIGHT});
-      } else if(currentCell.isWithinRange(range)) {
-
+      } else if(currentCellRange.isWithinRange(dragSelectedRange)){
         this.setState({mode: this.CELL_MODES.DRAG_HIGHLIGHT});
-      } else if(mode !== this.CELL_MODES.INACTIVE){
-
-        this.setState({mode: this.CELL_MODES.INACTIVE});
       }
+      return
     }
+
+    if(clickSelectedRange.isCellSelected(currentCellRange)){
+      this.setState({mode: this.CELL_MODES.ACTIVE});
+    } else if(clickSelectedRange.isNumberCellSelected(currentCellRange)){
+      this.setState({mode: this.CELL_MODES.HORIZONTAL_HIGHLIGHT});
+    } else if(clickSelectedRange.isHeaderSelected(currentCellRange)){
+      this.setState({mode: this.CELL_MODES.VERTICAL_HIGHLIGHT});
+    } else if(mode !== this.CELL_MODES.INACTIVE){
+      this.setState({mode: this.CELL_MODES.INACTIVE});
+    }
+    
   }
 
   mouseDown(){
@@ -144,14 +141,11 @@ export default class Cell extends React.Component {
   //this is called twice when cell is double clicked
   //to prevent that we check if the current cell is already selected
   cellClicked(){
-    let {row, col, selectedRange} = this.props;
-    let thisCellSelected = false;
-    for(let range of selectedRange){
-      thisCellSelected =  range.isCellSelected(row, col);
-      if(thisCellSelected) break;
-    }
+    let {row, col, ranges} = this.props;
+    let clickSelectedRange = SprdRange.fromImmutable('clickSelectedRange', ranges);
+    let thisCellSelected = clickSelectedRange.isCellSelected(row, col);
     if(!thisCellSelected)
-      Actions.selectRange(new SprdRange(row, col, row, col));
+      Actions.setRange({'clickSelectedRange': new SprdRange(row, col, row, col)});
   }
 
   cellDoubleClicked(){

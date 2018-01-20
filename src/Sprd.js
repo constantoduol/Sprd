@@ -46,22 +46,20 @@ export default class Sprd extends React.Component {
 
 
   shouldComponentUpdate(nextProps, nextState){
-    //there was a change in the focussed cell
-    if(!nextProps.focusedCell.isEqual(this.props.focusedCell)) return true;
+    //there was a change in the ranges
+    if(nextProps.ranges !== this.props.ranges) return true;
     //there was a change in data
     if(nextProps.data !== this.props.data) return true;
     if(nextProps.dragging !== this.props.dragging) return true; //dragging is going on
-    let shouldUpdate = !SprdRange.areEqual(nextProps.selectedRange, this.props.selectedRange);
-    if(shouldUpdate) return true;
     //there was a change in header widths
     return difference(nextProps.headerWidths, this.props.headerWidths).length > 0;
   }
 
   keyDown(e){
     let key = e.key.toLowerCase();
-    console.log(key)
+    let {ranges: {clickSelectedRange}} = this.props;
     if(key !== "enter"){
-      Actions.setFocusedCell(this.props.selectedRange[0]);
+      Actions.setRange({'focusedCellRange': clickSelectedRange});
     }
   }
 
@@ -96,8 +94,9 @@ export default class Sprd extends React.Component {
 
     document.onkeydown = (e) => {
       let key = e.key.toLowerCase();
+      let {ranges: {clickSelectedRange}} = this.props;
       if(!this.KEY_DOWN_IGNORE_KEYS[key]){
-        Actions.setFocusedCell(this.props.selectedRange[0]);
+        Actions.setRange({'focusedCellRange': clickSelectedRange});
       }
     }
 
@@ -105,10 +104,8 @@ export default class Sprd extends React.Component {
 
   render(){
     let {
-      cols, rows, showFormulaBar, headerWidths, 
-      selectedRange, showHeaderLetters, 
-      data, focusedCell, width, height, minRow, minCol, 
-      valueSetRange, dragging, dragOrigin, recentDragCell} = this.props;
+      cols, rows, showFormulaBar, headerWidths, ranges, showHeaderLetters, 
+      data, width, height, minRow, minCol, valueSetRange, dragging} = this.props;
     let style = merge(styles.root, {width});
     return (
       <div style={style} draggable="false">
@@ -117,7 +114,7 @@ export default class Sprd extends React.Component {
           <HeaderContainer
             cols={cols}
             headerWidths={headerWidths}
-            selectedRange={selectedRange}
+            ranges={ranges}
             minCol={minCol}
             showHeaderLetters={showHeaderLetters}/>
           <CellContainer 
@@ -126,11 +123,8 @@ export default class Sprd extends React.Component {
             minRow={minRow}
             data={data}
             valueSetRange={valueSetRange}
-            selectedRange={selectedRange}
-            focusedCell={focusedCell}
+            ranges={ranges}
             dragging={dragging}
-            dragOrigin={dragOrigin}
-            recentDragCell={recentDragCell}
             rows={rows}/>
         </table>
         <VirtualScrollBar 

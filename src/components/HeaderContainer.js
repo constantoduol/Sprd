@@ -11,7 +11,7 @@ export default class HeaderContainer extends React.Component {
   static propTypes = {
     showHeaderLetters: PropTypes.bool,
     cols: PropTypes.number,
-    selectedRange: PropTypes.array,
+    ranges: PropTypes.object,
     headerWidths: PropTypes.array,
     minCol: PropTypes.number
   };
@@ -24,21 +24,20 @@ export default class HeaderContainer extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState){
-    let shouldUpdate = !SprdRange.areEqual(nextProps.selectedRange, this.props.selectedRange);
-    if(shouldUpdate) return true;//there was a change in the selected range
+    if(nextProps.ranges !== this.props.ranges) return true;
     if(nextProps.minCol !== this.props.minCol) return true;
     //there was a change in header widths
     return difference(nextProps.headerWidths, this.props.headerWidths).length > 0;
   }
 
   renderHeaderLetters(){
-    let {selectedRange, headerWidths, cols, minCol} = this.props;
+    let {ranges, headerWidths, cols, minCol} = this.props;
     let headers = [
       <Header 
         title="" 
         col={-1}
         width={50}
-        selectedRange={selectedRange}
+        ranges={ranges}
         key="num_header"
       />
     ]; //the first header is for the numbers to the left
@@ -49,7 +48,7 @@ export default class HeaderContainer extends React.Component {
           key={x} 
           col={x} 
           width={headerWidths[x % cols]}
-          selectedRange={selectedRange}
+          ranges={ranges}
           title={colLetter} 
         />
       );

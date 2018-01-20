@@ -10,7 +10,7 @@ export default class NumberCell extends React.Component {
   static propTypes = {
     row: PropTypes.number,
     width: PropTypes.number,
-    selectedRange: PropTypes.array
+    ranges: PropTypes.object
   }
 
   constructor(props){
@@ -19,34 +19,26 @@ export default class NumberCell extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState){
-    for(let range of nextProps.selectedRange){
-      if(this.numberCellIsActive(range)) 
-        return true;
-    }
-    for(let range of this.props.selectedRange){
-      if(this.numberCellIsActive(range)) 
-        return true;
-    }
-    return false;
+    let clickSelectedRange = SprdRange.fromImmutable('clickSelectedRange', nextProps.ranges);
+    let currClickSelectedRange = SprdRange.fromImmutable('clickSelectedRange', this.props.ranges);
+    return this.numberCellIsActive(clickSelectedRange) || this.numberCellIsActive(currClickSelectedRange);
   }
 
   numberCellIsActive(range){
     let {startRow, stopRow} = range;
-    if(startRow === stopRow && stopRow === this.props.row)
-      return true;
+    return startRow === stopRow && stopRow === this.props.row;
   }
 
   numberCellClicked(){
     let {row} = this.props;
-    Actions.selectRange(new SprdRange(row, 0, row, -1));
+    Actions.setRange({clickSelectedRange: new SprdRange(row, 0, row, -1)});
   }
 
   currentStyle(){
-    let {selectedRange, width} = this.props;
-    for(let range of selectedRange){
-      if(this.numberCellIsActive(range))
-        return styles.numberCellSelected;
-    }
+    let {ranges, width} = this.props;
+    let clickSelectedRange = SprdRange.fromImmutable('clickSelectedRange', ranges);
+    if(this.numberCellIsActive(clickSelectedRange))
+      return styles.numberCellSelected;
     return merge(styles.numberCell, {width});
   }
 

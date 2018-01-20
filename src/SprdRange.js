@@ -8,16 +8,25 @@ export default class SprdRange {
     this.stopCol = stopCol; 
   }
 
+  /**
+  * range - the current cell range
+  */
   isNumberCellSelected(range){
     let {startRow} = range;
     return this.startCol === 0 && this.stopCol === -1 && this.startRow === startRow;
   }
 
+  /**
+  * range - the current cell range
+  */
   isCellSelected(range){
     let {startCol, startRow, stopRow, stopCol} = range;
     return this.startRow === startRow && this.startCol === startCol && this.stopRow === stopRow && this.stopCol === stopCol;
   }
 
+  /**
+  * range - the current cell range
+  */
   isHeaderSelected(range){
     let {startCol} = range;
     return this.startCol === startCol && this.stopCol === startCol && this.startRow === -1 && this.stopRow === -1;
@@ -44,6 +53,13 @@ export default class SprdRange {
       allFound = allFound && oneFound; 
     }
     return allFound;
+  }
+
+  //get a specific sprd range from the ranges immutable
+  static fromImmutable(key, ranges){
+    ranges = ranges.toJS();
+    if(!key) return ranges 
+    return ranges[key];
   }
 
   toString(){

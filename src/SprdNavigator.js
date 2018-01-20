@@ -6,8 +6,8 @@ import Actions from './Actions';
 export default class SprdNavigator {
 
   static move(props, direction){
-    let {selectedRange, minCol, minRow, rows, cols} = props;
-    let {startRow, stopRow, startCol, stopCol} = selectedRange[0]; //we assume its only one range selected
+    let {ranges: {focusedCellRange}, minCol, minRow, rows, cols} = props;
+    let {startRow, stopRow, startCol, stopCol} = focusedCellRange;
 
     let previousMinCol = minCol;
     let previousMinRow = minRow;
@@ -38,9 +38,9 @@ export default class SprdNavigator {
     
     if(previousMinRow !== minRow || previousMinCol !== minCol){
       Actions.setViewPort(minRow, minCol);
-      Actions.selectRange(new SprdRange(startRow, startCol, stopRow, stopCol));
+      Actions.setRange({focusedCellRange: new SprdRange(startRow, startCol, stopRow, stopCol)});
     } else {
-      Actions.selectRange(new SprdRange(startRow, startCol, stopRow, stopCol));
+      Actions.setRange({focusedCellRange: new SprdRange(startRow, startCol, stopRow, stopCol)});
     }
   }
 }

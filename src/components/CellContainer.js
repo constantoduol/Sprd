@@ -15,28 +15,23 @@ export default class CellContainer extends React.Component {
     rows: PropTypes.number,
     cols: PropTypes.number,
     data: PropTypes.object,
-    selectedRange: PropTypes.array,
+    ranges: PropTypes.object,
     minCol: PropTypes.number,
     minRow: PropTypes.number,
-    dragging: PropTypes.bool,
-    dragOrigin: PropTypes.object,
-    recentDragCell: PropTypes.object
+    dragging: PropTypes.bool
   };
 
   shouldComponentUpdate(nextProps, nextState){
-    if(nextProps.data !== this.props.data) return true;
-    if(!nextProps.focusedCell.isEqual(this.props.focusedCell)) return true;
-    if(nextProps.dragging !== this.props.dragging) return true; //dragging is going on
+    //there was a change in the ranges
+    if(nextProps.ranges !== this.props.ranges) return true;
     if(nextProps.rows !== this.props.rows || nextProps.cols !== this.props.cols)
       return true;
-    if(nextProps.minCol !== this.props.minCol || nextProps.minRow !== this.props.minRow)
-      return true;
-    return !SprdRange.areEqual(nextProps.selectedRange, this.props.selectedRange);
+    return nextProps.minCol !== this.props.minCol || nextProps.minRow !== this.props.minRow;
   }
 
   componentWillReceiveProps(nextProps){
     let {recentDragCell} = nextProps;
-    this.maybeScrollIfRangeExceeded(recentDragCell);
+    //this.maybeScrollIfRangeExceededWhileDragging(recentDragCell);
   }
 
 
@@ -44,14 +39,17 @@ export default class CellContainer extends React.Component {
   * when dragging happens and current screen view port
   * range is exceeded, we scroll
   * @recentCell - this is a sprd range representing the most recent cell
-  *               covered by dragging
+  *               covered while dragging
   */
-  maybeScrollIfRangeExceeded(recentCell){
-    let {minCol, minRow, cols, rows} = this.props;
+  maybeScrollIfRangeExceededWhileDragging(recentCell){
+    let {minCol, minRow, cols, rows, dragging} = this.props;
+    if(!dragging) return;
+
     let maxCol = minCol + cols;
     let maxRow = minRow + rows
     let {startCol, startRow, stopCol, stopRow} = recentCell;
     const THRESHOLD = 3; 
+
     if(startCol >  maxCol - THRESHOLD){
       SprdNavigator.move({selectedRange: [recentCell], minCol, minRow, rows, cols}, DIRECTION.RIGHT);
     } else if(startRow > maxRow - THRESHOLD){
@@ -71,7 +69,7 @@ export default class CellContainer extends React.Component {
   }
 
   renderCells(){
-    let {data, selectedRange, rows, cols, focusedCell, minRow, minCol, dragging, dragOrigin} = this.props;
+    let {data, rows, cols, minRow, minCol, dragging, ranges} = this.props;
     let allRows = [];
     for(let row = minRow; row < rows + minRow; row++){
       let currentRow = [];
@@ -80,7 +78,7 @@ export default class CellContainer extends React.Component {
         <NumberCell 
           key={"num_" + row} 
           row={row} 
-          selectedRange={selectedRange}/>
+          ranges={ranges}/>
       );
 
       for(let col = minCol; col < cols + minCol; col++){
@@ -94,10 +92,8 @@ export default class CellContainer extends React.Component {
             rows={rows}
             cols={cols}
             value={this.getCellValue(row, col)}
-            selectedRange={selectedRange}
-            focusedCell={focusedCell}
+            ranges={ranges}
             dragging={dragging}
-            dragOrigin={dragOrigin}
             key={row + "_" + col}/>
         );
       }
