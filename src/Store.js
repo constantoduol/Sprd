@@ -1,11 +1,10 @@
 import alt from './altConfig';
-import {isArray} from 'lodash';
+import {isArray, merge} from 'lodash';
 import {Map} from 'immutable';
 
 import Actions from './Actions';
 import SprdRange from './SprdRange';
-
-const OUT_OF_RANGE_CELL = new SprdRange(-1,-1,-1,-1);
+import {OUT_OF_RANGE_CELL} from './Constants';
 
 class Store {
 
@@ -43,17 +42,38 @@ class Store {
   }
 
   onSetRange(rangesToSet){
+    this._setRange(rangesToSet);
+  }
+
+  _setRange(rangesToSet, stateToSet){
     let {ranges} = this.state;
     for(let [key, range] of Object.entries(rangesToSet)){
       let currentRange = ranges.get(key);
       if(!currentRange) continue;
       ranges = ranges.set(key, range);
+      ranges = this._modifyRanges(key, ranges, rangesToSet);
     }
-    this.setState({ranges});
+    const newState = stateToSet ? merge({ranges}, stateToSet) : {ranges};
+    this.setState(newState); 
+  }
+
+  _modifyRanges(key, ranges, rangesToSet){
+    switch(key){
+      case "clickSelectedRange":
+        if(!rangesToSet.focusedCellRange) 
+          ranges = ranges.set('focusedCellRange', OUT_OF_RANGE_CELL);
+        if(!rangesToSet.dragSelectedRange) 
+          ranges = ranges.set('dragSelectedRange', OUT_OF_RANGE_CELL);
+        if(!rangesToSet.dragOriginCellRange) 
+          ranges = ranges.set('dragOriginCellRange', OUT_OF_RANGE_CELL);
+        break;
+    }
+
+    return ranges
   }
 
   onParseData(params){
-    let [data, headers, headerWidths, rows, cols] = params
+    const [data, headers, headerWidths, rows, cols] = params
     this.setState({
       data: data, 
       headerWidths: headerWidths, 
@@ -66,20 +86,25 @@ class Store {
     this.state.dragZone = {};
     this.addDragZone(origin);
     let {dragZone, ranges} = this.state;
-    
-    this.setState({dragging: true, dragZone: dragZone, dragOrigin: origin});
+    this._setRange({
+      dragOriginCellRange: origin, 
+      clickSelectedRange: OUT_OF_RANGE_CELL}, {dragging: true, dragZone: dragZone});
   }
 
   onDragStopped(end){
     this.addDragZone(end);
-    this.setState({dragging: false});
+    console.log("drag stopped")
+    this._setRange({
+      focusedCellRange: OUT_OF_RANGE_CELL, 
+      clickSelectedRange: OUT_OF_RANGE_CELL}, {dragging: false});
   }
 
   onAddDragZone(range){
     this.addDragZone(range);
-    let {dragZone, dragOrigin} = this.state;
-    let selectedRange = [SprdRange.toDragRange(Object.values(dragZone), dragOrigin, range)];
-    this.setState({dragZone: dragZone, selectedRange: selectedRange, recentDragCell: range}); 
+    let {dragZone, ranges} = this.state;
+    let dragOriginCellRange = SprdRange.fromImmutable('dragOriginCellRange', ranges);
+    let dragSelectedRange = SprdRange.toDragRange(Object.values(dragZone), dragOriginCellRange, range);
+    this._setRange({'dragSelectedRange': dragSelectedRange, 'recentDragCellRange': range}, {dragZone: dragZone});
   }
 
   addDragZone(range){

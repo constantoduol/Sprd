@@ -1,4 +1,4 @@
-import {DIRECTION} from './Constants';
+import {DIRECTION, OUT_OF_RANGE_CELL} from './Constants';
 import SprdRange from './SprdRange';
 import Actions from './Actions';
 //used to handle arrow key movements
@@ -6,8 +6,9 @@ import Actions from './Actions';
 export default class SprdNavigator {
 
   static move(props, direction){
-    let {ranges: {focusedCellRange}, minCol, minRow, rows, cols} = props;
-    let {startRow, stopRow, startCol, stopCol} = focusedCellRange;
+    let {ranges, minCol, minRow, rows, cols} = props;
+    let clickSelectedRange = SprdRange.fromImmutable('clickSelectedRange', ranges);
+    let {startRow, stopRow, startCol, stopCol} = clickSelectedRange;
 
     let previousMinCol = minCol;
     let previousMinRow = minRow;

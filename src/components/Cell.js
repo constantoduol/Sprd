@@ -6,7 +6,7 @@ import Mousetrap from 'mousetrap';
 import Actions from '../Actions';
 import SprdRange from '../SprdRange';
 import SprdNavigator from '../SprdNavigator';
-import {DIRECTION} from '../Constants';
+import {DIRECTION, OUT_OF_RANGE_CELL} from '../Constants';
 
 
 export default class Cell extends React.Component {
@@ -91,23 +91,22 @@ export default class Cell extends React.Component {
     let {mode} = this.state;
     let {ranges, row, col, dragging} = props;
     let currentCellRange = new SprdRange(row, col, row, col);
-    let {focusedCellRange, dragOriginCellRange, 
-      clickSelectedRange, dragSelectedRange} = SprdRange.fromImmutable(null, ranges); 
+    let {focusedCellRange, clickSelectedRange, 
+        dragSelectedRange, dragOriginCellRange} = SprdRange.fromImmutable(null, ranges); 
+
+    if(currentCellRange.isCellSelected(dragOriginCellRange)){
+      this.setState({mode: this.CELL_MODES.ACTIVE});
+      return;
+    } else if(currentCellRange.isWithinRange(dragSelectedRange)){
+      this.setState({mode: this.CELL_MODES.DRAG_HIGHLIGHT});
+      return
+    }
 
     if(focusedCellRange.isCellSelected(currentCellRange)){
       this.cellDoubleClicked();
       return;
     } 
-
-    if(dragging){
-      if(currentCellRange.isCellSelected(dragOriginCellRange)){
-        this.setState({mode: this.CELL_MODES.ACTIVE});
-      } else if(currentCellRange.isWithinRange(dragSelectedRange)){
-        this.setState({mode: this.CELL_MODES.DRAG_HIGHLIGHT});
-      }
-      return
-    }
-
+      
     if(clickSelectedRange.isCellSelected(currentCellRange)){
       this.setState({mode: this.CELL_MODES.ACTIVE});
     } else if(clickSelectedRange.isNumberCellSelected(currentCellRange)){
@@ -145,7 +144,7 @@ export default class Cell extends React.Component {
     let clickSelectedRange = SprdRange.fromImmutable('clickSelectedRange', ranges);
     let thisCellSelected = clickSelectedRange.isCellSelected(row, col);
     if(!thisCellSelected)
-      Actions.setRange({'clickSelectedRange': new SprdRange(row, col, row, col)});
+      Actions.setRange({clickSelectedRange: new SprdRange(row, col, row, col)});
   }
 
   cellDoubleClicked(){
@@ -173,7 +172,6 @@ export default class Cell extends React.Component {
 
   inputValueChanged(e){
     let value = e.target.value;
-    value = isNaN(Number(value)) ? value : Number(value);
     this.setState({value}, () => {
       let {row, col} = this.props;
       Actions.setValue(value, new SprdRange(row, col, row, col));

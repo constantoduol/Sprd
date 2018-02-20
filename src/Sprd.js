@@ -47,7 +47,8 @@ export default class Sprd extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState){
     //there was a change in the ranges
-    if(nextProps.ranges !== this.props.ranges) return true;
+    let rangesChanged = SprdRange.areEqual(Object.values(nextProps.ranges.toJS()), Object.values(this.props.ranges.toJS()));
+    if(!rangesChanged) return true;
     //there was a change in data
     if(nextProps.data !== this.props.data) return true;
     if(nextProps.dragging !== this.props.dragging) return true; //dragging is going on
@@ -57,7 +58,7 @@ export default class Sprd extends React.Component {
 
   keyDown(e){
     let key = e.key.toLowerCase();
-    let {ranges: {clickSelectedRange}} = this.props;
+    let clickSelectedRange = SprdRange.fromImmutable('clickSelectedRange', this.props.ranges);
     if(key !== "enter"){
       Actions.setRange({'focusedCellRange': clickSelectedRange});
     }
@@ -89,12 +90,13 @@ export default class Sprd extends React.Component {
     });
 
     Mousetrap.bind("enter", () => {
-      Actions.setFocusedCell(this.props.selectedRange[0]);
+      let clickSelectedRange = SprdRange.fromImmutable('clickSelectedRange', this.props.ranges);
+      Actions.setRange({'focusedCellRange': clickSelectedRange});
     });
 
     document.onkeydown = (e) => {
       let key = e.key.toLowerCase();
-      let {ranges: {clickSelectedRange}} = this.props;
+      let clickSelectedRange = SprdRange.fromImmutable('clickSelectedRange', this.props.ranges);
       if(!this.KEY_DOWN_IGNORE_KEYS[key]){
         Actions.setRange({'focusedCellRange': clickSelectedRange});
       }
@@ -105,7 +107,7 @@ export default class Sprd extends React.Component {
   render(){
     let {
       cols, rows, showFormulaBar, headerWidths, ranges, showHeaderLetters, 
-      data, width, height, minRow, minCol, valueSetRange, dragging} = this.props;
+      data, width, minRow, minCol, valueSetRange, dragging} = this.props;
     let style = merge(styles.root, {width});
     return (
       <div style={style} draggable="false">

@@ -23,15 +23,17 @@ export default class CellContainer extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState){
     //there was a change in the ranges
-    if(nextProps.ranges !== this.props.ranges) return true;
+    let rangesChanged = SprdRange.areEqual(Object.values(nextProps.ranges.toJS()), Object.values(this.props.ranges.toJS()));
+    if(!rangesChanged) return true;
     if(nextProps.rows !== this.props.rows || nextProps.cols !== this.props.cols)
       return true;
+    if(nextProps.dragging !== this.props.dragging) return true;
     return nextProps.minCol !== this.props.minCol || nextProps.minRow !== this.props.minRow;
   }
 
   componentWillReceiveProps(nextProps){
-    let {recentDragCell} = nextProps;
-    //this.maybeScrollIfRangeExceededWhileDragging(recentDragCell);
+    let recentDragCellRange = SprdRange.fromImmutable('recentDragCellRange', nextProps.ranges);
+    this.maybeScrollIfRangeExceededWhileDragging(recentDragCellRange);
   }
 
 
@@ -42,22 +44,23 @@ export default class CellContainer extends React.Component {
   *               covered while dragging
   */
   maybeScrollIfRangeExceededWhileDragging(recentCell){
-    let {minCol, minRow, cols, rows, dragging} = this.props;
+    let {minCol, minRow, cols, rows, dragging, ranges} = this.props;
     if(!dragging) return;
 
     let maxCol = minCol + cols;
     let maxRow = minRow + rows
     let {startCol, startRow, stopCol, stopRow} = recentCell;
     const THRESHOLD = 3; 
+    ranges = ranges.set('clickSelectedRange', recentCell);
 
     if(startCol >  maxCol - THRESHOLD){
-      SprdNavigator.move({selectedRange: [recentCell], minCol, minRow, rows, cols}, DIRECTION.RIGHT);
+      SprdNavigator.move({ranges, minCol, minRow, rows, cols}, DIRECTION.RIGHT);
     } else if(startRow > maxRow - THRESHOLD){
-      SprdNavigator.move({selectedRange: [recentCell], minCol, minRow, rows, cols}, DIRECTION.DOWN);
+      SprdNavigator.move({ranges, minCol, minRow, rows, cols}, DIRECTION.DOWN);
     } else if(startCol < minCol + THRESHOLD){
-      SprdNavigator.move({selectedRange: [recentCell], minCol, minRow, rows, cols}, DIRECTION.LEFT);
+      SprdNavigator.move({ranges, minCol, minRow, rows, cols}, DIRECTION.LEFT);
     } else if(startRow > minRow + THRESHOLD){
-      SprdNavigator.move({selectedRange: [recentCell], minCol, minRow, rows, cols}, DIRECTION.UP);
+      SprdNavigator.move({ranges, minCol, minRow, rows, cols}, DIRECTION.UP);
     }
   }
 

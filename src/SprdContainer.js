@@ -2,7 +2,6 @@ import React from 'react';
 
 import Sprd from './Sprd';
 import Actions from './Actions';
-import Store from './Store';
 import {DEFAULT_HEADER_WIDTH, DEFAULT_ROW_HEIGHT} from './Constants'; 
 
 export default class SprdContainer extends React.Component {
@@ -20,8 +19,8 @@ export default class SprdContainer extends React.Component {
 
   componentDidMount(){
     let {width, height} = this.props;
-    let cols = parseInt(this.props.width/DEFAULT_HEADER_WIDTH);
-    let rows = parseInt(this.props.height/DEFAULT_ROW_HEIGHT) - 2; //-2 for header and footer
+    let cols = parseInt(width/DEFAULT_HEADER_WIDTH);
+    let rows = parseInt(height/DEFAULT_ROW_HEIGHT) - 2; //-2 for header and footer
     Actions.parseData(this.props.data, rows, cols);
   }
 

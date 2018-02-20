@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import {difference} from 'lodash';
 
 import Header from './Header';
-import Actions from '../Actions';
 import SprdRange from '../SprdRange';
 
 export default class HeaderContainer extends React.Component {

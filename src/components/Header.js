@@ -5,6 +5,7 @@ import connectToStores from 'alt-utils/lib/connectToStores';
 
 import Actions from '../Actions';
 import SprdRange from '../SprdRange';
+import {OUT_OF_RANGE_CELL} from '../Constants';
 
 export default class Header extends React.Component {
 
@@ -33,7 +34,7 @@ export default class Header extends React.Component {
 
   headerClicked(){
     let {col} = this.props;
-    Actions.setRange({'clickSelectedRange': new SprdRange(-1, col, -1, col)});
+    Actions.setRange({clickSelectedRange: new SprdRange(-1, col, -1, col)});
   }
 
   currentStyle(){

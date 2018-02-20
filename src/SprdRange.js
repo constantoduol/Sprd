@@ -33,24 +33,30 @@ export default class SprdRange {
   }
 
   isEqual(otherRange){
-    let {startRow, stopRow, startCol, stopCol} = otherRange;
-    return startRow === this.startRow 
-          && stopRow === this.stopRow 
-          && startCol === this.startCol 
-          && stopCol === this.stopCol;
+    return this.toString() === otherRange.toString();
   }
 
   //verify whether a list of two ranges is the same
   static areEqual(ranges1, ranges2){
     if(ranges1.length !== ranges2.length) return false;
     let allFound = true;
-    for(let range1 of ranges1){
-      let oneFound = true;
-      for(let range2 of ranges2){
-         oneFound = oneFound && range1.isEqual(range2);
-         if(oneFound) break;
+    let skip = {}; //we've already found these, skip them
+
+    for(let x = 0; x < ranges1.length; x++){
+      let range1 = ranges1[x];
+      let oneFound = false;
+
+      for(let y = 0; y < ranges2.length; y++){
+        let range2 = ranges2[y];
+        if(range1.isEqual(range2) && !skip[y]) {
+          oneFound = true;
+          skip[y] = true;
+          break;
+        }
       }
+    
       allFound = allFound && oneFound; 
+      if(!allFound) break;
     }
     return allFound;
   }
