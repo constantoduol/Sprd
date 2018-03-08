@@ -23,8 +23,8 @@ export default class CellContainer extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState){
     //there was a change in the ranges
-    let rangesChanged = SprdRange.areEqual(Object.values(nextProps.ranges.toJS()), Object.values(this.props.ranges.toJS()));
-    if(!rangesChanged) return true;
+    let rangesEqual = SprdRange.areEqual(Object.values(nextProps.ranges.toJS()), Object.values(this.props.ranges.toJS()));
+    if(!rangesEqual) return true;
     if(nextProps.rows !== this.props.rows || nextProps.cols !== this.props.cols)
       return true;
     if(nextProps.dragging !== this.props.dragging) return true;
@@ -33,7 +33,7 @@ export default class CellContainer extends React.Component {
 
   componentWillReceiveProps(nextProps){
     let recentDragCellRange = SprdRange.fromImmutable('recentDragCellRange', nextProps.ranges);
-    this.maybeScrollIfRangeExceededWhileDragging(recentDragCellRange);
+    this.maybeScrollIfRangeExceededWhileDragging(recentDragCellRange, nextProps);
   }
 
 
@@ -43,8 +43,8 @@ export default class CellContainer extends React.Component {
   * @recentCell - this is a sprd range representing the most recent cell
   *               covered while dragging
   */
-  maybeScrollIfRangeExceededWhileDragging(recentCell){
-    let {minCol, minRow, cols, rows, dragging, ranges} = this.props;
+  maybeScrollIfRangeExceededWhileDragging(recentCell, nextProps){
+    let {minCol, minRow, cols, rows, dragging, ranges} = nextProps;
     if(!dragging) return;
 
     let maxCol = minCol + cols;

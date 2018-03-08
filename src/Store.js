@@ -93,10 +93,13 @@ class Store {
 
   onDragStopped(end){
     this.addDragZone(end);
-    console.log("drag stopped")
+    let {dragSelectedRange, dragOriginCellRange} = SprdRange.fromImmutable(null, this.state.ranges);
     this._setRange({
       focusedCellRange: OUT_OF_RANGE_CELL, 
-      clickSelectedRange: OUT_OF_RANGE_CELL}, {dragging: false});
+      clickSelectedRange: OUT_OF_RANGE_CELL,
+      recentDragCellRange: OUT_OF_RANGE_CELL, 
+      dragSelectedRange: dragSelectedRange, 
+      dragOriginCellRange: dragOriginCellRange}, {dragging: false});
   }
 
   onAddDragZone(range){

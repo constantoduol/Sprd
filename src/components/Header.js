@@ -29,7 +29,7 @@ export default class Header extends React.Component {
 
   headerIsActive(range){
     let {startCol, stopCol} = range;
-    return startCol === stopCol && stopCol === this.props.col;
+    return startCol === stopCol && stopCol === this.props.col && startCol > -1;
   }
 
   headerClicked(){

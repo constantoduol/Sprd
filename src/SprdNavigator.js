@@ -7,7 +7,7 @@ export default class SprdNavigator {
 
   static move(props, direction){
     let {ranges, minCol, minRow, rows, cols} = props;
-    let clickSelectedRange = SprdRange.fromImmutable('clickSelectedRange', ranges);
+    let {clickSelectedRange, dragSelectedRange, dragOriginCellRange} = SprdRange.fromImmutable(null, ranges);
     let {startRow, stopRow, startCol, stopCol} = clickSelectedRange;
 
     let previousMinCol = minCol;
@@ -39,9 +39,17 @@ export default class SprdNavigator {
     
     if(previousMinRow !== minRow || previousMinCol !== minCol){
       Actions.setViewPort(minRow, minCol);
-      Actions.setRange({focusedCellRange: new SprdRange(startRow, startCol, stopRow, stopCol)});
+      Actions.setRange({
+        clickSelectedRange: new SprdRange(startRow, startCol, stopRow, stopCol), 
+        dragSelectedRange: dragSelectedRange, 
+        dragOriginCellRange: dragOriginCellRange
+      });
     } else {
-      Actions.setRange({focusedCellRange: new SprdRange(startRow, startCol, stopRow, stopCol)});
+      Actions.setRange({
+        clickSelectedRange: new SprdRange(startRow, startCol, stopRow, stopCol), 
+        dragSelectedRange: dragSelectedRange, 
+        dragOriginCellRange: dragOriginCellRange
+      });
     }
   }
 }
