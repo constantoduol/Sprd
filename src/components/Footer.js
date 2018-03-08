@@ -2,17 +2,20 @@ import React from 'react';
 import {merge} from 'lodash';
 import PropTypes from 'prop-types';
 
+import {FOOTER_HEIGHT, SCROLL_BAR_WIDTH} from '../Constants';
+
 export default class Footer extends React.Component {
 
   static propTypes = {
     width: PropTypes.number,
+    content: PropTypes.string
   };
 
   render(){
-    let {width} = this.props;
-    let style = merge(styles.footer, {width});
+    let {width, content} = this.props;
+    let style = merge(styles.footer, {width: width + SCROLL_BAR_WIDTH - 2});
     return (
-      <div style={style}>Footer</div>
+      <div style={style}>{content}</div>
     )
   }
 }
@@ -23,9 +26,9 @@ const styles = {
     paddingTop: 5,
     paddingBottom: 5,
     fontSize: 14,
-    borderLeft: "1px solid #BDBDBD",
-    borderRight: "1px solid #BDBDBD",
-    position: "fixed"
+    border: "1px solid #BDBDBD",
+    position: "fixed",
+    height: FOOTER_HEIGHT
   }
 }
 

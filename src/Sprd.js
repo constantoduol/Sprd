@@ -6,7 +6,6 @@ import connectToStores from 'alt-utils/lib/connectToStores';
 import Footer from './components/Footer';
 import HeaderContainer from './components/HeaderContainer';
 import CellContainer from './components/CellContainer';
-import FormulaBar from './components/FormulaBar';
 import VirtualScrollBar from './components/VirtualScrollBar';
 import Actions from './Actions';
 import SprdRange from './SprdRange';
@@ -106,35 +105,47 @@ export default class Sprd extends React.Component {
 
   render(){
     let {
-      cols, rows, showFormulaBar, headerWidths, ranges, showHeaderLetters, 
-      data, width, minRow, minCol, valueSetRange, dragging} = this.props;
+      cols, rows, headerWidths, ranges, showHeaderLetters, 
+      data, width, minRow, minCol, valueSetRange, dragging, height, showScrollBars} = this.props;
     let style = merge(styles.root, {width});
     return (
-      <div style={style} draggable="false">
-        {showFormulaBar ? <FormulaBar/> : null}
-        <table style={styles.table}>
-          <HeaderContainer
-            cols={cols}
-            headerWidths={headerWidths}
-            ranges={ranges}
-            minCol={minCol}
-            showHeaderLetters={showHeaderLetters}/>
-          <CellContainer 
+      <div>
+        <div style={style} draggable="false">
+          <table style={styles.table}>
+            <HeaderContainer
+              cols={cols}
+              headerWidths={headerWidths}
+              ranges={ranges}
+              minCol={minCol}
+              showHeaderLetters={showHeaderLetters}/>
+            <CellContainer 
+              cols={cols} 
+              minCol={minCol}
+              minRow={minRow}
+              data={data}
+              valueSetRange={valueSetRange}
+              ranges={ranges}
+              dragging={dragging}
+              rows={rows}/>
+          </table>
+          {showScrollBars ?
+            <VirtualScrollBar 
+              cols={cols} 
+              rows={rows} 
+              minCol={minCol} 
+              scroll="horizontal"
+              minRow={minRow}/> : null}
+          <Footer width={width}/>
+        </div>
+        {showScrollBars ? 
+          <VirtualScrollBar 
             cols={cols} 
-            minCol={minCol}
-            minRow={minRow}
-            data={data}
-            valueSetRange={valueSetRange}
-            ranges={ranges}
-            dragging={dragging}
-            rows={rows}/>
-        </table>
-        <VirtualScrollBar 
-          cols={cols} 
-          rows={rows} 
-          minCol={minCol} 
-          minRow={minRow}/>
-        <Footer width={width}/>
+            rows={rows} 
+            minCol={minCol} 
+            height={height}
+            width={width}
+            scroll="vertical"
+            minRow={minRow}/> : null}
       </div>
     )
   }

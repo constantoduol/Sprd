@@ -6,3 +6,6 @@ export const DEFAULT_NUM_HEADER_WIDTH = 50
 export const DIRECTION = {UP: "up", DOWN: "down", LEFT: "left", RIGHT: "right"};
 
 export const OUT_OF_RANGE_CELL = new SprdRange(-1,-1,-1,-1);
+
+export const FOOTER_HEIGHT = 15;
+export const SCROLL_BAR_WIDTH = 15;
