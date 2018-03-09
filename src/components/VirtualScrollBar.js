@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import {FOOTER_HEIGHT, SCROLL_BAR_WIDTH} from '../Constants';
+import {FOOTER_HEIGHT, SCROLL_BAR_WIDTH, SCROLL_DIRECTION} from '../Constants';
 
 export default class VirtualScrollBar extends React.Component {
 
@@ -10,21 +10,35 @@ export default class VirtualScrollBar extends React.Component {
     cols: PropTypes.number,
     minCol: PropTypes.number,
     minRow: PropTypes.number,
-    scroll: PropTypes.string,
+    scroll: PropTypes.number,
     height: PropTypes.number,
     width: PropTypes.number
   };
 
+  shouldShowScollbars(){
+    let {minRow, minCol} = this.props;
+    let showVertical = minRow > 0;
+    let showHorizontal = minCol > 0;
+    return {showVertical, showHorizontal};
+  }
+
   render(){
     let {scroll, height, width} = this.props;
-    let areaStyle = scroll == "vertical" ? styles.scroll_area_vertical : styles.scroll_area_horizontal;
-    let scrollerStyle = scroll == "vertical" ? styles.scroller_vertical : styles.scroller_horizontal;
- 
-    if(scroll === "vertical"){
+    let areaStyle, scrollerStyle;
+    let {showVertical, showHorizontal} = this.shouldShowScollbars();
+
+    if(scroll === SCROLL_DIRECTION.VERTICAL){
+      areaStyle = styles.scroll_area_vertical;
+      scrollerStyle = styles.scroller_vertical;
       areaStyle.height = height - FOOTER_HEIGHT;
-      areaStyle.top = -height + 8;
       areaStyle.left = width + 5;
+      scrollerStyle.display = showVertical ? "block" : "none";
+    } else {
+      areaStyle = styles.scroll_area_horizontal;
+      scrollerStyle = styles.scroller_horizontal;
+      scrollerStyle.display = showHorizontal ? "block" : "none";
     }
+
     return (
       <div style={areaStyle}>
         <div style={scrollerStyle}></div>
@@ -34,11 +48,17 @@ export default class VirtualScrollBar extends React.Component {
 }
 
 const styles = {
-  scroll_area_horizontal: {background: "#eee"},
+  scroll_area_horizontal: {
+    background: "#eee",
+    height: SCROLL_BAR_WIDTH,
+    borderLeft: "1px solid #BDBDBD",
+  },
   scroll_area_vertical: {
     background: "#eee",
     width: SCROLL_BAR_WIDTH,
     position: "relative",
+    top: 5,
+    borderTop: "1px solid #BDBDBD",
   },
   scroller_horizontal: {
     height: SCROLL_BAR_WIDTH,

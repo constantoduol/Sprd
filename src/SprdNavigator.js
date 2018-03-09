@@ -6,7 +6,7 @@ import Actions from './Actions';
 export default class SprdNavigator {
 
   static move(props, direction){
-    let {ranges, minCol, minRow, rows, cols} = props;
+    let {ranges, minCol, minRow, rows, cols, infiniteScroll} = props;
     let {clickSelectedRange, dragSelectedRange, dragOriginCellRange} = SprdRange.fromImmutable(null, ranges);
     let {startRow, stopRow, startCol, stopCol} = clickSelectedRange;
 
@@ -37,6 +37,8 @@ export default class SprdNavigator {
     if(startCol === minCol + cols) minCol++;
     else if( (startCol + 1) === minCol && minCol !== 0) minCol--;
     
+    if(!infiniteScroll && (minRow > 0 || minCol > 0)) return; //disable infite scrolling
+
     if(previousMinRow !== minRow || previousMinCol !== minCol){
       Actions.setViewPort(minRow, minCol);
       Actions.setRange({

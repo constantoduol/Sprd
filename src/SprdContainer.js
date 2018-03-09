@@ -8,10 +8,10 @@ export default class SprdContainer extends React.Component {
 
   static defaultProps = {
     data: null, //data is in format {header1: [value1, value2], header2: [value3, value4]}
-    showHeaderLetters: true, //show the letters at top A, B, C ... AA, AB
-    showRowNumbers: true,
+    showHeaderLetters: false, //show the letters at top A, B, C ... AA, AB
     showScrollBars: true, //show horizontal and vertical scroll bars
     showFooter: true,
+    infiniteScroll: true, //scroll infinitely in any direction
     width: 600,
     height: 700
   };

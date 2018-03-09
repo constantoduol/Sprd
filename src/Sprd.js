@@ -11,7 +11,7 @@ import Actions from './Actions';
 import SprdRange from './SprdRange';
 import Store from './Store';
 import SprdNavigator from './SprdNavigator';
-import {DIRECTION} from './Constants';
+import {DIRECTION, SCROLL_DIRECTION} from './Constants';
 
 @connectToStores
 export default class Sprd extends React.Component {
@@ -133,9 +133,9 @@ export default class Sprd extends React.Component {
               cols={cols} 
               rows={rows} 
               minCol={minCol} 
-              scroll="horizontal"
+              scroll={SCROLL_DIRECTION.HORIZONTAL}
               minRow={minRow}/> : null}
-          <Footer width={width}/>
+          <Footer width={width} showScrollBars={showScrollBars}/>
         </div>
         {showScrollBars ? 
           <VirtualScrollBar 
@@ -144,7 +144,7 @@ export default class Sprd extends React.Component {
             minCol={minCol} 
             height={height}
             width={width}
-            scroll="vertical"
+            scroll={SCROLL_DIRECTION.VERTICAL}
             minRow={minRow}/> : null}
       </div>
     )
@@ -161,6 +161,7 @@ const styles = {
     borderBottom: "1px solid #BDBDBD",
     borderRight: "1px solid #BDBDBD",
     margin: 5,
-    userSelect: "none"
+    userSelect: "none",
+    position: "fixed"
   }
 }

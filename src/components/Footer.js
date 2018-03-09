@@ -8,12 +8,14 @@ export default class Footer extends React.Component {
 
   static propTypes = {
     width: PropTypes.number,
-    content: PropTypes.string
+    content: PropTypes.string,
+    showScrollBars: PropTypes.bool
   };
 
   render(){
-    let {width, content} = this.props;
-    let style = merge(styles.footer, {width: width + SCROLL_BAR_WIDTH - 2});
+    let {width, content, showScrollBars} = this.props;
+    let widthCorrection = showScrollBars ? SCROLL_BAR_WIDTH - 2 : 0;
+    let style = merge(styles.footer, {width: width + widthCorrection});
     return (
       <div style={style}>{content}</div>
     )
@@ -31,4 +33,3 @@ const styles = {
     height: FOOTER_HEIGHT
   }
 }
-
