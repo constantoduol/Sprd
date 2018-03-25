@@ -37,21 +37,17 @@ export default class SprdNavigator {
     if(startCol === minCol + cols) minCol++;
     else if( (startCol + 1) === minCol && minCol !== 0) minCol--;
     
-    if(!infiniteScroll && (minRow > 0 || minCol > 0)) return; //disable infite scrolling
+    if(!infiniteScroll && (minRow > 0 || minCol > 0)) return; //disable infinite scrolling
 
     if(previousMinRow !== minRow || previousMinCol !== minCol){
       Actions.setViewPort(minRow, minCol);
-      Actions.setRange({
-        clickSelectedRange: new SprdRange(startRow, startCol, stopRow, stopCol), 
-        dragSelectedRange: dragSelectedRange, 
-        dragOriginCellRange: dragOriginCellRange
-      });
-    } else {
-      Actions.setRange({
-        clickSelectedRange: new SprdRange(startRow, startCol, stopRow, stopCol), 
-        dragSelectedRange: dragSelectedRange, 
-        dragOriginCellRange: dragOriginCellRange
-      });
     }
+
+    Actions.setRange({
+      clickSelectedRange: new SprdRange(startRow, startCol, stopRow, stopCol), 
+      dragSelectedRange: dragSelectedRange, 
+      dragOriginCellRange: dragOriginCellRange
+    });
+
   }
 }

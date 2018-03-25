@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {merge} from 'lodash';
+import {merge, defer} from 'lodash';
 import Mousetrap from 'mousetrap';
 
 import Actions from '../Actions';
@@ -51,6 +51,9 @@ export default class Cell extends React.Component {
     this.cellClicked = this.cellClicked.bind(this);
     this.cellDoubleClicked = this.cellDoubleClicked.bind(this);
     this.inputValueChanged = this.inputValueChanged.bind(this);
+
+    this.mouseCurrentlyUp = true; //we use this to prevent false triggers to dragstarted
+    this.MOUSE_DOWN_DELAY = 200; //delay until we are sure the user is actually dragging
   }
 
   componentDidMount(){
@@ -121,18 +124,25 @@ export default class Cell extends React.Component {
 
   mouseDown(){
     let {row, col} = this.props;
-    Actions.dragStarted(new SprdRange(row, col, row, col));
+    this.mouseCurrentlyUp = false;
+    setTimeout( () => { //use this to prevent false triggering of dragging when someone clicks this cell
+      if(!this.mouseCurrentlyUp){
+        Actions.dragStarted(new SprdRange(row, col, row, col));
+      }
+    }, this.MOUSE_DOWN_DELAY);
   }
 
   mouseUp(){
-    let {row, col} = this.props;
-    Actions.dragStopped(new SprdRange(row, col, row, col));
+    let {row, col, dragging} = this.props;
+    if(dragging){
+      Actions.dragStopped(new SprdRange(row, col, row, col));
+    }
+    this.mouseCurrentlyUp = true; //clicked on the same cell, and now the mouse has come up
   }
 
   mouseOver(){
-    let {dragging} = this.props;
+    let {dragging, row, col} = this.props;
     if(dragging){
-      let {row, col} = this.props;
       Actions.addDragZone(new SprdRange(row, col, row, col));
     }
   }
@@ -143,8 +153,9 @@ export default class Cell extends React.Component {
     let {row, col, ranges} = this.props;
     let clickSelectedRange = SprdRange.fromImmutable('clickSelectedRange', ranges);
     let thisCellSelected = clickSelectedRange.isCellSelected(row, col);
-    if(!thisCellSelected)
+    if(!thisCellSelected){
       Actions.setRange({clickSelectedRange: new SprdRange(row, col, row, col)});
+    }
   }
 
   cellDoubleClicked(){

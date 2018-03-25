@@ -105,8 +105,8 @@ export default class Sprd extends React.Component {
 
   render(){
     let {
-      cols, rows, headerWidths, ranges, showHeaderLetters, 
-      data, width, minRow, minCol, valueSetRange, dragging, height, showScrollBars} = this.props;
+      cols, rows, headerWidths, ranges, showHeaderLetters, data, width, minRow, minCol, 
+      valueSetRange, dragging, height, showScrollBars, infiniteScroll, furthestRow, furthestCol} = this.props;
     let style = merge(styles.root, {width});
     return (
       <div>
@@ -123,6 +123,7 @@ export default class Sprd extends React.Component {
               minCol={minCol}
               minRow={minRow}
               data={data}
+              infiniteScroll={infiniteScroll}
               valueSetRange={valueSetRange}
               ranges={ranges}
               dragging={dragging}
@@ -132,7 +133,11 @@ export default class Sprd extends React.Component {
             <VirtualScrollBar 
               cols={cols} 
               rows={rows} 
-              minCol={minCol} 
+              minCol={minCol}
+              height={height}
+              width={width} 
+              furthestRow={furthestRow}
+              furthestCol={furthestCol}
               scroll={SCROLL_DIRECTION.HORIZONTAL}
               minRow={minRow}/> : null}
           <Footer width={width} showScrollBars={showScrollBars}/>
@@ -141,6 +146,8 @@ export default class Sprd extends React.Component {
           <VirtualScrollBar 
             cols={cols} 
             rows={rows} 
+            furthestRow={furthestRow}
+            furthestCol={furthestCol}
             minCol={minCol} 
             height={height}
             width={width}

@@ -1,5 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import {merge} from 'lodash';
+import Draggable from 'react-draggable';
 
 import {FOOTER_HEIGHT, SCROLL_BAR_WIDTH, SCROLL_DIRECTION} from '../Constants';
 
@@ -12,7 +14,9 @@ export default class VirtualScrollBar extends React.Component {
     minRow: PropTypes.number,
     scroll: PropTypes.number,
     height: PropTypes.number,
-    width: PropTypes.number
+    width: PropTypes.number,
+    furthestCol: PropTypes.number,
+    furthestRow: PropTypes.number
   };
 
   shouldShowScollbars(){
@@ -22,26 +26,37 @@ export default class VirtualScrollBar extends React.Component {
     return {showVertical, showHorizontal};
   }
 
+  getScrollBarLength(){
+    return 50;
+  }
+
   render(){
     let {scroll, height, width} = this.props;
-    let areaStyle, scrollerStyle;
+    let areaStyle, scrollerStyle, axis, bounds;
     let {showVertical, showHorizontal} = this.shouldShowScollbars();
+    let scrollBarLength = this.getScrollBarLength();
 
     if(scroll === SCROLL_DIRECTION.VERTICAL){
       areaStyle = styles.scroll_area_vertical;
       scrollerStyle = styles.scroller_vertical;
       areaStyle.height = height - FOOTER_HEIGHT;
       areaStyle.left = width + 5;
-      scrollerStyle.display = showVertical ? "block" : "none";
+      scrollerStyle = merge({height: scrollBarLength ,display: showVertical ? "block" : "none"}, scrollerStyle);
+      axis = "y";
+      bounds = {top: 0, bottom: height - FOOTER_HEIGHT - SCROLL_BAR_WIDTH - scrollBarLength};
     } else {
       areaStyle = styles.scroll_area_horizontal;
       scrollerStyle = styles.scroller_horizontal;
-      scrollerStyle.display = showHorizontal ? "block" : "none";
+      scrollerStyle = merge({width: scrollBarLength, display: showHorizontal ? "block" : "none"}, scrollerStyle);
+      axis = "x";
+      bounds = {left: 0, right: width  - FOOTER_HEIGHT - SCROLL_BAR_WIDTH - scrollBarLength};
     }
-
+  
     return (
       <div style={areaStyle}>
-        <div style={scrollerStyle}></div>
+        <Draggable axis={axis} bounds={bounds}>
+          <div style={scrollerStyle}></div>
+        </Draggable>
       </div>
     )
   }
@@ -63,10 +78,8 @@ const styles = {
   scroller_horizontal: {
     height: SCROLL_BAR_WIDTH,
     background: "gray",
-    width: 50
   },
   scroller_vertical: {
-    height: 50,
     background: "gray",
     width: SCROLL_BAR_WIDTH
   }

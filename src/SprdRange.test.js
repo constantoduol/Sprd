@@ -27,7 +27,7 @@ test('check whether a header is selected', () => {
 	expect(range3.isHeaderSelected(range1)).toBe(true);
 });
 
-test('check whether 2 range are equal', () => {
+test('check whether 2 ranges are equal', () => {
 	//startRow, startCol, stopRow, stopCol
 	const range1 = new SprdRange(1, 1, 1, 1);
 	const range2 = new SprdRange(1, 1, 1, 1);

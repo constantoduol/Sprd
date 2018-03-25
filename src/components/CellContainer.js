@@ -45,23 +45,23 @@ export default class CellContainer extends React.Component {
   *               covered while dragging
   */
   maybeScrollIfRangeExceededWhileDragging(recentCell, nextProps){
-    let {minCol, minRow, cols, rows, dragging, ranges} = nextProps;
-    if(!dragging) return;
+    let {minCol, minRow, cols, rows, dragging, ranges, infiniteScroll} = nextProps;
+    let {startCol, startRow, stopCol, stopRow} = recentCell;
+    if(!dragging || startCol < 0 || startRow < 0) return;
 
     let maxCol = minCol + cols;
     let maxRow = minRow + rows
-    let {startCol, startRow, stopCol, stopRow} = recentCell;
     const THRESHOLD = 3; 
     ranges = ranges.set('clickSelectedRange', recentCell);
-
+    
     if(startCol >  maxCol - THRESHOLD){
-      SprdNavigator.move({ranges, minCol, minRow, rows, cols}, DIRECTION.RIGHT);
+      SprdNavigator.move({ranges, minCol, minRow, rows, cols, infiniteScroll}, DIRECTION.RIGHT);
     } else if(startRow > maxRow - THRESHOLD){
-      SprdNavigator.move({ranges, minCol, minRow, rows, cols}, DIRECTION.DOWN);
+      SprdNavigator.move({ranges, minCol, minRow, rows, cols, infiniteScroll}, DIRECTION.DOWN);
     } else if(startCol < minCol + THRESHOLD){
-      SprdNavigator.move({ranges, minCol, minRow, rows, cols}, DIRECTION.LEFT);
+      SprdNavigator.move({ranges, minCol, minRow, rows, cols, infiniteScroll}, DIRECTION.LEFT);
     } else if(startRow > minRow + THRESHOLD){
-      SprdNavigator.move({ranges, minCol, minRow, rows, cols}, DIRECTION.UP);
+      SprdNavigator.move({ranges, minCol, minRow, rows, cols, infiniteScroll}, DIRECTION.UP);
     }
   }
 

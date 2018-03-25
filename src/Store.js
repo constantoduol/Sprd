@@ -36,7 +36,9 @@ class Store {
       cols: 0,
       rows: 0,
       minCol: 0, //rendering of headers starts from minCol to minCol + cols
-      minRow: 0 //rendering of rows starts from minRow to minRow + rows
+      minRow: 0, //rendering of rows starts from minRow to minRow + rows
+      furthestRow: 0, //the furthest row a user has ever scrolled to
+      furthestCol: 0, //the furthest col a user has ever scrolled to
     };
 
   }
@@ -135,9 +137,14 @@ class Store {
 
   onSetViewPort(params){
     let [minRow, minCol] = params;
+    let {furthestRow, furthestCol, rows, cols} = this.state;
+    let newFurthestRow = minRow + rows;
+    let newFurthestCol = minCol + cols;
     this.setState({
       minRow: minRow, 
-      minCol: minCol
+      minCol: minCol,
+      furthestRow: Math.max(furthestRow, newFurthestRow),
+      furthestCol: Math.max(furthestCol, newFurthestCol)
     });
   }
 
