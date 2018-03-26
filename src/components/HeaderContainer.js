@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import {difference} from 'lodash';
 
 import Header from './Header';
-import SprdRange from '../SprdRange';
 
 export default class HeaderContainer extends React.Component {
 
@@ -17,7 +16,7 @@ export default class HeaderContainer extends React.Component {
 
   toExcelColName(num){
     for (var ret = '', a = 1, b = 26; (num -= a) >= 0; a = b, b *= 26) {
-      ret = String.fromCharCode(parseInt((num % b) / a) + 65) + ret;
+      ret = String.fromCharCode(parseInt((num % b) / a, 10) + 65) + ret;
     }
     return ret;
   }

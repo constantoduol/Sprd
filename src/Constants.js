@@ -9,5 +9,6 @@ export const OUT_OF_RANGE_CELL = new SprdRange(-1,-1,-1,-1);
 
 export const FOOTER_HEIGHT = 15;
 export const SCROLL_BAR_WIDTH = 15;
+export const MIN_SCROLLBAR_LENGTH = 30;
 
 export const SCROLL_DIRECTION = {VERTICAL: 0, HORIZONTAL: 1};

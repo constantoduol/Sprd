@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {merge, defer} from 'lodash';
+import {merge} from 'lodash';
 import Mousetrap from 'mousetrap';
 
 import Actions from '../Actions';
 import SprdRange from '../SprdRange';
 import SprdNavigator from '../SprdNavigator';
-import {DIRECTION, OUT_OF_RANGE_CELL} from '../Constants';
+import {DIRECTION} from '../Constants';
 
 
 export default class Cell extends React.Component {
@@ -92,7 +92,7 @@ export default class Cell extends React.Component {
 
   maybeChangeCellMode(props){
     let {mode} = this.state;
-    let {ranges, row, col, dragging} = props;
+    let {ranges, row, col} = props;
     let currentCellRange = new SprdRange(row, col, row, col);
     let {focusedCellRange, clickSelectedRange, 
         dragSelectedRange, dragOriginCellRange} = SprdRange.fromImmutable(null, ranges); 

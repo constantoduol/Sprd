@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import Cell from './Cell';
 import NumberCell from './NumberCell';
 import TableRow from './TableRow';
-import Actions from '../Actions';
 import SprdRange from '../SprdRange';
 import SprdNavigator from '../SprdNavigator';
 import {DIRECTION} from '../Constants';
@@ -46,22 +45,23 @@ export default class CellContainer extends React.Component {
   */
   maybeScrollIfRangeExceededWhileDragging(recentCell, nextProps){
     let {minCol, minRow, cols, rows, dragging, ranges, infiniteScroll} = nextProps;
-    let {startCol, startRow, stopCol, stopRow} = recentCell;
+    let {startCol, startRow} = recentCell;
     if(!dragging || startCol < 0 || startRow < 0) return;
 
     let maxCol = minCol + cols;
     let maxRow = minRow + rows
     const THRESHOLD = 3; 
     ranges = ranges.set('clickSelectedRange', recentCell);
+    let dontSetClickSelectedRange = true;
     
     if(startCol >  maxCol - THRESHOLD){
-      SprdNavigator.move({ranges, minCol, minRow, rows, cols, infiniteScroll}, DIRECTION.RIGHT);
+      SprdNavigator.move({ranges, minCol, minRow, rows, cols, infiniteScroll, dontSetClickSelectedRange}, DIRECTION.RIGHT);
     } else if(startRow > maxRow - THRESHOLD){
-      SprdNavigator.move({ranges, minCol, minRow, rows, cols, infiniteScroll}, DIRECTION.DOWN);
+      SprdNavigator.move({ranges, minCol, minRow, rows, cols, infiniteScroll, dontSetClickSelectedRange}, DIRECTION.DOWN);
     } else if(startCol < minCol + THRESHOLD){
-      SprdNavigator.move({ranges, minCol, minRow, rows, cols, infiniteScroll}, DIRECTION.LEFT);
+      SprdNavigator.move({ranges, minCol, minRow, rows, cols, infiniteScroll, dontSetClickSelectedRange}, DIRECTION.LEFT);
     } else if(startRow > minRow + THRESHOLD){
-      SprdNavigator.move({ranges, minCol, minRow, rows, cols, infiniteScroll}, DIRECTION.UP);
+      SprdNavigator.move({ranges, minCol, minRow, rows, cols, infiniteScroll, dontSetClickSelectedRange}, DIRECTION.UP);
     }
   }
 
@@ -86,7 +86,6 @@ export default class CellContainer extends React.Component {
       );
 
       for(let col = minCol; col < cols + minCol; col++){
-        let modCol = col % cols; //modular column
         currentRow.push(
           <Cell 
             row={row} 

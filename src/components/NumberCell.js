@@ -4,7 +4,6 @@ import {merge} from 'lodash';
 
 import Actions from '../Actions';
 import SprdRange from '../SprdRange';
-import {OUT_OF_RANGE_CELL} from '../Constants';
 
 export default class NumberCell extends React.Component {
 

@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 import {merge} from 'lodash';
 import Draggable from 'react-draggable';
 
-import {FOOTER_HEIGHT, SCROLL_BAR_WIDTH, SCROLL_DIRECTION} from '../Constants';
+import SprdNavigator from '../SprdNavigator';
+import {FOOTER_HEIGHT, SCROLL_BAR_WIDTH, SCROLL_DIRECTION, MIN_SCROLLBAR_LENGTH, DIRECTION} from '../Constants';
+
 
 export default class VirtualScrollBar extends React.Component {
 
@@ -16,18 +18,61 @@ export default class VirtualScrollBar extends React.Component {
     height: PropTypes.number,
     width: PropTypes.number,
     furthestCol: PropTypes.number,
-    furthestRow: PropTypes.number
+    furthestRow: PropTypes.number,
+    ranges: PropTypes.object,
+    infiniteScroll: PropTypes.bool
   };
 
+  constructor(props){
+    super(props);
+    this.handleDragged = this.handleDragged.bind(this);
+
+  }
+
+  handleDragged(e, data){
+    let {ranges, minCol, minRow, rows, cols, infiniteScroll} = this.props;
+    let yScrollerDragged = data.x == data.lastX;
+    let xScrollerDragged = data.y == data.lastY;
+
+    let yVelocity = 0, xVelocity = 0;
+    let yChangeInViewPortPerUnit = 4;
+    let xChangeInViewPortPerUnit = 4;
+    let dontSetClickSelectedRange = true;
+
+    if(xScrollerDragged){
+      xVelocity = data.x - data.lastX;
+    } else {
+      yVelocity = data.y - data.lastY;
+      SprdNavigator.move({ranges, minCol, minRow, rows, cols, infiniteScroll, dontSetClickSelectedRange}, DIRECTION.DOWN);
+    }
+  }
+
   shouldShowScollbars(){
-    let {minRow, minCol} = this.props;
-    let showVertical = minRow > 0;
-    let showHorizontal = minCol > 0;
+    let {furthestRow, furthestCol, rows, cols} = this.props;
+    let showVertical = furthestRow > rows;
+    let showHorizontal = furthestCol > cols;
     return {showVertical, showHorizontal};
   }
 
   getScrollBarLength(){
-    return 50;
+    let {rows, cols, furthestRow, furthestCol, scroll} = this.props;
+    furthestRow = furthestRow || 1;
+    furthestCol = furthestCol || 1;
+    if(scroll === SCROLL_DIRECTION.VERTICAL){
+      return Math.max((rows * this.getMaxVerticalScroll())/furthestRow, MIN_SCROLLBAR_LENGTH);
+    } else {
+      return Math.max((cols * this.getMaxHorizontalScroll())/furthestCol, MIN_SCROLLBAR_LENGTH);
+    }
+  }
+
+  getMaxVerticalScroll(){
+    let {height} = this.props;
+    return height - FOOTER_HEIGHT - SCROLL_BAR_WIDTH;
+  }
+
+  getMaxHorizontalScroll(){
+    let {width} = this.props;
+    return width  - FOOTER_HEIGHT - SCROLL_BAR_WIDTH
   }
 
   render(){
@@ -43,18 +88,18 @@ export default class VirtualScrollBar extends React.Component {
       areaStyle.left = width + 5;
       scrollerStyle = merge({height: scrollBarLength ,display: showVertical ? "block" : "none"}, scrollerStyle);
       axis = "y";
-      bounds = {top: 0, bottom: height - FOOTER_HEIGHT - SCROLL_BAR_WIDTH - scrollBarLength};
+      bounds = {top: 0, bottom: this.getMaxVerticalScroll() - scrollBarLength};
     } else {
       areaStyle = styles.scroll_area_horizontal;
       scrollerStyle = styles.scroller_horizontal;
       scrollerStyle = merge({width: scrollBarLength, display: showHorizontal ? "block" : "none"}, scrollerStyle);
       axis = "x";
-      bounds = {left: 0, right: width  - FOOTER_HEIGHT - SCROLL_BAR_WIDTH - scrollBarLength};
+      bounds = {left: 0, right: this.getMaxHorizontalScroll() - scrollBarLength};
     }
   
     return (
       <div style={areaStyle}>
-        <Draggable axis={axis} bounds={bounds}>
+        <Draggable axis={axis} bounds={bounds} onDrag={this.handleDragged}>
           <div style={scrollerStyle}></div>
         </Draggable>
       </div>

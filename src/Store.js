@@ -87,7 +87,7 @@ class Store {
   onDragStarted(origin){
     this.state.dragZone = {};
     this.addDragZone(origin);
-    let {dragZone, ranges} = this.state;
+    let {dragZone} = this.state;
     this._setRange({
       dragOriginCellRange: origin, 
       clickSelectedRange: OUT_OF_RANGE_CELL}, {dragging: true, dragZone: dragZone});

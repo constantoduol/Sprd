@@ -1,10 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Actions from '../Actions';
-import SprdRange from '../SprdRange';
-import Store from '../Store';
-
 export default class TableRow extends React.Component {
 
   static propTypes = {

@@ -1,4 +1,4 @@
-import {DIRECTION, OUT_OF_RANGE_CELL} from './Constants';
+import {DIRECTION} from './Constants';
 import SprdRange from './SprdRange';
 import Actions from './Actions';
 //used to handle arrow key movements
@@ -6,7 +6,7 @@ import Actions from './Actions';
 export default class SprdNavigator {
 
   static move(props, direction){
-    let {ranges, minCol, minRow, rows, cols, infiniteScroll} = props;
+    let {ranges, minCol, minRow, rows, cols, infiniteScroll, dontSetClickSelectedRange} = props;
     let {clickSelectedRange, dragSelectedRange, dragOriginCellRange} = SprdRange.fromImmutable(null, ranges);
     let {startRow, stopRow, startCol, stopCol} = clickSelectedRange;
 
@@ -43,11 +43,18 @@ export default class SprdNavigator {
       Actions.setViewPort(minRow, minCol);
     }
 
-    Actions.setRange({
-      clickSelectedRange: new SprdRange(startRow, startCol, stopRow, stopCol), 
-      dragSelectedRange: dragSelectedRange, 
-      dragOriginCellRange: dragOriginCellRange
-    });
+    if(dontSetClickSelectedRange){
+      Actions.setRange({
+        dragSelectedRange: dragSelectedRange, 
+        dragOriginCellRange: dragOriginCellRange
+      });
+    } else {
+      Actions.setRange({
+        clickSelectedRange: new SprdRange(startRow, startCol, stopRow, stopCol), 
+        dragSelectedRange: dragSelectedRange, 
+        dragOriginCellRange: dragOriginCellRange
+      });
+    }
 
   }
 }

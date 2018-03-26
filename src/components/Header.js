@@ -1,11 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {merge} from 'lodash';
-import connectToStores from 'alt-utils/lib/connectToStores';
 
 import Actions from '../Actions';
 import SprdRange from '../SprdRange';
-import {OUT_OF_RANGE_CELL} from '../Constants';
 
 export default class Header extends React.Component {
 

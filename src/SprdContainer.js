@@ -18,8 +18,8 @@ export default class SprdContainer extends React.Component {
 
   componentDidMount(){
     let {width, height} = this.props;
-    let cols = parseInt(width/DEFAULT_HEADER_WIDTH);
-    let rows = parseInt(height/DEFAULT_ROW_HEIGHT) - 2; //-2 for header and footer
+    let cols = parseInt(width/DEFAULT_HEADER_WIDTH, 10);
+    let rows = parseInt(height/DEFAULT_ROW_HEIGHT, 10) - 2; //-2 for header and footer
     Actions.parseData(this.props.data, rows, cols);
   }
 

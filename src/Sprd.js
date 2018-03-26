@@ -138,6 +138,8 @@ export default class Sprd extends React.Component {
               width={width} 
               furthestRow={furthestRow}
               furthestCol={furthestCol}
+              ranges={ranges}
+              infiniteScroll={infiniteScroll}
               scroll={SCROLL_DIRECTION.HORIZONTAL}
               minRow={minRow}/> : null}
           <Footer width={width} showScrollBars={showScrollBars}/>
@@ -151,6 +153,8 @@ export default class Sprd extends React.Component {
             minCol={minCol} 
             height={height}
             width={width}
+            ranges={ranges}
+            infiniteScroll={infiniteScroll}
             scroll={SCROLL_DIRECTION.VERTICAL}
             minRow={minRow}/> : null}
       </div>
