@@ -32,37 +32,47 @@ export default class CellContainer extends React.Component {
   }
 
   componentWillReceiveProps(nextProps){
-    let recentDragCellRange = SprdRange.fromImmutable('recentDragCellRange', nextProps.ranges);
-    this.maybeScrollIfRangeExceededWhileDragging(recentDragCellRange, nextProps);
+    this.maybeScrollIfRangeExceededWhileDragging(nextProps);
+  }
+
+  /**
+  * get the general direction of movement from 2 sprd ranges representing the previous drag selected
+  * range and the current drag selected range
+  */
+  directionOfMotion(oldDragSelectedRange, newDragSelectedRange){
+    if(!oldDragSelectedRange || !newDragSelectedRange) return;
+    let {startCol, startRow, stopRow, stopCol} = newDragSelectedRange;
+    let {startCol: oldStartCol, startRow: oldStartRow, stopRow: oldStopRow, stopCol: oldStopCol} = oldDragSelectedRange;
+    if(startCol !== oldStartCol) return DIRECTION.LEFT;
+    else if(startRow !== oldStartRow) return DIRECTION.UP;
+    else if(stopRow !== oldStopRow) return DIRECTION.DOWN;
+    else if(stopCol !== oldStopCol) return DIRECTION.RIGHT; 
   }
 
 
   /**
   * when dragging happens and current screen view port
   * range is exceeded, we scroll
-  * @recentCell - this is a sprd range representing the most recent cell
-  *               covered while dragging
   */
-  maybeScrollIfRangeExceededWhileDragging(recentCell, nextProps){
+  maybeScrollIfRangeExceededWhileDragging(nextProps){
     let {minCol, minRow, cols, rows, dragging, ranges, infiniteScroll} = nextProps;
-    let {startCol, startRow} = recentCell;
+    let recentDragCellRange = SprdRange.fromImmutable('recentDragCellRange', nextProps.ranges);
+    let {startRow, stopRow, startCol, stopCol} = recentDragCellRange;
     if(!dragging || startCol < 0 || startRow < 0) return;
 
     let maxCol = minCol + cols;
     let maxRow = minRow + rows
-    const THRESHOLD = 3; 
-    ranges = ranges.set('clickSelectedRange', recentCell);
+    
+    let newDragSelectedRange = SprdRange.fromImmutable('dragSelectedRange', nextProps.ranges);
+    let oldDragSelectedRange = SprdRange.fromImmutable('dragSelectedRange', this.props.ranges);
+    let direction = this.directionOfMotion(oldDragSelectedRange, newDragSelectedRange);
+
+    const THRESHOLD = direction === DIRECTION.RIGHT || DIRECTION.DOWN ? 2 : -2;
+    recentDragCellRange = new SprdRange(startRow + THRESHOLD, startCol + THRESHOLD, stopRow + THRESHOLD, stopCol + THRESHOLD);
+    ranges = ranges.set('clickSelectedRange', recentDragCellRange);
     let dontSetClickSelectedRange = true;
     
-    if(startCol >  maxCol - THRESHOLD){
-      SprdNavigator.move({ranges, minCol, minRow, rows, cols, infiniteScroll, dontSetClickSelectedRange}, DIRECTION.RIGHT);
-    } else if(startRow > maxRow - THRESHOLD){
-      SprdNavigator.move({ranges, minCol, minRow, rows, cols, infiniteScroll, dontSetClickSelectedRange}, DIRECTION.DOWN);
-    } else if(startCol < minCol + THRESHOLD){
-      SprdNavigator.move({ranges, minCol, minRow, rows, cols, infiniteScroll, dontSetClickSelectedRange}, DIRECTION.LEFT);
-    } else if(startRow > minRow + THRESHOLD){
-      SprdNavigator.move({ranges, minCol, minRow, rows, cols, infiniteScroll, dontSetClickSelectedRange}, DIRECTION.UP);
-    }
+    SprdNavigator.move({ranges, minCol, minRow, rows, cols, infiniteScroll, dontSetClickSelectedRange}, direction);
   }
 
   getCellValue(row, col){

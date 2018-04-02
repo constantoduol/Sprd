@@ -31,11 +31,11 @@ export default class SprdNavigator {
         stopCol++;
     }
 
-    if(startRow === minRow + rows) minRow++;
-    else if( (startRow + 1) === minRow && minRow !== 0) minRow--;
+    if(startRow >= minRow + rows) minRow++;
+    else if( (startRow + 1) >= minRow && minRow !== 0) minRow--;
 
-    if(startCol === minCol + cols) minCol++;
-    else if( (startCol + 1) === minCol && minCol !== 0) minCol--;
+    if(startCol >= minCol + cols) minCol++;
+    else if( (startCol + 1) >= minCol && minCol !== 0) minCol--;
     
     if(!infiniteScroll && (minRow > 0 || minCol > 0)) return; //disable infinite scrolling
 
