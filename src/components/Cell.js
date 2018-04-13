@@ -86,8 +86,8 @@ export default class Cell extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState){
-    let {mode, value} = this.state;
-    return nextState.mode !== mode || nextState.value !== value;
+    let {mode} = this.state;
+    return nextState.mode !== mode || nextProps.value !== this.props.value;
   }
 
   maybeChangeCellMode(props){
@@ -98,10 +98,10 @@ export default class Cell extends React.Component {
         dragSelectedRange, dragOriginCellRange} = SprdRange.fromImmutable(null, ranges); 
 
     if(currentCellRange.isCellSelected(dragOriginCellRange)){
-      this.setState({mode: this.CELL_MODES.ACTIVE});
+      this.setState({mode: this.CELL_MODES.ACTIVE, value: props.value});
       return;
     } else if(currentCellRange.isWithinRange(dragSelectedRange)){
-      this.setState({mode: this.CELL_MODES.DRAG_HIGHLIGHT});
+      this.setState({mode: this.CELL_MODES.DRAG_HIGHLIGHT, value: props.value});
       return
     }
 
@@ -111,13 +111,15 @@ export default class Cell extends React.Component {
     } 
       
     if(clickSelectedRange.isCellSelected(currentCellRange)){
-      this.setState({mode: this.CELL_MODES.ACTIVE});
+      this.setState({mode: this.CELL_MODES.ACTIVE, value: props.value});
     } else if(clickSelectedRange.isNumberCellSelected(currentCellRange)){
-      this.setState({mode: this.CELL_MODES.HORIZONTAL_HIGHLIGHT});
+      this.setState({mode: this.CELL_MODES.HORIZONTAL_HIGHLIGHT, value: props.value});
     } else if(clickSelectedRange.isHeaderSelected(currentCellRange)){
-      this.setState({mode: this.CELL_MODES.VERTICAL_HIGHLIGHT});
+      this.setState({mode: this.CELL_MODES.VERTICAL_HIGHLIGHT, value: props.value});
     } else if(mode !== this.CELL_MODES.INACTIVE){
-      this.setState({mode: this.CELL_MODES.INACTIVE});
+      this.setState({mode: this.CELL_MODES.INACTIVE, value: props.value});
+    } else {
+      this.setState({value: props.value})
     }
     
   }

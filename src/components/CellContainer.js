@@ -28,6 +28,7 @@ export default class CellContainer extends React.Component {
     if(nextProps.rows !== this.props.rows || nextProps.cols !== this.props.cols)
       return true;
     if(nextProps.dragging !== this.props.dragging) return true;
+    if(nextProps.data !== this.props.data) return true;
     return nextProps.minCol !== this.props.minCol || nextProps.minRow !== this.props.minRow;
   }
 
@@ -59,9 +60,6 @@ export default class CellContainer extends React.Component {
     let recentDragCellRange = SprdRange.fromImmutable('recentDragCellRange', nextProps.ranges);
     let {startRow, stopRow, startCol, stopCol} = recentDragCellRange;
     if(!dragging || startCol < 0 || startRow < 0) return;
-
-    let maxCol = minCol + cols;
-    let maxRow = minRow + rows
     
     let newDragSelectedRange = SprdRange.fromImmutable('dragSelectedRange', nextProps.ranges);
     let oldDragSelectedRange = SprdRange.fromImmutable('dragSelectedRange', this.props.ranges);
@@ -96,6 +94,7 @@ export default class CellContainer extends React.Component {
       );
 
       for(let col = minCol; col < cols + minCol; col++){
+        // console.log(this.getCellValue(row, col))
         currentRow.push(
           <Cell 
             row={row} 

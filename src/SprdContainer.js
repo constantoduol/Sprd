@@ -12,6 +12,7 @@ export default class SprdContainer extends React.Component {
     showScrollBars: true, //show horizontal and vertical scroll bars
     showFooter: true,
     infiniteScroll: true, //scroll infinitely in any direction
+    onEvent: null, //function called when an event occurs
     width: 600,
     height: 700
   };

@@ -2,20 +2,18 @@ import React from 'react';
 import {merge} from 'lodash';
 import PropTypes from 'prop-types';
 
-import {FOOTER_HEIGHT, SCROLL_BAR_WIDTH} from '../Constants';
+import {FOOTER_HEIGHT} from '../Constants';
 
 export default class Footer extends React.Component {
 
   static propTypes = {
     width: PropTypes.number,
-    content: PropTypes.string,
-    showScrollBars: PropTypes.bool
+    content: PropTypes.string
   };
 
   render(){
-    let {width, content, showScrollBars} = this.props;
-    let widthCorrection = showScrollBars ? SCROLL_BAR_WIDTH - 2 : 0;
-    let style = merge(styles.footer, {width: width + widthCorrection});
+    let {width, content} = this.props;
+    let style = merge(styles.footer, {width: width});
     return (
       <div style={style}>{content}</div>
     )

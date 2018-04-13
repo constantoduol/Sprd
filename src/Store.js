@@ -16,7 +16,9 @@ class Store {
       onSetViewPort: Actions.setViewPort,
       onDragStarted: Actions.dragStarted,
       onDragStopped: Actions.dragStopped,
-      onAddDragZone: Actions.addDragZone
+      onAddDragZone: Actions.addDragZone,
+      onSetData: Actions.setData,
+      onSetState: Actions.setState
     });
 
 
@@ -26,9 +28,9 @@ class Store {
         dragSelectedRange: OUT_OF_RANGE_CELL, //range selected by user drag actions
         focusedCellRange: OUT_OF_RANGE_CELL, //a range representing a single cell that is the currently focused cell
         recentDragCellRange: OUT_OF_RANGE_CELL, //range representing a single cell that was most recently covered when dragging
-        dragOriginCellRange: OUT_OF_RANGE_CELL //range representing a single cell that is the origin of dragging
+        dragOriginCellRange: OUT_OF_RANGE_CELL, //range representing a single cell that is the origin of dragging
+        valueSetRange: OUT_OF_RANGE_CELL //what value was set
       }),
-      valueSetRange: [], //range of where data changed
       data: Map(),
       headerWidths: [],
       dragging: false, //current drag highlighting on going?
@@ -37,8 +39,6 @@ class Store {
       rows: 0,
       minCol: 0, //rendering of headers starts from minCol to minCol + cols
       minRow: 0, //rendering of rows starts from minRow to minRow + rows
-      furthestRow: 0, //the furthest row a user has ever scrolled to
-      furthestCol: 0, //the furthest col a user has ever scrolled to
     };
 
   }
@@ -120,32 +120,32 @@ class Store {
   }
 
   onSetValue(valueAndRange){
-    let [value, ranges] = valueAndRange;
+    let [value, range] = valueAndRange;
     let {data} = this.state;
-    if(!isArray(ranges)) ranges = [ranges];
-    for(let range of ranges){
-      let {startRow, stopRow, startCol, stopCol} = range;
-      for(let row = startRow; row <= stopRow; row++){
-        if(!data.get(row)) data = data.set(row, Map({}));
-        for(let col = startCol; col <= stopCol; col++){
-          if(value) data = data.setIn([row, col], value)
-        }
+    let {startRow, stopRow, startCol, stopCol} = range;
+    for(let row = startRow; row <= stopRow; row++){
+      if(!data.get(row)) data = data.set(row, Map({}));
+      for(let col = startCol; col <= stopCol; col++){
+        if(value) data = data.setIn([row, col], value)
       }
     }
-    this.setState({data: data, valueSetRange: ranges});
+    this._setRange({valueSetRange: range}, {data: data});
   }
 
   onSetViewPort(params){
     let [minRow, minCol] = params;
-    let {furthestRow, furthestCol, rows, cols} = this.state;
-    let newFurthestRow = minRow + rows;
-    let newFurthestCol = minCol + cols;
     this.setState({
       minRow: minRow, 
-      minCol: minCol,
-      furthestRow: Math.max(furthestRow, newFurthestRow),
-      furthestCol: Math.max(furthestCol, newFurthestCol)
+      minCol: minCol
     });
+  }
+
+  onSetData(newData){
+    this.setState({data: newData});
+  }
+
+  onSetState(newState){
+    this.setState(newState)
   }
 
 }

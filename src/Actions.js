@@ -22,6 +22,10 @@ class Actions {
     return data;
   }
 
+  setState(state){
+    return state;
+  }
+
   setHeaderWidths(headerWidths){
     return headerWidths;
   }

@@ -6,12 +6,11 @@ import connectToStores from 'alt-utils/lib/connectToStores';
 import Footer from './components/Footer';
 import HeaderContainer from './components/HeaderContainer';
 import CellContainer from './components/CellContainer';
-import VirtualScrollBar from './components/VirtualScrollBar';
 import Actions from './Actions';
 import SprdRange from './SprdRange';
 import Store from './Store';
 import SprdNavigator from './SprdNavigator';
-import {DIRECTION, SCROLL_DIRECTION} from './Constants';
+import {DIRECTION} from './Constants';
 
 @connectToStores
 export default class Sprd extends React.Component {
@@ -41,6 +40,7 @@ export default class Sprd extends React.Component {
 
   componentDidMount(){
     this.setupKeyBindings();
+    this.container.addEventListener('paste', this.handlePaste.bind(this));
   }
 
 
@@ -65,11 +65,7 @@ export default class Sprd extends React.Component {
 
   setupKeyBindings(){
     Mousetrap.bind("mod+c", () => {
-      console.log("copy");
-    });
-
-    Mousetrap.bind("mod+v", () => {
-      console.log("paste");
+      console.log("copy", this);
     });
 
     Mousetrap.bind("up", () => {
@@ -103,60 +99,68 @@ export default class Sprd extends React.Component {
 
   }
 
+  handlePaste (e) {
+    let clipboardData, pastedData;
+
+    // Stop data actually being pasted into div
+    e.stopPropagation();
+    e.preventDefault();
+
+    // Get pasted data via clipboard API
+    clipboardData = e.clipboardData || window.clipboardData;
+    pastedData = clipboardData.getData('Text');
+
+    let lines = pastedData.split(/\r?\n/);
+    let {ranges, data} = this.props;
+    let clickSelectedRange = SprdRange.fromImmutable('clickSelectedRange', ranges);
+    let {startRow, stopRow, startCol, stopCol} = clickSelectedRange;
+    let originalStartCol = startCol;
+    let highligtedRange = new SprdRange(startRow, startCol, stopRow, stopCol);
+    let maxTokenLength = 0;
+
+    for(let line of lines){
+      let tokens = line.split(/\t?\s/);
+      maxTokenLength = Math.max(maxTokenLength, tokens.length);
+      if(!data.get(startRow)) data = data.set(startRow, Map({}));
+      for(let token of tokens){
+        if(token) data = data.setIn([startRow, startCol], token);
+        startCol++;
+      }
+      startRow++;
+      startCol = originalStartCol;
+    }
+
+    highligtedRange.stopRow = startRow;
+    highligtedRange.stopCol = startCol + maxTokenLength - 1;
+    ranges = ranges.set('dragSelectedRange', highligtedRange);
+    Actions.setState({data: data, ranges: ranges});
+  }
+
   render(){
     let {
-      cols, rows, headerWidths, ranges, showHeaderLetters, data, width, minRow, minCol, 
-      valueSetRange, dragging, height, showScrollBars, infiniteScroll, furthestRow, furthestCol} = this.props;
+      cols, rows, headerWidths, ranges, showHeaderLetters, data, width, 
+      minRow, minCol, dragging, infiniteScroll} = this.props;
     let style = merge(styles.root, {width});
     return (
-      <div>
-        <div style={style} draggable="false">
-          <table style={styles.table}>
-            <HeaderContainer
-              cols={cols}
-              headerWidths={headerWidths}
-              ranges={ranges}
-              minCol={minCol}
-              showHeaderLetters={showHeaderLetters}/>
-            <CellContainer 
-              cols={cols} 
-              minCol={minCol}
-              minRow={minRow}
-              data={data}
-              infiniteScroll={infiniteScroll}
-              valueSetRange={valueSetRange}
-              ranges={ranges}
-              dragging={dragging}
-              rows={rows}/>
-          </table>
-          {showScrollBars ?
-            <VirtualScrollBar 
-              cols={cols} 
-              rows={rows} 
-              minCol={minCol}
-              height={height}
-              width={width} 
-              furthestRow={furthestRow}
-              furthestCol={furthestCol}
-              ranges={ranges}
-              infiniteScroll={infiniteScroll}
-              scroll={SCROLL_DIRECTION.HORIZONTAL}
-              minRow={minRow}/> : null}
-          <Footer width={width} showScrollBars={showScrollBars}/>
-        </div>
-        {showScrollBars ? 
-          <VirtualScrollBar 
-            cols={cols} 
-            rows={rows} 
-            furthestRow={furthestRow}
-            furthestCol={furthestCol}
-            minCol={minCol} 
-            height={height}
-            width={width}
+      <div style={style} draggable="false" ref={container => this.container = container}>
+        <table style={styles.table}>
+          <HeaderContainer
+            cols={cols}
+            headerWidths={headerWidths}
             ranges={ranges}
+            minCol={minCol}
+            showHeaderLetters={showHeaderLetters}/>
+          <CellContainer 
+            cols={cols} 
+            minCol={minCol}
+            minRow={minRow}
+            data={data}
             infiniteScroll={infiniteScroll}
-            scroll={SCROLL_DIRECTION.VERTICAL}
-            minRow={minRow}/> : null}
+            ranges={ranges}
+            dragging={dragging}
+            rows={rows}/>
+        </table>
+        <Footer width={width}/>
       </div>
     )
   }
