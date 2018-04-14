@@ -10,7 +10,8 @@ import Actions from './Actions';
 import SprdRange from './SprdRange';
 import Store from './Store';
 import SprdNavigator from './SprdNavigator';
-import {DIRECTION} from './Constants';
+import SprdContainer from './SprdContainer';
+import {DIRECTION, EVENT} from './Constants';
 
 @connectToStores
 export default class Sprd extends React.Component {
@@ -59,7 +60,9 @@ export default class Sprd extends React.Component {
     let key = e.key.toLowerCase();
     let clickSelectedRange = SprdRange.fromImmutable('clickSelectedRange', this.props.ranges);
     if(key !== "enter"){
+      let {onEvent} = this.props;
       Actions.setRange({'focusedCellRange': clickSelectedRange});
+      SprdContainer.eventTriggered(onEvent, EVENT.CELL_FOCUSED, clickSelectedRange);
     }
   }
 
@@ -85,18 +88,21 @@ export default class Sprd extends React.Component {
     });
 
     Mousetrap.bind("enter", () => {
-      let clickSelectedRange = SprdRange.fromImmutable('clickSelectedRange', this.props.ranges);
+      let {onEvent, ranges} = this.props;
+      let clickSelectedRange = SprdRange.fromImmutable('clickSelectedRange', ranges);
       Actions.setRange({'focusedCellRange': clickSelectedRange});
+      SprdContainer.eventTriggered(onEvent, EVENT.CELL_FOCUSED, clickSelectedRange);
     });
 
     document.onkeydown = (e) => {
       let key = e.key.toLowerCase();
-      let clickSelectedRange = SprdRange.fromImmutable('clickSelectedRange', this.props.ranges);
+      let {onEvent, ranges} = this.props;
+      let clickSelectedRange = SprdRange.fromImmutable('clickSelectedRange', ranges); 
       if(!this.KEY_DOWN_IGNORE_KEYS[key]){
         Actions.setRange({'focusedCellRange': clickSelectedRange});
+        SprdContainer.eventTriggered(onEvent, EVENT.CELL_FOCUSED, clickSelectedRange);
       }
     }
-
   }
 
   handlePaste (e) {
@@ -111,11 +117,11 @@ export default class Sprd extends React.Component {
     pastedData = clipboardData.getData('Text');
 
     let lines = pastedData.split(/\r?\n/);
-    let {ranges, data} = this.props;
+    let {ranges, data, onEvent} = this.props;
     let clickSelectedRange = SprdRange.fromImmutable('clickSelectedRange', ranges);
     let {startRow, stopRow, startCol, stopCol} = clickSelectedRange;
     let originalStartCol = startCol;
-    let highligtedRange = new SprdRange(startRow, startCol, stopRow, stopCol);
+    let highLightedRange = new SprdRange(startRow, startCol, stopRow, stopCol);
     let maxTokenLength = 0;
 
     for(let line of lines){
@@ -130,16 +136,17 @@ export default class Sprd extends React.Component {
       startCol = originalStartCol;
     }
 
-    highligtedRange.stopRow = startRow;
-    highligtedRange.stopCol = startCol + maxTokenLength - 1;
-    ranges = ranges.set('dragSelectedRange', highligtedRange);
+    highLightedRange.stopRow = startRow;
+    highLightedRange.stopCol = startCol + maxTokenLength - 1;
+    ranges = ranges.set('dragSelectedRange', highLightedRange);
     Actions.setState({data: data, ranges: ranges});
+    SprdContainer.eventTriggered(onEvent, EVENT.PASTE, highLightedRange, lines);
   }
 
   render(){
     let {
       cols, rows, headerWidths, ranges, showHeaderLetters, data, width, 
-      minRow, minCol, dragging, infiniteScroll} = this.props;
+      minRow, minCol, dragging, infiniteScroll, showFooter, onEvent} = this.props;
     let style = merge(styles.root, {width});
     return (
       <div style={style} draggable="false" ref={container => this.container = container}>
@@ -149,18 +156,20 @@ export default class Sprd extends React.Component {
             headerWidths={headerWidths}
             ranges={ranges}
             minCol={minCol}
+            onEvent={onEvent}
             showHeaderLetters={showHeaderLetters}/>
           <CellContainer 
             cols={cols} 
             minCol={minCol}
             minRow={minRow}
+            onEvent={onEvent}
             data={data}
             infiniteScroll={infiniteScroll}
             ranges={ranges}
             dragging={dragging}
             rows={rows}/>
         </table>
-        <Footer width={width}/>
+        {showFooter ? <Footer width={width}/> : null}
       </div>
     )
   }

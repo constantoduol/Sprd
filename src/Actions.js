@@ -51,7 +51,6 @@ class Actions {
     let headers = [];
     let headerWidths = [];
     if(isObject(rawData)){
-      console.log("here data");
       headers = Object.keys(rawData); //there is no guarantee for header order
       for(let col = 0, row = 0; col < headers.length; col++){
         let headerData = rawData[headers[col]];

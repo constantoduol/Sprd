@@ -9,7 +9,6 @@ export default class SprdContainer extends React.Component {
   static defaultProps = {
     data: null, //data is in format {header1: [value1, value2], header2: [value3, value4]}
     showHeaderLetters: false, //show the letters at top A, B, C ... AA, AB
-    showScrollBars: true, //show horizontal and vertical scroll bars
     showFooter: true,
     infiniteScroll: true, //scroll infinitely in any direction
     onEvent: null, //function called when an event occurs
@@ -22,6 +21,12 @@ export default class SprdContainer extends React.Component {
     let cols = parseInt(width/DEFAULT_HEADER_WIDTH, 10);
     let rows = parseInt(height/DEFAULT_ROW_HEIGHT, 10) - 2; //-2 for header and footer
     Actions.parseData(this.props.data, rows, cols);
+  }
+
+  static eventTriggered(onEvent, eventType, eventData, eventRange){
+    if(onEvent){
+      onEvent(eventType, eventData, eventRange);
+    }
   }
 
   render(){

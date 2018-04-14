@@ -6,7 +6,8 @@ import Mousetrap from 'mousetrap';
 import Actions from '../Actions';
 import SprdRange from '../SprdRange';
 import SprdNavigator from '../SprdNavigator';
-import {DIRECTION} from '../Constants';
+import SprdContainer from '../SprdContainer';
+import {DIRECTION, EVENT} from '../Constants';
 
 
 export default class Cell extends React.Component {
@@ -125,45 +126,55 @@ export default class Cell extends React.Component {
   }
 
   mouseDown(){
-    let {row, col} = this.props;
+    let {row, col, onEvent} = this.props;
     this.mouseCurrentlyUp = false;
     setTimeout( () => { //use this to prevent false triggering of dragging when someone clicks this cell
       if(!this.mouseCurrentlyUp){
-        Actions.dragStarted(new SprdRange(row, col, row, col));
+        let dragOrigin = new SprdRange(row, col, row, col);
+        Actions.dragStarted(dragOrigin);
+        SprdContainer.eventTriggered(onEvent, EVENT.DRAG_STARTED, dragOrigin);
       }
     }, this.MOUSE_DOWN_DELAY);
   }
 
   mouseUp(){
-    let {row, col, dragging} = this.props;
+    let {row, col, dragging, onEvent} = this.props;
     if(dragging){
-      Actions.dragStopped(new SprdRange(row, col, row, col));
+      let dragEndPos = new SprdRange(row, col, row, col)
+      Actions.dragStopped(dragEndPos);
+      SprdContainer.eventTriggered(onEvent, EVENT.DRAG_STOPPED, dragEndPos);
     }
     this.mouseCurrentlyUp = true; //clicked on the same cell, and now the mouse has come up
   }
 
   mouseOver(){
-    let {dragging, row, col} = this.props;
+    let {dragging, row, col, ranges, onEvent} = this.props;
     if(dragging){
+      let dragSelectedRange = SprdRange.fromImmutable('dragSelectedRange', ranges);
       Actions.addDragZone(new SprdRange(row, col, row, col));
+      SprdContainer.eventTriggered(onEvent, EVENT.DRAG_IN_PROGRESS, dragSelectedRange);
     }
   }
 
   //this is called twice when cell is double clicked
   //to prevent that we check if the current cell is already selected
   cellClicked(){
-    let {row, col, ranges} = this.props;
+    let {row, col, ranges, onEvent} = this.props;
     let clickSelectedRange = SprdRange.fromImmutable('clickSelectedRange', ranges);
     let thisCellSelected = clickSelectedRange.isCellSelected(row, col);
     if(!thisCellSelected){
-      Actions.setRange({clickSelectedRange: new SprdRange(row, col, row, col)});
+      let clickPos = new SprdRange(row, col, row, col);
+      Actions.setRange({clickSelectedRange: clickPos});
+      SprdContainer.eventTriggered(onEvent, EVENT.CELL_CLICKED, clickPos);
     }
   }
 
   cellDoubleClicked(){
     this.setState({mode: this.CELL_MODES.EDITING}, () => {
       this.input.focus();
-    })
+    });
+    let {row, col, ranges, onEvent} = this.props;
+    SprdContainer.eventTriggered(onEvent, EVENT.CELL_DOUBLE_CLICKED, new SprdRange(row, col, row, col));
   }
 
   currentStyle(){
@@ -186,8 +197,10 @@ export default class Cell extends React.Component {
   inputValueChanged(e){
     let value = e.target.value;
     this.setState({value}, () => {
-      let {row, col} = this.props;
-      Actions.setValue(value, new SprdRange(row, col, row, col));
+      let {row, col, onEvent} = this.props;
+      let pos = new SprdRange(row, col, row, col);
+      Actions.setValue(value, pos);
+      SprdContainer.eventTriggered(onEvent, EVENT.CELL_VALUE_CHANGED, pos);
     });
   }
 

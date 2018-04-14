@@ -29,7 +29,7 @@ export default class HeaderContainer extends React.Component {
   }
 
   renderHeaderLetters(){
-    let {ranges, headerWidths, cols, minCol} = this.props;
+    let {ranges, headerWidths, cols, minCol, showHeaderLetters, onEvent} = this.props;
     let headers = [
       <Header 
         title="" 
@@ -47,7 +47,8 @@ export default class HeaderContainer extends React.Component {
           col={x} 
           width={headerWidths[x % cols]}
           ranges={ranges}
-          title={colLetter} 
+          onEvent={onEvent}
+          title={showHeaderLetters ? colLetter : ""} 
         />
       );
     }

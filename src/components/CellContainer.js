@@ -81,7 +81,7 @@ export default class CellContainer extends React.Component {
   }
 
   renderCells(){
-    let {data, rows, cols, minRow, minCol, dragging, ranges, infiniteScroll} = this.props;
+    let {data, rows, cols, minRow, minCol, dragging, ranges, infiniteScroll, onEvent} = this.props;
     let allRows = [];
     for(let row = minRow; row < rows + minRow; row++){
       let currentRow = [];
@@ -90,6 +90,7 @@ export default class CellContainer extends React.Component {
         <NumberCell 
           key={"num_" + row} 
           row={row} 
+          onEvent={onEvent}
           ranges={ranges}/>
       );
 
@@ -107,6 +108,7 @@ export default class CellContainer extends React.Component {
             infiniteScroll={infiniteScroll}
             ranges={ranges}
             dragging={dragging}
+            onEvent={onEvent}
             key={row + "_" + col}/>
         );
       }

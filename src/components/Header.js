@@ -4,6 +4,8 @@ import {merge} from 'lodash';
 
 import Actions from '../Actions';
 import SprdRange from '../SprdRange';
+import SprdContainer from '../SprdContainer';
+import {EVENT} from '../Constants';
 
 export default class Header extends React.Component {
 
@@ -31,8 +33,10 @@ export default class Header extends React.Component {
   }
 
   headerClicked(){
-    let {col} = this.props;
-    Actions.setRange({clickSelectedRange: new SprdRange(-1, col, -1, col)});
+    let {col, onEvent} = this.props;
+    let pos = new SprdRange(-1, col, -1, col);
+    Actions.setRange({clickSelectedRange: pos});
+    SprdContainer.eventTriggered(onEvent, EVENT.HEADER_CLICKED, pos);
   }
 
   currentStyle(){
