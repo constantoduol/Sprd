@@ -1,3 +1,4 @@
+import {toExcelColName} from './Util'
 //renamed from Range to distinguish from window.Range
 export default class SprdRange {
 
@@ -5,7 +6,7 @@ export default class SprdRange {
     this.startRow = startRow;
     this.startCol = startCol;
     this.stopRow = stopRow;
-    this.stopCol = stopCol; 
+    this.stopCol = stopCol;
   }
 
   /**
@@ -14,6 +15,20 @@ export default class SprdRange {
   isNumberCellSelected(range){
     let {startRow} = range;
     return this.startCol === 0 && this.stopCol === -1 && this.startRow === startRow;
+  }
+
+  getAddress(){
+    //returns address in the form of column letter,row num e.g A6, A19:D29
+    let {startCol, startRow, stopRow, stopCol} = this;
+    let startColLetter = toExcelColName(startCol + 1);
+    if(startRow === stopRow && startCol === stopCol){ //single cell
+      return `${startColLetter}${startRow + 1}`
+    } else if(startRow === 0 && stopRow === -1){ //column selected
+      return `${startColLetter}:${startColLetter}`;
+    } else if(startCol === 0 && stopCol === -1){//row selected
+      return `${startRow + 1}:${startRow + 1}`;
+    }
+    return `${startColLetter}${startRow + 1}:${toExcelColName(stopCol + 1)}${stopRow + 1}`; //arbitrary range
   }
 
   /**
@@ -29,7 +44,7 @@ export default class SprdRange {
   */
   isHeaderSelected(range){
     let {startCol} = range;
-    return this.startCol === startCol && this.stopCol === startCol && this.startRow === -1 && this.stopRow === -1;
+    return this.startCol === startCol && this.stopCol === startCol && this.startRow === 0 && this.stopRow === -1;
   }
 
   isEqual(otherRange){

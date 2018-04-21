@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import Header from './Header';
+import {toExcelColName} from '../Util';
 import {DEFAULT_HEADER_WIDTH, DEFAULT_NUM_HEADER_WIDTH} from '../Constants';
 
 export default class HeaderContainer extends React.Component {
@@ -12,13 +13,6 @@ export default class HeaderContainer extends React.Component {
     ranges: PropTypes.object,
     minCol: PropTypes.number
   };
-
-  toExcelColName(num){
-    for (var ret = '', a = 1, b = 26; (num -= a) >= 0; a = b, b *= 26) {
-      ret = String.fromCharCode(parseInt((num % b) / a, 10) + 65) + ret;
-    }
-    return ret;
-  }
 
   shouldComponentUpdate(nextProps, nextState){
     if(nextProps.ranges !== this.props.ranges) return true;
@@ -38,7 +32,7 @@ export default class HeaderContainer extends React.Component {
       />
     ]; //the first header is for the numbers to the left
     for(let x = minCol; x < cols + minCol; x++){
-      let colLetter = this.toExcelColName(x + 1);
+      let colLetter = toExcelColName(x + 1);
       headers.push(
         <Header 
           key={x} 

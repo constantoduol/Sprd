@@ -6,7 +6,7 @@ import Mousetrap from 'mousetrap';
 import Actions from '../Actions';
 import SprdRange from '../SprdRange';
 import SprdNavigator from '../SprdNavigator';
-import SprdContainer from '../SprdContainer';
+import {eventTriggered} from '../Util';
 import {DIRECTION, EVENT, DATA_TYPE} from '../Constants';
 
 
@@ -116,7 +116,7 @@ export default class Cell extends React.Component {
       if(!this.mouseCurrentlyUp){
         let dragOrigin = new SprdRange(row, col, row, col);
         Actions.dragStarted(dragOrigin);
-        SprdContainer.eventTriggered(onEvent, EVENT.DRAG_STARTED, dragOrigin);
+        eventTriggered(onEvent, EVENT.DRAG_STARTED, dragOrigin);
       }
     }, this.MOUSE_DOWN_DELAY);
   }
@@ -126,7 +126,7 @@ export default class Cell extends React.Component {
     if(dragging){
       let dragEndPos = new SprdRange(row, col, row, col)
       Actions.dragStopped(dragEndPos);
-      SprdContainer.eventTriggered(onEvent, EVENT.DRAG_STOPPED, dragEndPos);
+      eventTriggered(onEvent, EVENT.DRAG_STOPPED, dragEndPos);
     }
     this.mouseCurrentlyUp = true; //clicked on the same cell, and now the mouse has come up
   }
@@ -136,7 +136,7 @@ export default class Cell extends React.Component {
     if(dragging){
       let dragSelectedRange = SprdRange.fromImmutable('dragSelectedRange', ranges);
       Actions.addDragZone(new SprdRange(row, col, row, col));
-      SprdContainer.eventTriggered(onEvent, EVENT.DRAG_IN_PROGRESS, dragSelectedRange);
+      eventTriggered(onEvent, EVENT.DRAG_IN_PROGRESS, dragSelectedRange);
     }
   }
 
@@ -149,7 +149,7 @@ export default class Cell extends React.Component {
     let thisCellSelected = clickSelectedRange.isCellSelected(clickPos);
     if(!thisCellSelected){
       Actions.setRange({clickSelectedRange: clickPos});
-      SprdContainer.eventTriggered(onEvent, EVENT.CELL_CLICKED, clickPos);
+      eventTriggered(onEvent, EVENT.CELL_CLICKED, clickPos);
     }
   }
 
@@ -158,7 +158,7 @@ export default class Cell extends React.Component {
       this.input.focus();
     });
     let {row, col, onEvent} = this.props;
-    SprdContainer.eventTriggered(onEvent, EVENT.CELL_DOUBLE_CLICKED, new SprdRange(row, col, row, col));
+    eventTriggered(onEvent, EVENT.CELL_DOUBLE_CLICKED, new SprdRange(row, col, row, col));
   }
 
   currentStyle(){
@@ -195,7 +195,7 @@ export default class Cell extends React.Component {
     let {row, col, onEvent} = this.props;
     let pos = new SprdRange(row, col, row, col);
     Actions.setValue(value, pos);
-    SprdContainer.eventTriggered(onEvent, EVENT.CELL_VALUE_CHANGED, pos);
+    eventTriggered(onEvent, EVENT.CELL_VALUE_CHANGED, pos);
   }
 
 

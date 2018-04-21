@@ -1,7 +1,7 @@
 import {DIRECTION, EVENT} from './Constants';
 import SprdRange from './SprdRange';
 import Actions from './Actions';
-import SprdContainer from './SprdContainer';
+import {eventTriggered} from './Util';
 //used to handle arrow key movements
 
 export default class SprdNavigator {
@@ -57,7 +57,7 @@ export default class SprdNavigator {
         dragOriginCellRange: dragOriginCellRange
       });
     }
-    SprdContainer.eventTriggered(
+    eventTriggered(
       onEvent, EVENT.MOVE, null, {oldPosition: clickSelectedRange, newPosition: newClickSelectedRange});
   }
 }

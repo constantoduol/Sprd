@@ -10,7 +10,7 @@ import Actions from './Actions';
 import SprdRange from './SprdRange';
 import Store from './Store';
 import SprdNavigator from './SprdNavigator';
-import SprdContainer from './SprdContainer';
+import {eventTriggered} from './Util';
 import {DIRECTION, EVENT} from './Constants';
 
 @connectToStores
@@ -60,7 +60,7 @@ export default class Sprd extends React.Component {
     let clickSelectedRange = SprdRange.fromImmutable('clickSelectedRange', ranges);
     if(key !== "enter"){
       Actions.setRange({'focusedCellRange': clickSelectedRange});
-      SprdContainer.eventTriggered(onEvent, EVENT.CELL_FOCUSED, clickSelectedRange);
+      eventTriggered(onEvent, EVENT.CELL_FOCUSED, clickSelectedRange);
     }
   }
 
@@ -89,7 +89,7 @@ export default class Sprd extends React.Component {
       let {onEvent, ranges} = this.props;
       let clickSelectedRange = SprdRange.fromImmutable('clickSelectedRange', ranges);
       Actions.setRange({'focusedCellRange': clickSelectedRange});
-      SprdContainer.eventTriggered(onEvent, EVENT.CELL_FOCUSED, clickSelectedRange);
+      eventTriggered(onEvent, EVENT.CELL_FOCUSED, clickSelectedRange);
     });
 
     document.onkeydown = (e) => {
@@ -98,7 +98,7 @@ export default class Sprd extends React.Component {
       let clickSelectedRange = SprdRange.fromImmutable('clickSelectedRange', ranges); 
       if(!this.KEY_DOWN_IGNORE_KEYS[key]){
         Actions.setRange({'focusedCellRange': clickSelectedRange});
-        SprdContainer.eventTriggered(onEvent, EVENT.CELL_FOCUSED, clickSelectedRange);
+        eventTriggered(onEvent, EVENT.CELL_FOCUSED, clickSelectedRange);
       }
     }
   }
@@ -138,7 +138,7 @@ export default class Sprd extends React.Component {
     highLightedRange.stopCol = startCol + maxTokenLength - 1;
     ranges = ranges.set('dragSelectedRange', highLightedRange);
     Actions.setState({data: data, ranges: ranges});
-    SprdContainer.eventTriggered(onEvent, EVENT.PASTE, highLightedRange, lines);
+    eventTriggered(onEvent, EVENT.PASTE, highLightedRange, lines);
   }
 
   render(){

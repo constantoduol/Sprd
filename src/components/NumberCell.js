@@ -4,7 +4,7 @@ import {merge} from 'lodash';
 
 import Actions from '../Actions';
 import SprdRange from '../SprdRange';
-import SprdContainer from '../SprdContainer';
+import {eventTriggered} from '../Util';
 import {EVENT} from '../Constants';
 
 export default class NumberCell extends React.Component {
@@ -35,7 +35,7 @@ export default class NumberCell extends React.Component {
     let {row, onEvent} = this.props;
     let pos = new SprdRange(row, 0, row, -1);
     Actions.setRange({clickSelectedRange: pos});
-    SprdContainer.eventTriggered(onEvent, EVENT.NUMBER_CELL_CLICKED, pos);
+    eventTriggered(onEvent, EVENT.NUMBER_CELL_CLICKED, pos);
   }
 
   currentStyle(){

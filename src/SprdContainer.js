@@ -23,12 +23,6 @@ export default class SprdContainer extends React.Component {
     Actions.parseData(this.props.data, rows, cols);
   }
 
-  static eventTriggered(onEvent, eventType, eventData, eventRange){
-    if(onEvent){
-      onEvent(eventType, eventData, eventRange);
-    }
-  }
-
   render(){
     return (
       <Sprd {...this.props}/>

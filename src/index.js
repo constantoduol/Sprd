@@ -49,12 +49,12 @@ let data = [
 ReactDOM.render(
   <SprdContainer 
     showHeaderLetters={true}
-    showFooter={false}
+    showFooter={true}
     infiniteScroll={true}
     width={800}
     height={600}
-    // onEvent={(eventType, range, data) => console.log(eventType, range, data)} 
-    // columnDataTypes={['number', 'string']}
+    onEvent={(eventType, range, data) => console.log(eventType, range, data)} 
+    columnDataTypes={['string', 'number']}
     data={data}/>, 
   document.getElementById('root')
 );
