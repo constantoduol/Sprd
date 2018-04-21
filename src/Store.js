@@ -1,5 +1,5 @@
 import alt from './altConfig';
-import {isArray, merge} from 'lodash';
+import {merge} from 'lodash';
 import {Map} from 'immutable';
 
 import Actions from './Actions';
@@ -32,7 +32,6 @@ class Store {
         valueSetRange: OUT_OF_RANGE_CELL //what value was set
       }),
       data: Map(),
-      headerWidths: [],
       dragging: false, //current drag highlighting on going?
       dragZone: {}, //cells in the drag zone
       cols: 0,
@@ -75,10 +74,9 @@ class Store {
   }
 
   onParseData(params){
-    const [data, headers, headerWidths, rows, cols] = params
+    const [data, rows, cols] = params
     this.setState({
       data: data, 
-      headerWidths: headerWidths, 
       rows: rows, 
       cols: cols
     });

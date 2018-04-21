@@ -51,16 +51,14 @@ export default class Sprd extends React.Component {
     if(!rangesChanged) return true;
     //there was a change in data
     if(nextProps.data !== this.props.data) return true;
-    if(nextProps.dragging !== this.props.dragging) return true; //dragging is going on
-    //there was a change in header widths
-    return difference(nextProps.headerWidths, this.props.headerWidths).length > 0;
+    return nextProps.dragging !== this.props.dragging;
   }
 
   keyDown(e){
     let key = e.key.toLowerCase();
-    let clickSelectedRange = SprdRange.fromImmutable('clickSelectedRange', this.props.ranges);
+    let {onEvent, ranges} = this.props;
+    let clickSelectedRange = SprdRange.fromImmutable('clickSelectedRange', ranges);
     if(key !== "enter"){
-      let {onEvent} = this.props;
       Actions.setRange({'focusedCellRange': clickSelectedRange});
       SprdContainer.eventTriggered(onEvent, EVENT.CELL_FOCUSED, clickSelectedRange);
     }
@@ -145,15 +143,14 @@ export default class Sprd extends React.Component {
 
   render(){
     let {
-      cols, rows, headerWidths, ranges, showHeaderLetters, data, width, 
-      minRow, minCol, dragging, infiniteScroll, showFooter, onEvent} = this.props;
+      cols, rows, ranges, showHeaderLetters, data, width, 
+      minRow, minCol, dragging, infiniteScroll, showFooter, onEvent, columnDataTypes} = this.props;
     let style = merge(styles.root, {width});
     return (
       <div style={style} draggable="false" ref={container => this.container = container}>
         <table style={styles.table}>
           <HeaderContainer
             cols={cols}
-            headerWidths={headerWidths}
             ranges={ranges}
             minCol={minCol}
             onEvent={onEvent}
@@ -164,6 +161,7 @@ export default class Sprd extends React.Component {
             minRow={minRow}
             onEvent={onEvent}
             data={data}
+            columnDataTypes={columnDataTypes}
             infiniteScroll={infiniteScroll}
             ranges={ranges}
             dragging={dragging}

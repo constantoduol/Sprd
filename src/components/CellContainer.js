@@ -18,7 +18,8 @@ export default class CellContainer extends React.Component {
     minCol: PropTypes.number,
     minRow: PropTypes.number,
     dragging: PropTypes.bool,
-    infiniteScroll: PropTypes.bool
+    infiniteScroll: PropTypes.bool,
+    columnDataTypes: PropTypes.array
   };
 
   shouldComponentUpdate(nextProps, nextState){
@@ -81,11 +82,11 @@ export default class CellContainer extends React.Component {
   }
 
   renderCells(){
-    let {data, rows, cols, minRow, minCol, dragging, ranges, infiniteScroll, onEvent} = this.props;
+    let {rows, cols, minRow, minCol, dragging, ranges, infiniteScroll, onEvent, columnDataTypes} = this.props;
     let allRows = [];
+    columnDataTypes = columnDataTypes || [];
     for(let row = minRow; row < rows + minRow; row++){
       let currentRow = [];
-      let modRow = row % rows; //modular row
       currentRow.push(
         <NumberCell 
           key={"num_" + row} 
@@ -95,7 +96,6 @@ export default class CellContainer extends React.Component {
       );
 
       for(let col = minCol; col < cols + minCol; col++){
-        // console.log(this.getCellValue(row, col))
         currentRow.push(
           <Cell 
             row={row} 
@@ -108,16 +108,15 @@ export default class CellContainer extends React.Component {
             infiniteScroll={infiniteScroll}
             ranges={ranges}
             dragging={dragging}
+            dataType={columnDataTypes[col]}
             onEvent={onEvent}
             key={row + "_" + col}/>
         );
       }
-      let height = data.get(modRow).get('height');
       allRows.push(
         <TableRow 
           key={"row_"+row} 
-          rowData={currentRow} 
-          height={height}/>
+          rowData={currentRow}/>
       );
     }
     return allRows;

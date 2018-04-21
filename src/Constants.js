@@ -22,3 +22,8 @@ export const EVENT = {
   HEADER_CLICKED: "HEADER_CLICKED",
   NUMBER_CELL_CLICKED: "NUMBER_CELL_CLICKED"
 };
+
+export const DATA_TYPE = {
+  STRING: "string",
+  NUMBER: "number"
+}

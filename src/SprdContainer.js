@@ -7,7 +7,7 @@ import {DEFAULT_HEADER_WIDTH, DEFAULT_ROW_HEIGHT} from './Constants';
 export default class SprdContainer extends React.Component {
 
   static defaultProps = {
-    data: null, //data is in format {header1: [value1, value2], header2: [value3, value4]}
+    data: null, //data is in format [['Name', 'Age'], ['sam', 20], ['Mike', 30], ['Greg', 40]]
     showHeaderLetters: false, //show the letters at top A, B, C ... AA, AB
     showFooter: true,
     infiniteScroll: true, //scroll infinitely in any direction

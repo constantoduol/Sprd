@@ -1,6 +1,5 @@
 import alt from './altConfig';
-import {DEFAULT_HEADER_WIDTH, DEFAULT_ROW_HEIGHT} from './Constants'; 
-import {isObject} from 'lodash';
+import {isArray} from 'lodash';
 import {Map} from 'immutable';
 
 
@@ -26,10 +25,6 @@ class Actions {
     return state;
   }
 
-  setHeaderWidths(headerWidths){
-    return headerWidths;
-  }
-
   setViewPort(minRow, minCol){ 
     return [minRow, minCol];
   }
@@ -47,34 +42,21 @@ class Actions {
   }
 
   parseData(rawData, rows, cols){
+    console.log(rawData)
     let data = Map();
-    let headers = [];
-    let headerWidths = [];
-    if(isObject(rawData)){
-      headers = Object.keys(rawData); //there is no guarantee for header order
-      for(let col = 0, row = 0; col < headers.length; col++){
-        let headerData = rawData[headers[col]];
-        if(!data.get(row)) data = data.set(row, Map());
-
-        if(headerData[row])//we don't store empty values
-          data.get(row).set(col, headerData[row]);
-        if(col === headers.length){
-          col = 0;
-          row++;
-        }
-        if(row === headerData.length) break;
+    if(isArray(rawData)){
+      for(let row = 0; row < rawData.length; row++){
+          if(!data.get(row)) data = data.set(row, Map());
+          for(let col = 0; col < rawData[row].length; col++){
+            let value = rawData[row][col];
+            if(value) data = data.setIn([row, col], value);
+          }
       }   
     } else if(rawData) {
       console.warn("Unrecognized object passed into Sprd as data");
+      return;
     }
-    for(let col = 0; col < cols; col++) headerWidths.push(DEFAULT_HEADER_WIDTH);
-    for(let row = 0; row < rows; row++){
-      if(!data.get(row)) data = data.set(row, Map());
-      let rowData = data.get(row);
-      rowData = rowData.set('height', DEFAULT_ROW_HEIGHT);
-      data = data.set(row, rowData);
-    }
-    return [data, headers, headerWidths, rows, cols];
+    return [data, rows, cols];
   }
 
 }

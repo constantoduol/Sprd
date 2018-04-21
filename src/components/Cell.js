@@ -7,7 +7,7 @@ import Actions from '../Actions';
 import SprdRange from '../SprdRange';
 import SprdNavigator from '../SprdNavigator';
 import SprdContainer from '../SprdContainer';
-import {DIRECTION, EVENT} from '../Constants';
+import {DIRECTION, EVENT, DATA_TYPE} from '../Constants';
 
 
 export default class Cell extends React.Component {
@@ -26,7 +26,8 @@ export default class Cell extends React.Component {
     width: PropTypes.number,
     selectedRange: PropTypes.array,
     dragging: PropTypes.bool,
-    dragOrigin: PropTypes.object
+    dragOrigin: PropTypes.object,
+    dataType: PropTypes.string
   };
 
   constructor(props){
@@ -59,24 +60,9 @@ export default class Cell extends React.Component {
 
   componentDidMount(){
     console.log("cell mount")
-    Mousetrap(this.input).bind(["enter", "down"], () => {
+    Mousetrap(this.input).bind("enter", () => {
       this.setState({mode: this.CELL_MODES.INACTIVE});
       SprdNavigator.move(this.props, DIRECTION.DOWN);
-    });
-
-    Mousetrap(this.input).bind("left", () => {
-      this.setState({mode: this.CELL_MODES.INACTIVE});
-      SprdNavigator.move(this.props, DIRECTION.LEFT);
-    });
-
-    Mousetrap(this.input).bind("right", () => {
-      this.setState({mode: this.CELL_MODES.INACTIVE});
-      SprdNavigator.move(this.props, DIRECTION.RIGHT);
-    });
-
-    Mousetrap(this.input).bind("up", () => {
-      this.setState({mode: this.CELL_MODES.INACTIVE});
-      SprdNavigator.move(this.props, DIRECTION.UP);
     });
 
     this.maybeChangeCellMode(this.props);
@@ -99,10 +85,10 @@ export default class Cell extends React.Component {
         dragSelectedRange, dragOriginCellRange} = SprdRange.fromImmutable(null, ranges); 
 
     if(currentCellRange.isCellSelected(dragOriginCellRange)){
-      this.setState({mode: this.CELL_MODES.ACTIVE, value: props.value});
+      this.setState({mode: this.CELL_MODES.ACTIVE});
       return;
     } else if(currentCellRange.isWithinRange(dragSelectedRange)){
-      this.setState({mode: this.CELL_MODES.DRAG_HIGHLIGHT, value: props.value});
+      this.setState({mode: this.CELL_MODES.DRAG_HIGHLIGHT});
       return
     }
 
@@ -112,15 +98,13 @@ export default class Cell extends React.Component {
     } 
       
     if(clickSelectedRange.isCellSelected(currentCellRange)){
-      this.setState({mode: this.CELL_MODES.ACTIVE, value: props.value});
+      this.setState({mode: this.CELL_MODES.ACTIVE});
     } else if(clickSelectedRange.isNumberCellSelected(currentCellRange)){
-      this.setState({mode: this.CELL_MODES.HORIZONTAL_HIGHLIGHT, value: props.value});
+      this.setState({mode: this.CELL_MODES.HORIZONTAL_HIGHLIGHT});
     } else if(clickSelectedRange.isHeaderSelected(currentCellRange)){
-      this.setState({mode: this.CELL_MODES.VERTICAL_HIGHLIGHT, value: props.value});
+      this.setState({mode: this.CELL_MODES.VERTICAL_HIGHLIGHT});
     } else if(mode !== this.CELL_MODES.INACTIVE){
-      this.setState({mode: this.CELL_MODES.INACTIVE, value: props.value});
-    } else {
-      this.setState({value: props.value})
+      this.setState({mode: this.CELL_MODES.INACTIVE});
     }
     
   }
@@ -161,9 +145,9 @@ export default class Cell extends React.Component {
   cellClicked(){
     let {row, col, ranges, onEvent} = this.props;
     let clickSelectedRange = SprdRange.fromImmutable('clickSelectedRange', ranges);
-    let thisCellSelected = clickSelectedRange.isCellSelected(row, col);
+    let clickPos = new SprdRange(row, col, row, col);
+    let thisCellSelected = clickSelectedRange.isCellSelected(clickPos);
     if(!thisCellSelected){
-      let clickPos = new SprdRange(row, col, row, col);
       Actions.setRange({clickSelectedRange: clickPos});
       SprdContainer.eventTriggered(onEvent, EVENT.CELL_CLICKED, clickPos);
     }
@@ -173,7 +157,7 @@ export default class Cell extends React.Component {
     this.setState({mode: this.CELL_MODES.EDITING}, () => {
       this.input.focus();
     });
-    let {row, col, ranges, onEvent} = this.props;
+    let {row, col, onEvent} = this.props;
     SprdContainer.eventTriggered(onEvent, EVENT.CELL_DOUBLE_CLICKED, new SprdRange(row, col, row, col));
   }
 
@@ -194,47 +178,58 @@ export default class Cell extends React.Component {
     }
   }
 
+  isNumber(value){
+    let isNum = typeof value === DATA_TYPE.NUMBER;
+    return isNum || !isNaN(Number(value));
+  }
+
+  getValueDataType(value){
+    let {dataType} = this.props;
+    if(dataType) return dataType; 
+    if(this.isNumber(value)) return DATA_TYPE.NUMBER;
+    return DATA_TYPE.STRING;
+  }
+
   inputValueChanged(e){
     let value = e.target.value;
-    this.setState({value}, () => {
-      let {row, col, onEvent} = this.props;
-      let pos = new SprdRange(row, col, row, col);
-      Actions.setValue(value, pos);
-      SprdContainer.eventTriggered(onEvent, EVENT.CELL_VALUE_CHANGED, pos);
-    });
+    let {row, col, onEvent} = this.props;
+    let pos = new SprdRange(row, col, row, col);
+    Actions.setValue(value, pos);
+    SprdContainer.eventTriggered(onEvent, EVENT.CELL_VALUE_CHANGED, pos);
   }
 
 
   renderInnerCell(){
-    let {mode, value} = this.state;
+    let {mode} = this.state;
     return (
       <input 
         key={0}
         onChange={this.inputValueChanged}
         hidden={mode !== this.CELL_MODES.EDITING}
         type='text' 
-        value={value}
+        value={this.props.value}
         ref={(input) => { this.input = input; }}
         style={styles.input_active}/>
     );
   }
 
   renderOuterCell(){
-    let {mode, value} = this.state;
-    let textAlign = typeof value === "number" ? "right" : "left";
+    let {mode} = this.state;
+    let {value} = this.props;
+    let valueDataType = this.getValueDataType(value);
+    let textAlign = valueDataType === DATA_TYPE.NUMBER ? "right" : "left";
     let style = merge({textAlign}, styles.outer_cell);
     return (
       <div 
         key={1}
         hidden={mode === this.CELL_MODES.EDITING}
         style={style}>
-          {this.state.value}
+          {value}
       </div>
     );
   }
   
   render(){
-    //console.log("cell re-render");
     let {width} = this.props;
     let style = merge(this.currentStyle(), {width});
     return (
@@ -293,6 +288,7 @@ const styles = {
    border: "2px solid #2196F3"
   },
   outer_cell: {
-    fontSize: 14
+    fontSize: 14,
+    padding: 2
   }
 }

@@ -7,10 +7,10 @@ import SprdContainer from './SprdContainer';
 export default class SprdNavigator {
 
   static move(props, direction){
-    let {ranges, minCol, minRow, rows, cols, infiniteScroll, dontSetClickSelectedRange, onEvent} = props;
+    let {ranges, minCol, minRow, rows, cols, infiniteScroll, dontSetClickSelectedRange, onEvent, dragging} = props;
     let {clickSelectedRange, dragSelectedRange, dragOriginCellRange} = SprdRange.fromImmutable(null, ranges);
     let {startRow, stopRow, startCol, stopCol} = clickSelectedRange;
-
+    
     let previousMinCol = minCol;
     let previousMinRow = minRow;
 
