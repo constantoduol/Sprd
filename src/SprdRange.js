@@ -21,6 +21,7 @@ export default class SprdRange {
     //returns address in the form of column letter,row num e.g A6, A19:D29
     let {startCol, startRow, stopRow, stopCol} = this;
     let startColLetter = toExcelColName(startCol + 1);
+    
     if(startRow === stopRow && startCol === stopCol){ //single cell
       return `${startColLetter}${startRow + 1}`
     } else if(startRow === 0 && stopRow === -1){ //column selected

@@ -12,6 +12,7 @@ export default class SprdContainer extends React.Component {
     showFooter: true,
     infiniteScroll: true, //scroll infinitely in any direction
     onEvent: null, //function called when an event occurs
+    cellOverride: null, //function called to selectively render some cells differently
     width: 600,
     height: 700
   };

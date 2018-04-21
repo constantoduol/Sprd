@@ -103,6 +103,13 @@ export default class Sprd extends React.Component {
     }
   }
 
+  footerContent(){
+    let {ranges} = this.props;
+    let {clickSelectedRange, dragSelectedRange} = SprdRange.fromImmutable(null, ranges);
+    if(clickSelectedRange.startRow !== -1) return clickSelectedRange.getAddress();
+    return dragSelectedRange.getAddress();
+  }
+
   handlePaste (e) {
     let clipboardData, pastedData;
 
@@ -144,7 +151,7 @@ export default class Sprd extends React.Component {
   render(){
     let {
       cols, rows, ranges, showHeaderLetters, data, width, 
-      minRow, minCol, dragging, infiniteScroll, showFooter, onEvent, columnDataTypes} = this.props;
+      minRow, minCol, dragging, infiniteScroll, showFooter, onEvent, columnDataTypes, cellOverride} = this.props;
     let style = merge(styles.root, {width});
     return (
       <div style={style} draggable="false" ref={container => this.container = container}>
@@ -164,10 +171,11 @@ export default class Sprd extends React.Component {
             columnDataTypes={columnDataTypes}
             infiniteScroll={infiniteScroll}
             ranges={ranges}
+            cellOverride={cellOverride}
             dragging={dragging}
             rows={rows}/>
         </table>
-        {showFooter ? <Footer width={width}/> : null}
+        {showFooter ? <Footer width={width} content={this.footerContent()}/> : null}
       </div>
     )
   }

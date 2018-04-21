@@ -183,8 +183,8 @@ export default class Cell extends React.Component {
     return isNum || !isNaN(Number(value));
   }
 
-  getValueDataType(value){
-    let {dataType} = this.props;
+  getValueDataType(){
+    let {dataType, value} = this.props;
     if(dataType) return dataType; 
     if(this.isNumber(value)) return DATA_TYPE.NUMBER;
     return DATA_TYPE.STRING;
@@ -196,6 +196,24 @@ export default class Cell extends React.Component {
     let pos = new SprdRange(row, col, row, col);
     Actions.setValue(value, pos);
     eventTriggered(onEvent, EVENT.CELL_VALUE_CHANGED, pos);
+  }
+
+  getInnerAndOuterCells(){
+    let {cellOverride, row, col} = this.props;
+    let innerCell = this.renderInnerCell();
+    let outerCell = this.renderOuterCell();
+  
+    let cellInfo = {
+      row: row,
+      col: col,
+      dataType: this.getValueDataType()
+    };
+
+    if(cellOverride){
+      return cellOverride(cellInfo, innerCell, outerCell);
+    } else {
+      return {innerCell: innerCell, outerCell: outerCell};
+    }
   }
 
 
@@ -216,8 +234,8 @@ export default class Cell extends React.Component {
   renderOuterCell(){
     let {mode} = this.state;
     let {value} = this.props;
-    let valueDataType = this.getValueDataType(value);
-    let textAlign = valueDataType === DATA_TYPE.NUMBER ? "right" : "left";
+    let dataType = this.getValueDataType();
+    let textAlign = dataType === DATA_TYPE.NUMBER ? "right" : "left";
     let style = merge({textAlign}, styles.outer_cell);
     return (
       <div 
@@ -232,6 +250,7 @@ export default class Cell extends React.Component {
   render(){
     let {width} = this.props;
     let style = merge(this.currentStyle(), {width});
+    let {innerCell, outerCell} = this.getInnerAndOuterCells();
     return (
       <td 
         onMouseDown={this.mouseDown}
@@ -240,7 +259,7 @@ export default class Cell extends React.Component {
         onDoubleClick={this.cellDoubleClicked}
         onClick={this.cellClicked}
         style={style}>
-          {[this.renderInnerCell(), this.renderOuterCell()]}
+          {[innerCell, outerCell]}
       </td>
     )
   }
