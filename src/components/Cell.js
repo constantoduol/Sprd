@@ -310,6 +310,6 @@ const styles = {
   },
   outer_cell: {
     fontSize: 14,
-    padding: 2
+    padding: 2,
   }
 }

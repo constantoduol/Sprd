@@ -2,6 +2,7 @@ import React from 'react';
 import {merge, difference} from 'lodash';
 import Mousetrap from 'mousetrap';
 import connectToStores from 'alt-utils/lib/connectToStores';
+import {Map} from 'immutable';
 
 import Footer from './components/Footer';
 import HeaderContainer from './components/HeaderContainer';
@@ -18,7 +19,6 @@ export default class Sprd extends React.Component {
 
   constructor(props){
     super(props);
-    this.keyDown = this.keyDown.bind(this);
     this.KEY_DOWN_IGNORE_KEYS = {
       arrowleft: "arrowleft", 
       arrowdown: "arrowdown", 
@@ -53,16 +53,6 @@ export default class Sprd extends React.Component {
     return nextProps.dragging !== this.props.dragging;
   }
 
-  keyDown(e){
-    let key = e.key.toLowerCase();
-    let {onEvent, ranges} = this.props;
-    let clickSelectedRange = SprdRange.fromImmutable('clickSelectedRange', ranges);
-    if(key !== "enter"){
-      Actions.setRange({'focusedCellRange': clickSelectedRange});
-      eventTriggered(onEvent, EVENT.CELL_FOCUSED, clickSelectedRange);
-    }
-  }
-
   setupKeyBindings(){
     Mousetrap.bind("mod+c", () => {
       this.handleCopy();
@@ -94,8 +84,13 @@ export default class Sprd extends React.Component {
     document.onkeydown = (e) => {
       let key = e.key.toLowerCase();
       let {onEvent, ranges} = this.props;
-      let clickSelectedRange = SprdRange.fromImmutable('clickSelectedRange', ranges); 
-      if(!this.KEY_DOWN_IGNORE_KEYS[key] && !e.ctrlKey && !e.altKey && !e.shiftKey){
+      let clickSelectedRange = SprdRange.fromImmutable('clickSelectedRange', ranges);
+
+      if(key === "v" && e.ctrlKey){
+        //special case to support paste event
+        Actions.setRange({focusedCellRange: clickSelectedRange});
+      }
+      if(!this.KEY_DOWN_IGNORE_KEYS[key] && !e.shiftKey && !e.ctrlKey && !e.altKey){
         Actions.setRange({'focusedCellRange': clickSelectedRange});
         eventTriggered(onEvent, EVENT.CELL_FOCUSED, clickSelectedRange);
       }
@@ -110,6 +105,7 @@ export default class Sprd extends React.Component {
   }
 
   handleCopy(){
+    //data is a sparse map, cells with no data have no values in the map
     let text = "";
     let targetRange;
     let {ranges, data, onEvent} = this.props;
@@ -117,21 +113,25 @@ export default class Sprd extends React.Component {
 
     if(clickSelectedRange.startRow !== UNKNOWN) targetRange = clickSelectedRange;
     else targetRange = dragSelectedRange;
-
+    console.log(targetRange)
     let {startRow, stopRow, startCol, stopCol} = targetRange;
 
     if(stopRow === UNKNOWN) stopRow = data.size - 1;
     
     for(let row = startRow; row <= stopRow; row++){
-      if(stopCol === UNKNOWN) stopCol = data.get(row).size - 1;
+      let endCol = stopCol;
+      if(stopCol === UNKNOWN) endCol = data.get(row).size;
+      console.log(endCol);
 
-      for(let col = startCol; col <= stopCol; col++){
+      for(let col = startCol; col <= endCol; col++){
         let value = data.getIn([row, col]);
+
         if(value !== undefined){
-          text += value + "\t"
+          text += value;
+          if(col < endCol) text += "\t";
         }
       }
-      text += "\n";
+      if(text) text += "\n";
     }
 
     copyToClipboard(text);
@@ -159,18 +159,26 @@ export default class Sprd extends React.Component {
 
     for(let line of lines){
       let tokens = line.split(/\t?\s/);
-      maxTokenLength = Math.max(maxTokenLength, tokens.length);
+      let validTokenLength = 0;
+
       if(!data.get(startRow)) data = data.set(startRow, Map({}));
       for(let token of tokens){
-        if(token) data = data.setIn([startRow, startCol], token);
+        if(token) {
+          data = data.setIn([startRow, startCol], token);
+          validTokenLength++;
+        }
         startCol++;
       }
-      startRow++;
+
+      maxTokenLength = Math.max(maxTokenLength, validTokenLength);
+      validTokenLength = 0;
+      if(line) startRow++;
       startCol = originalStartCol;
     }
 
-    highLightedRange.stopRow = startRow;
+    highLightedRange.stopRow = startRow - 1;
     highLightedRange.stopCol = startCol + maxTokenLength - 1;
+    
     ranges = ranges.set('dragSelectedRange', highLightedRange);
     Actions.setState({data: data, ranges: ranges});
     eventTriggered(onEvent, EVENT.PASTE, highLightedRange, lines);
@@ -182,7 +190,10 @@ export default class Sprd extends React.Component {
       minRow, minCol, dragging, infiniteScroll, showFooter, onEvent, columnDataTypes, cellOverride} = this.props;
     let style = merge(styles.root, {width});
     return (
-      <div style={style} draggable="false" ref={container => this.container = container}>
+      <div 
+        style={style} 
+        draggable="false"
+        ref={container => this.container = container}>
         <table style={styles.table}>
           <HeaderContainer
             cols={cols}

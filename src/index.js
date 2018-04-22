@@ -74,9 +74,9 @@ ReactDOM.render(
       // if(cellInfo.row > 5 && cellInfo.row < 10){
       //   outerCell = <outerCell {...outerCell.props} style={{color: 'green'}}/>
       // }
-      if(cellInfo.dataType === "number"){
-        outerCell = <outerCell {...outerCell.props} style={{color: 'blue', fontSize: 11}} key={outerCell.key}/>
-      }
+      // if(cellInfo.dataType === "number"){
+      //   outerCell = <outerCell {...outerCell.props} style={{color: 'blue', fontSize: 11}} key={outerCell.key}/>
+      // }
       return {innerCell, outerCell}}
     }
     data={data}/>, 
