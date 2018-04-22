@@ -99,6 +99,8 @@ export default class Cell extends React.Component {
       
     if(clickSelectedRange.isCellSelected(currentCellRange)){
       this.setState({mode: this.CELL_MODES.ACTIVE});
+    } else if(SprdRange.isEntireGridSelected(clickSelectedRange)){
+      this.setState({mode: this.CELL_MODES.DRAG_HIGHLIGHT});
     } else if(clickSelectedRange.isNumberCellSelected(currentCellRange)){
       this.setState({mode: this.CELL_MODES.HORIZONTAL_HIGHLIGHT});
     } else if(clickSelectedRange.isHeaderSelected(currentCellRange)){

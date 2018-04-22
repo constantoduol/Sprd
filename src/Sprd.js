@@ -10,8 +10,8 @@ import Actions from './Actions';
 import SprdRange from './SprdRange';
 import Store from './Store';
 import SprdNavigator from './SprdNavigator';
-import {eventTriggered} from './Util';
-import {DIRECTION, EVENT} from './Constants';
+import {eventTriggered, copyToClipboard} from './Util';
+import {DIRECTION, EVENT, UNKNOWN} from './Constants';
 
 @connectToStores
 export default class Sprd extends React.Component {
@@ -20,7 +20,6 @@ export default class Sprd extends React.Component {
     super(props);
     this.keyDown = this.keyDown.bind(this);
     this.KEY_DOWN_IGNORE_KEYS = {
-      enter: "enter", 
       arrowleft: "arrowleft", 
       arrowdown: "arrowdown", 
       arrowright: "arrowright",
@@ -66,7 +65,14 @@ export default class Sprd extends React.Component {
 
   setupKeyBindings(){
     Mousetrap.bind("mod+c", () => {
-      console.log("copy", this);
+      this.handleCopy();
+    });
+
+    Mousetrap.bind("mod+a", () => {
+      let {onEvent} = this.props;
+      let clickSelectedRange = new SprdRange(0, 0, UNKNOWN, UNKNOWN);
+      Actions.setRange({'clickSelectedRange': clickSelectedRange});
+      eventTriggered(onEvent, EVENT.SELECT_ALL, clickSelectedRange);
     });
 
     Mousetrap.bind("up", () => {
@@ -85,18 +91,11 @@ export default class Sprd extends React.Component {
       SprdNavigator.move(this.props, DIRECTION.LEFT);
     });
 
-    Mousetrap.bind("enter", () => {
-      let {onEvent, ranges} = this.props;
-      let clickSelectedRange = SprdRange.fromImmutable('clickSelectedRange', ranges);
-      Actions.setRange({'focusedCellRange': clickSelectedRange});
-      eventTriggered(onEvent, EVENT.CELL_FOCUSED, clickSelectedRange);
-    });
-
     document.onkeydown = (e) => {
       let key = e.key.toLowerCase();
       let {onEvent, ranges} = this.props;
       let clickSelectedRange = SprdRange.fromImmutable('clickSelectedRange', ranges); 
-      if(!this.KEY_DOWN_IGNORE_KEYS[key]){
+      if(!this.KEY_DOWN_IGNORE_KEYS[key] && !e.ctrlKey && !e.altKey && !e.shiftKey){
         Actions.setRange({'focusedCellRange': clickSelectedRange});
         eventTriggered(onEvent, EVENT.CELL_FOCUSED, clickSelectedRange);
       }
@@ -106,8 +105,37 @@ export default class Sprd extends React.Component {
   footerContent(){
     let {ranges} = this.props;
     let {clickSelectedRange, dragSelectedRange} = SprdRange.fromImmutable(null, ranges);
-    if(clickSelectedRange.startRow !== -1) return clickSelectedRange.getAddress();
+    if(clickSelectedRange.startRow !== UNKNOWN) return clickSelectedRange.getAddress();
     return dragSelectedRange.getAddress();
+  }
+
+  handleCopy(){
+    let text = "";
+    let targetRange;
+    let {ranges, data, onEvent} = this.props;
+    let {clickSelectedRange, dragSelectedRange} = SprdRange.fromImmutable(null, ranges);
+
+    if(clickSelectedRange.startRow !== UNKNOWN) targetRange = clickSelectedRange;
+    else targetRange = dragSelectedRange;
+
+    let {startRow, stopRow, startCol, stopCol} = targetRange;
+
+    if(stopRow === UNKNOWN) stopRow = data.size - 1;
+    
+    for(let row = startRow; row <= stopRow; row++){
+      if(stopCol === UNKNOWN) stopCol = data.get(row).size - 1;
+
+      for(let col = startCol; col <= stopCol; col++){
+        let value = data.getIn([row, col]);
+        if(value !== undefined){
+          text += value + "\t"
+        }
+      }
+      text += "\n";
+    }
+
+    copyToClipboard(text);
+    eventTriggered(onEvent, EVENT.COPY, targetRange, text);
   }
 
   handlePaste (e) {
