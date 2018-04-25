@@ -6,7 +6,7 @@ import {eventTriggered} from './Util';
 
 export default class SprdNavigator {
 
-  static move(props, direction){
+  static move(props, direction, step = 1){
     let {ranges, minCol, minRow, rows, cols, infiniteScroll, dontSetClickSelectedRange, onEvent, dragging} = props;
     let {clickSelectedRange, dragSelectedRange, dragOriginCellRange} = SprdRange.fromImmutable(null, ranges);
     let {startRow, stopRow, startCol, stopCol} = clickSelectedRange;
@@ -16,27 +16,28 @@ export default class SprdNavigator {
 
     switch(direction){
       case DIRECTION.UP:
-        if(startRow > 0) startRow--;
-        if(stopRow > 0) stopRow--;
+        if(startRow > 0) startRow -= step;
+        if(stopRow > 0) stopRow -= step;
         break;
       case DIRECTION.DOWN:
-        startRow++;
-        stopRow++;
+        startRow += step;
+        stopRow += step;
         break;
       case DIRECTION.LEFT:
-        if(startCol > 0)startCol--;
-        if(stopCol > 0) stopCol--;
+        if(startCol > 0)startCol -= step;
+        if(stopCol > 0) stopCol -= step;
         break;
       case DIRECTION.RIGHT:
-        startCol++;
-        stopCol++;
+        startCol += step;
+        stopCol += step;
     }
 
-    if(startRow >= minRow + rows) minRow++;
-    else if( (startRow + 1) >= minRow && minRow !== 0) minRow--;
 
-    if(startCol >= minCol + cols) minCol++;
-    else if( (startCol + 1) >= minCol && minCol !== 0) minCol--;
+    if(startRow >= minRow + rows) minRow += step;
+    else if( (startRow + 1) >= minRow && minRow !== 0) minRow -= step;
+
+    if(startCol >= minCol + cols) minCol += step;
+    else if( (startCol + 1) >= minCol && minCol !== 0) minCol -= step;
     
     if(!infiniteScroll && (minRow > 0 || minCol > 0)) return; //disable infinite scrolling
 

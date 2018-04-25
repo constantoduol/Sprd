@@ -26,7 +26,10 @@ export default class Sprd extends React.Component {
       arrowup: "arrowup",
       alt: "alt",
       control: "control",
-      shift: "shift"
+      shift: "shift",
+      delete: "delete",
+      pagedown: "pagedown",
+      pageup: "pageup"
     };
   }
 
@@ -58,6 +61,10 @@ export default class Sprd extends React.Component {
       this.handleCopy();
     });
 
+    Mousetrap.bind("del", () => {
+      this.handleDelete();
+    });
+
     Mousetrap.bind("mod+a", () => {
       let {onEvent} = this.props;
       let clickSelectedRange = new SprdRange(0, 0, UNKNOWN, UNKNOWN);
@@ -71,6 +78,16 @@ export default class Sprd extends React.Component {
 
     Mousetrap.bind("down", () => {
       SprdNavigator.move(this.props, DIRECTION.DOWN);
+    });
+
+    Mousetrap.bind("pagedown", () => {
+      let {rows} = this.props;
+      SprdNavigator.move(this.props, DIRECTION.DOWN, rows);
+    });
+
+    Mousetrap.bind("pageup", () => {
+      let {rows} = this.props;
+      SprdNavigator.move(this.props, DIRECTION.UP, rows);
     });
 
     Mousetrap.bind("right", () => {
@@ -97,45 +114,66 @@ export default class Sprd extends React.Component {
     }
   }
 
-  footerContent(){
+  getSelectedRange(){
     let {ranges} = this.props;
+    let targetRange;
     let {clickSelectedRange, dragSelectedRange} = SprdRange.fromImmutable(null, ranges);
-    if(clickSelectedRange.startRow !== UNKNOWN) return clickSelectedRange.getAddress();
-    return dragSelectedRange.getAddress();
+
+    if(clickSelectedRange.startRow !== UNKNOWN) targetRange = clickSelectedRange;
+    else targetRange = dragSelectedRange;
+
+    return targetRange;
+  }
+
+  footerContent(){
+    return this.getSelectedRange().getAddress();
   }
 
   handleCopy(){
     //data is a sparse map, cells with no data have no values in the map
     let text = "";
-    let targetRange;
-    let {ranges, data, onEvent} = this.props;
-    let {clickSelectedRange, dragSelectedRange} = SprdRange.fromImmutable(null, ranges);
-
-    if(clickSelectedRange.startRow !== UNKNOWN) targetRange = clickSelectedRange;
-    else targetRange = dragSelectedRange;
-    console.log(targetRange)
+    let targetRange = this.getSelectedRange();
+    let {data, onEvent, furthestCol} = this.props;
+    
     let {startRow, stopRow, startCol, stopCol} = targetRange;
 
     if(stopRow === UNKNOWN) stopRow = data.size - 1;
+    if(stopCol === UNKNOWN) stopCol = furthestCol;
     
     for(let row = startRow; row <= stopRow; row++){
-      let endCol = stopCol;
-      if(stopCol === UNKNOWN) endCol = data.get(row).size;
-      console.log(endCol);
 
-      for(let col = startCol; col <= endCol; col++){
+      for(let col = startCol; col <= stopCol; col++){
         let value = data.getIn([row, col]);
 
         if(value !== undefined){
           text += value;
-          if(col < endCol) text += "\t";
-        }
+          if(col < stopCol) text += "\t";
+        } else text += "\t";
       }
       if(text) text += "\n";
     }
 
     copyToClipboard(text);
     eventTriggered(onEvent, EVENT.COPY, targetRange, text);
+  }
+
+  handleDelete(){
+    let targetRange = this.getSelectedRange();
+    let {data, onEvent, furthestCol} = this.props;
+    let {startRow, stopRow, startCol, stopCol} = targetRange;
+
+    if(stopRow === UNKNOWN) stopRow = data.size - 1;
+    if(stopCol === UNKNOWN) stopCol = furthestCol;
+
+    for(let row = startRow; row <= stopRow; row++){
+      for(let col = startCol; col <= stopCol; col++){
+        data = data.deleteIn([row, col]);
+      }
+    }
+
+    Actions.setState({data: data, furthestCol: 0});
+    eventTriggered(onEvent, EVENT.DELETE, targetRange);
+
   }
 
   handlePaste (e) {
@@ -180,7 +218,7 @@ export default class Sprd extends React.Component {
     highLightedRange.stopCol = startCol + maxTokenLength - 1;
     
     ranges = ranges.set('dragSelectedRange', highLightedRange);
-    Actions.setState({data: data, ranges: ranges});
+    Actions.setState({data: data, ranges: ranges, furthestCol: highLightedRange.stopCol});
     eventTriggered(onEvent, EVENT.PASTE, highLightedRange, lines);
   }
 

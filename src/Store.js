@@ -17,7 +17,6 @@ class Store {
       onDragStarted: Actions.dragStarted,
       onDragStopped: Actions.dragStopped,
       onAddDragZone: Actions.addDragZone,
-      onSetData: Actions.setData,
       onSetState: Actions.setState
     });
 
@@ -36,6 +35,7 @@ class Store {
       dragZone: {}, //cells in the drag zone
       cols: 0,
       rows: 0,
+      furthestCol: 0,
       minCol: 0, //rendering of headers starts from minCol to minCol + cols
       minRow: 0, //rendering of rows starts from minRow to minRow + rows
     };
@@ -74,11 +74,12 @@ class Store {
   }
 
   onParseData(params){
-    const [data, rows, cols] = params
+    const {data, rows, cols, furthestCol} = params
     this.setState({
       data: data, 
       rows: rows, 
-      cols: cols
+      cols: cols,
+      furthestCol: furthestCol
     });
   }
 
@@ -119,15 +120,16 @@ class Store {
 
   onSetValue(valueAndRange){
     let [value, range] = valueAndRange;
-    let {data} = this.state;
+    let {data, furthestCol} = this.state;
     let {startRow, stopRow, startCol, stopCol} = range;
     for(let row = startRow; row <= stopRow; row++){
       if(!data.get(row)) data = data.set(row, Map({}));
       for(let col = startCol; col <= stopCol; col++){
         if(value) data = data.setIn([row, col], value)
+        furthestCol = Math.max(furthestCol, col);
       }
     }
-    this._setRange({valueSetRange: range}, {data: data});
+    this._setRange({valueSetRange: range}, {data, furthestCol});
   }
 
   onSetViewPort(params){
@@ -136,10 +138,6 @@ class Store {
       minRow: minRow, 
       minCol: minCol
     });
-  }
-
-  onSetData(newData){
-    this.setState({data: newData});
   }
 
   onSetState(newState){
