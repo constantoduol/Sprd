@@ -54,8 +54,8 @@ ReactDOM.render(
     width={800}
     height={600}
     onEvent={(eventType, range, data) => {
-      console.log(eventType, range, data) 
-      if(range) console.log(range.getAddress())
+      // console.log(eventType, range, data) 
+      // if(range) console.log(range.getAddress())
     }}
     // columnDataTypes={['string', 'number']}
     cellOverride={(cellInfo, innerCell, outerCell) => {

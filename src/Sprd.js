@@ -29,7 +29,9 @@ export default class Sprd extends React.Component {
       shift: "shift",
       delete: "delete",
       pagedown: "pagedown",
-      pageup: "pageup"
+      pageup: "pageup",
+      home: "home",
+      escape: "escape"
     };
   }
 
@@ -53,7 +55,8 @@ export default class Sprd extends React.Component {
     if(!rangesChanged) return true;
     //there was a change in data
     if(nextProps.data !== this.props.data) return true;
-    return nextProps.dragging !== this.props.dragging;
+    if(nextProps.dragging !== this.props.dragging) return true;
+    return nextProps.minCol !== this.props.minCol || nextProps.minRow !== this.props.minRow;
   }
 
   setupKeyBindings(){
@@ -63,6 +66,10 @@ export default class Sprd extends React.Component {
 
     Mousetrap.bind("del", () => {
       this.handleDelete();
+    });
+
+    Mousetrap.bind("home", () => {
+      Actions.setViewPort(0, 0);
     });
 
     Mousetrap.bind("mod+a", () => {
@@ -196,15 +203,15 @@ export default class Sprd extends React.Component {
     let maxTokenLength = 0;
 
     for(let line of lines){
-      let tokens = line.split(/\t?\s/);
+      let tokens = line.split(/\s/);
       let validTokenLength = 0;
 
       if(!data.get(startRow)) data = data.set(startRow, Map({}));
       for(let token of tokens){
         if(token) {
           data = data.setIn([startRow, startCol], token);
-          validTokenLength++;
         }
+        validTokenLength++;
         startCol++;
       }
 

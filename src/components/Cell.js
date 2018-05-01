@@ -59,10 +59,14 @@ export default class Cell extends React.Component {
   }
 
   componentDidMount(){
-    console.log("cell mount")
+    // console.log("cell mount")
     Mousetrap(this.input).bind("enter", () => {
       this.setState({mode: this.CELL_MODES.INACTIVE});
       SprdNavigator.move(this.props, DIRECTION.DOWN);
+    });
+
+    Mousetrap(this.input).bind("esc", () => {
+      this.setState({mode: this.CELL_MODES.ACTIVE});
     });
 
     this.maybeChangeCellMode(this.props);

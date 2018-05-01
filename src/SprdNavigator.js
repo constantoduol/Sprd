@@ -18,27 +18,31 @@ export default class SprdNavigator {
       case DIRECTION.UP:
         if(startRow > 0) startRow -= step;
         if(stopRow > 0) stopRow -= step;
+
+        if( (startRow + 1) >= 0) minRow -= step;
         break;
       case DIRECTION.DOWN:
         startRow += step;
         stopRow += step;
+
+        if(startRow >= minRow + rows) minRow += step;
         break;
       case DIRECTION.LEFT:
         if(startCol > 0)startCol -= step;
         if(stopCol > 0) stopCol -= step;
+
+        if( (startCol + 1) >= 0) minCol -= step;
         break;
       case DIRECTION.RIGHT:
         startCol += step;
         stopCol += step;
+
+        if(startCol >= minCol + cols) minCol += step;
     }
 
+    minRow = Math.max(minRow, 0);
+    minCol = Math.max(minCol, 0);
 
-    if(startRow >= minRow + rows) minRow += step;
-    else if( (startRow + 1) >= minRow && minRow !== 0) minRow -= step;
-
-    if(startCol >= minCol + cols) minCol += step;
-    else if( (startCol + 1) >= minCol && minCol !== 0) minCol -= step;
-    
     if(!infiniteScroll && (minRow > 0 || minCol > 0)) return; //disable infinite scrolling
 
     if(previousMinRow !== minRow || previousMinCol !== minCol){
