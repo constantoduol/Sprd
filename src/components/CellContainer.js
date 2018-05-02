@@ -85,6 +85,7 @@ export default class CellContainer extends React.Component {
   getRangeThatChanged(){
     //instead of re-rendering the entire grid when something changes
     //we can find out exactly what changed and re-render that section
+    let {ranges, minRow, minCol} = this.props;
     
   }
 

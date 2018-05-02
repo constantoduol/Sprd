@@ -166,7 +166,7 @@ export default class Sprd extends React.Component {
 
   handleDelete(){
     let targetRange = this.getSelectedRange();
-    let {data, onEvent, furthestCol} = this.props;
+    let {data, onEvent, furthestCol, ranges} = this.props;
     let {startRow, stopRow, startCol, stopCol} = targetRange;
 
     if(stopRow === UNKNOWN) stopRow = data.size - 1;
@@ -177,8 +177,8 @@ export default class Sprd extends React.Component {
         data = data.deleteIn([row, col]);
       }
     }
-
-    Actions.setState({data: data, furthestCol: 0});
+    ranges = ranges.set('valueSetRange', targetRange);
+    Actions.setState({data: data, furthestCol: 0, ranges: ranges});
     eventTriggered(onEvent, EVENT.DELETE, targetRange);
 
   }
@@ -225,6 +225,7 @@ export default class Sprd extends React.Component {
     highLightedRange.stopCol = startCol + maxTokenLength - 1;
     
     ranges = ranges.set('dragSelectedRange', highLightedRange);
+    ranges = ranges.set('valueSetRange', highLightedRange);
     Actions.setState({data: data, ranges: ranges, furthestCol: highLightedRange.stopCol});
     eventTriggered(onEvent, EVENT.PASTE, highLightedRange, lines);
   }
