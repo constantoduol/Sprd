@@ -97,6 +97,7 @@ export default class Cell extends React.Component {
     }
 
     if(focusedCellRange.isCellSelected(currentCellRange)){
+      console.log(focusedCellRange, currentCellRange)
       this.cellDoubleClicked();
       return;
     } 

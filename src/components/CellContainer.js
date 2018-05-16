@@ -23,6 +23,14 @@ export default class CellContainer extends React.Component {
     cellOverride: PropTypes.func
   };
 
+  constructor(props){
+    super(props);
+    this.state = {
+      rangeThatChanged: null
+    };
+    this.cellCache = [];
+  }
+
   shouldComponentUpdate(nextProps, nextState){
     //there was a change in the ranges
     let rangesEqual = SprdRange.areEqual(Object.values(nextProps.ranges.toJS()), Object.values(this.props.ranges.toJS()));
@@ -36,6 +44,7 @@ export default class CellContainer extends React.Component {
 
   componentWillReceiveProps(nextProps){
     this.maybeScrollIfRangeExceededWhileDragging(nextProps);
+    this.setRangeThatChanged();
   }
 
   /**
@@ -82,19 +91,110 @@ export default class CellContainer extends React.Component {
     return "";
   }
 
-  getRangeThatChanged(){
+  setRangeThatChanged(){
     //instead of re-rendering the entire grid when something changes
     //we can find out exactly what changed and re-render that section
     let {ranges, minRow, minCol} = this.props;
-    
+    let rangeThatChanged = SprdRange.toSingleRange(Object.values(SprdRange.fromImmutable(null, ranges)));
+    this.setState({rangeThatChanged});
   }
+
+  // generateCells(){
+  //   for(let row = minRow; row < maxRow; row++){
+  //     let currentRow = [];
+  //     currentRow.push(
+  //       <NumberCell 
+  //         key={"num_" + row} 
+  //         row={row} 
+  //         onEvent={onEvent}
+  //         ranges={ranges}/>
+  //     );
+
+  //     for(let col = minCol; col < maxCol; col++){
+  //       currentRow.push(
+  //         <Cell 
+  //           row={row} 
+  //           col={col} 
+  //           minRow={minRow}
+  //           minCol={minCol}
+  //           rows={rows}
+  //           cols={cols}
+  //           value={this.getCellValue(row, col)}
+  //           infiniteScroll={infiniteScroll}
+  //           ranges={ranges}
+  //           dragging={dragging}
+  //           cellOverride={cellOverride}
+  //           dataType={columnDataTypes[col]}
+  //           onEvent={onEvent}
+  //           key={row + "_" + col}/>
+  //       );
+  //     }
+  //     this.cellCache.push(
+  //       <TableRow 
+  //         key={"row_"+row} 
+  //         rowData={currentRow}/>
+  //     );
+  //   }
+  // }
+
+  // redrawCachedCells(){
+  //   for(let row = minRow; row < maxRow; row++){
+  //     let currentRow = [];
+  //     currentRow.push(
+  //       <NumberCell 
+  //         key={"num_" + row} 
+  //         row={row} 
+  //         onEvent={onEvent}
+  //         ranges={ranges}/>
+  //     );
+
+  //     for(let col = minCol; col < maxCol; col++){
+  //       currentRow.push(
+  //         <Cell 
+  //           row={row} 
+  //           col={col} 
+  //           minRow={minRow}
+  //           minCol={minCol}
+  //           rows={rows}
+  //           cols={cols}
+  //           value={this.getCellValue(row, col)}
+  //           infiniteScroll={infiniteScroll}
+  //           ranges={ranges}
+  //           dragging={dragging}
+  //           cellOverride={cellOverride}
+  //           dataType={columnDataTypes[col]}
+  //           onEvent={onEvent}
+  //           key={row + "_" + col}/>
+  //       );
+  //     }
+  //     this.cellCache.push(
+  //       <TableRow 
+  //         key={"row_"+row} 
+  //         rowData={currentRow}/>
+  //     );
+  //   }
+  // }
 
   renderCells(){
     let {rows, cols, minRow, minCol, dragging, ranges, infiniteScroll, 
         onEvent, columnDataTypes, cellOverride} = this.props;
     let allRows = [];
     columnDataTypes = columnDataTypes || [];
-    for(let row = minRow; row < rows + minRow; row++){
+    
+    let {rangeThatChanged} = this.state;
+    let maxRow = rows + minRow;
+    let maxCol = cols + minCol;
+
+    // if(rangeThatChanged && !rangeThatChanged.isOutOfRangeCell()){
+    //   //only redraw section that changed so that we dont have to redraw the entire grid
+    //   let {startRow, startCol, stopRow, stopCol} = rangeThatChanged;
+    //   maxRow = stopRow;
+    //   maxCol = stopCol;
+    //   minRow = startRow;
+    //   minCol = startCol;
+    // }
+
+    for(let row = minRow; row < maxRow; row++){
       let currentRow = [];
       currentRow.push(
         <NumberCell 
@@ -104,7 +204,7 @@ export default class CellContainer extends React.Component {
           ranges={ranges}/>
       );
 
-      for(let col = minCol; col < cols + minCol; col++){
+      for(let col = minCol; col < maxCol; col++){
         currentRow.push(
           <Cell 
             row={row} 

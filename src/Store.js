@@ -61,6 +61,7 @@ class Store {
   _modifyRanges(key, ranges, rangesToSet){
     switch(key){
       case "clickSelectedRange":
+        console.log(rangesToSet.focusedCellRange)
         if(!rangesToSet.focusedCellRange) 
           ranges = ranges.set('focusedCellRange', OUT_OF_RANGE_CELL);
         if(!rangesToSet.dragSelectedRange) 

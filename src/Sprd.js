@@ -31,7 +31,8 @@ export default class Sprd extends React.Component {
       pagedown: "pagedown",
       pageup: "pageup",
       home: "home",
-      escape: "escape"
+      escape: "escape",
+      enter: "enter"
     };
   }
 
@@ -87,6 +88,17 @@ export default class Sprd extends React.Component {
       SprdNavigator.move(this.props, DIRECTION.DOWN);
     });
 
+    Mousetrap.bind("enter", () => {
+      let {ranges} = this.props;
+      let {clickSelectedRange, focusedCellRange} = SprdRange.fromImmutable(null, ranges);
+      if(!focusedCellRange || focusedCellRange.isOutOfRangeCell()){
+        Actions.setRange({focusedCellRange: clickSelectedRange})
+      } else {
+        SprdNavigator.move(this.props, DIRECTION.DOWN);
+      }
+    });
+
+
     Mousetrap.bind("pagedown", () => {
       let {rows} = this.props;
       SprdNavigator.move(this.props, DIRECTION.DOWN, rows);
@@ -113,8 +125,10 @@ export default class Sprd extends React.Component {
       if(key === "v" && e.ctrlKey){
         //special case to support paste event
         Actions.setRange({focusedCellRange: clickSelectedRange});
-      }
+      } 
+
       if(!this.KEY_DOWN_IGNORE_KEYS[key] && !e.shiftKey && !e.ctrlKey && !e.altKey){
+        console.log("hereeeee")
         Actions.setRange({'focusedCellRange': clickSelectedRange});
         eventTriggered(onEvent, EVENT.CELL_FOCUSED, clickSelectedRange);
       }

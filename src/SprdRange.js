@@ -1,5 +1,5 @@
 import {toExcelColName} from './Util';
-import {UNKNOWN} from './Constants';
+import {UNKNOWN, OUT_OF_RANGE_CELL} from './Constants';
 //renamed from Range to distinguish from window.Range
 export default class SprdRange {
 
@@ -31,6 +31,11 @@ export default class SprdRange {
       return `${startRow + 1}:${startRow + 1}`;
     }
     return `${startColLetter}${startRow + 1}:${toExcelColName(stopCol + 1)}${stopRow + 1}`; //arbitrary range
+  }
+
+  isOutOfRangeCell(){
+    let {startCol, startRow, stopRow, stopCol} = this;
+    return startCol < 0 && startRow < 0 && stopCol < 0 && stopRow < 0;
   }
 
   /**
@@ -103,7 +108,15 @@ export default class SprdRange {
   */
   static toSingleRange(ranges){
     let minRow = Number.MAX_SAFE_INTEGER, minCol = Number.MAX_SAFE_INTEGER, maxRow = 0, maxCol = 0;
+    let validRangeFound = false;
+
     for(let range of ranges){
+      if(!range || range.isOutOfRangeCell()) {
+        continue;
+      }
+
+      validRangeFound = true
+
       let {startCol, stopCol, startRow, stopRow} = range;
       if(startCol < minCol) minCol = startCol;
       if(stopCol > maxCol) maxCol = stopCol;
@@ -111,6 +124,8 @@ export default class SprdRange {
       if(startRow < minRow) minRow = startRow;
       if(stopRow > maxRow) maxRow = stopRow;
     }
+
+    if(!validRangeFound) return OUT_OF_RANGE_CELL;
 
     return new SprdRange(minRow, minCol, maxRow, maxCol);
   }
