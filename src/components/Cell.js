@@ -42,8 +42,7 @@ export default class Cell extends React.Component {
     };
 
     this.state = {
-      mode: this.CELL_MODES.INACTIVE,
-      value: this.props.value
+      mode: this.CELL_MODES.INACTIVE
     };
 
     this.mouseUp = this.mouseUp.bind(this);
@@ -53,6 +52,7 @@ export default class Cell extends React.Component {
     this.cellClicked = this.cellClicked.bind(this);
     this.cellDoubleClicked = this.cellDoubleClicked.bind(this);
     this.inputValueChanged = this.inputValueChanged.bind(this);
+    this.moveCaretAtEnd = this.moveCaretAtEnd.bind(this);
 
     this.mouseCurrentlyUp = true; //we use this to prevent false triggers to dragstarted
     this.MOUSE_DOWN_DELAY = 200; //delay until we are sure the user is actually dragging
@@ -147,6 +147,12 @@ export default class Cell extends React.Component {
     }
   }
 
+  moveCaretAtEnd(e) {
+    var temp_value = e.target.value
+    e.target.value = ''
+    e.target.value = temp_value
+  }
+
   //this is called twice when cell is double clicked
   //to prevent that we check if the current cell is already selected
   cellClicked(){
@@ -229,6 +235,7 @@ export default class Cell extends React.Component {
     return (
       <input 
         key={0}
+        onFocus={this.moveCaretAtEnd}
         onChange={this.inputValueChanged}
         hidden={mode !== this.CELL_MODES.EDITING}
         type='text' 

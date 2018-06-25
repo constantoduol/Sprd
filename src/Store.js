@@ -126,7 +126,8 @@ class Store {
     for(let row = startRow; row <= stopRow; row++){
       if(!data.get(row)) data = data.set(row, Map({}));
       for(let col = startCol; col <= stopCol; col++){
-        if(value) data = data.setIn([row, col], value)
+        let prevVal = data.getIn([row, col]);
+        if(value || prevVal) data = data.setIn([row, col], value)
         furthestCol = Math.max(furthestCol, col);
       }
     }
