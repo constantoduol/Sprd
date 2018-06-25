@@ -1,8 +1,6 @@
-import Example from './components/Example';
-import SecondExample from './components/SecondExample';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './sprd.css';
+import SprdContainer from './SprdContainer';
 
-export default Example;
-
-export {
-  SecondExample,
-};
+export default SprdContainer;

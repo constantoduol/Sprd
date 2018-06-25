@@ -138,7 +138,8 @@ module.exports = {
             include: [paths.appLibSrc, paths.appDemoSrc], // CRL: updated with library src folder
             loader: require.resolve('babel-loader'),
             options: {
-              compact: true
+              compact: true,
+              plugins: ['transform-decorators-legacy' ]
             }
           },
           // The notation here is somewhat confusing.
