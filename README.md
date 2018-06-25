@@ -2,7 +2,16 @@
 
 `npm install sprd`
 
+## How it looks
+
+![Alt text](images/sprd.gif?raw=true "Sprd in Action")
+
+or 
+
+[Demo Video](https://www.useloom.com/share/1106217b86584231b2bcdb583384fd5f)
+
 ## Loading inital data
+import SprdContainer from 'sprd';
 
 ```javascript
 let data = [
@@ -29,6 +38,8 @@ let data = [
 ## Listening to events
 
 ```javascript
+import SprdContainer from 'sprd';
+
 <SprdContainer 
   width={800}
   height={600}
@@ -44,6 +55,8 @@ let data = [
 
 ```
 javascript
+import SprdContainer from 'sprd';
+
 <SprdContainer 
   width={800}
   height={600}
