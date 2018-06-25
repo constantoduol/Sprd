@@ -1,0 +1,17 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+td > input:focus {
+    outline: none;
+}
+
+.resize:hover {
+	background:  #2196F3;
+}
+
+.resize {
+	border: 1px solid;
+}

@@ -1,5 +1,5 @@
 {
-  "name": "Sprd",
+  "name": "sprd",
   "version": "1.0.0",
   "description": "An excel like spread sheet from the future",
   "main": "build/index.js",

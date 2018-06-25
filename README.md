@@ -11,9 +11,10 @@ or
 [Demo Video](https://www.useloom.com/share/1106217b86584231b2bcdb583384fd5f)
 
 ## Loading inital data
-import SprdContainer from 'sprd';
 
 ```javascript
+import SprdContainer from 'sprd';
+
 let data = [
   ['Name', 'Age'], 
   ['sam', 20], 
@@ -53,8 +54,8 @@ import SprdContainer from 'sprd';
 
 ## Overriding the cells with custom ones
 
-```
-javascript
+```javascript
+
 import SprdContainer from 'sprd';
 
 <SprdContainer 
