@@ -1,6 +1,6 @@
 {
   "name": "sprd",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "An excel like spread sheet from the future",
   "main": "build/index.js",
   "scripts": {
