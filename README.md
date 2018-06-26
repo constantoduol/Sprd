@@ -10,10 +10,18 @@ or
 
 [Demo Video](https://www.useloom.com/share/1106217b86584231b2bcdb583384fd5f)
 
+## Available features
+
+1. Keyboard navigation using arrow keys or page up and page down
+2. Copy and Paste
+3. Infinite scrolling vertically and horizontally
+4. Custom cell formatting
+5. Drag highlighting
+
 ## Loading inital data
 
 ```javascript
-import SprdContainer from 'sprd';
+import {SprdContainer} from 'sprd';
 
 let data = [
   ['Name', 'Age'], 
@@ -39,7 +47,7 @@ let data = [
 ## Listening to events
 
 ```javascript
-import SprdContainer from 'sprd';
+import {SprdContainer} from 'sprd';
 
 <SprdContainer 
   width={800}
@@ -56,7 +64,7 @@ import SprdContainer from 'sprd';
 
 ```javascript
 
-import SprdContainer from 'sprd';
+import {SprdContainer} from 'sprd';
 
 <SprdContainer 
   width={800}
@@ -86,6 +94,28 @@ import SprdContainer from 'sprd';
   data={data}/>
 
 ```
+
+## Getting all data currently in the spreadsheet
+
+```javascript
+import {Store} from 'sprd';
+
+console.log(Store.getData());
+
+```
+This will return a json object with the top level keys corresponding to the row indices
+and the keys in the nested json objects corresponding to column indices
+e.g
+
+```javascript
+{
+  0:{0: "Name", 1: "Age"},
+  1:{0: "sam", 1: 20},
+  2:{0: "Mike", 1: 30},
+  3:{0: "Greg", 1: 40}
+}
+```
+NB: Any cells without data are not captured
 
 ## Props and meaning
 

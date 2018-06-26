@@ -138,7 +138,6 @@ export default class CellContainer extends React.Component {
   }
 
   render(){
-    console.log("cell container re-render");
     return (
       <tbody>
         {this.renderCells()}

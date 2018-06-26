@@ -59,7 +59,6 @@ export default class Cell extends React.Component {
   }
 
   componentDidMount(){
-    // console.log("cell mount")
     Mousetrap(this.input).bind("enter", () => {
       this.setState({mode: this.CELL_MODES.INACTIVE});
       SprdNavigator.move(this.props, DIRECTION.DOWN);
@@ -97,7 +96,6 @@ export default class Cell extends React.Component {
     }
 
     if(focusedCellRange.isCellSelected(currentCellRange)){
-      console.log(focusedCellRange, currentCellRange)
       this.cellDoubleClicked();
       return;
     } 

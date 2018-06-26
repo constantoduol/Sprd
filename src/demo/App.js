@@ -1,6 +1,7 @@
 import React from 'react';
 import '../lib/sprd.css';
 import SprdContainer from '../lib/SprdContainer';
+import Store from '../lib/Store';
 
 let data = [
   ['Name', 'Age'], 
@@ -54,8 +55,9 @@ const App = () => (
     // width={800}
     // height={600}
     onEvent={(eventType, range, data) => {
-      console.log(eventType, range, data) 
-      if(range) console.log(range.getAddress())
+      // console.log(eventType, range, data) 
+      // if(range) console.log(range.getAddress())
+      console.log(Store.getData());
     }}
     columnDataTypes={['string', 'number']}
     cellOverride={(cellInfo, innerCell, outerCell) => {

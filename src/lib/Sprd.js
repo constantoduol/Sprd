@@ -128,7 +128,6 @@ export default class Sprd extends React.Component {
       } 
 
       if(!this.KEY_DOWN_IGNORE_KEYS[key] && !e.shiftKey && !e.ctrlKey && !e.altKey){
-        console.log("hereeeee")
         Actions.setRange({'focusedCellRange': clickSelectedRange});
         eventTriggered(onEvent, EVENT.CELL_FOCUSED, clickSelectedRange);
       }
@@ -249,7 +248,6 @@ export default class Sprd extends React.Component {
       cols, rows, ranges, showHeaderLetters, data, width, 
       minRow, minCol, dragging, infiniteScroll, showFooter, onEvent, columnDataTypes, cellOverride} = this.props;
     let style = merge(styles.root, {width});
-    console.log(showHeaderLetters)
     return (
       <div 
         style={style} 

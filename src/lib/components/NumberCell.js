@@ -47,7 +47,6 @@ export default class NumberCell extends React.Component {
   }
 
   render(){
-    //console.log("number cell re-render");
     let num = this.props.row + 1;
     return (
       <td style={this.currentStyle()} onClick={this.numberCellClicked} key={num}>

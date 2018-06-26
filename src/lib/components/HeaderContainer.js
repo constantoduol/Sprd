@@ -33,7 +33,6 @@ export default class HeaderContainer extends React.Component {
     ]; //the first header is for the numbers to the left
     for(let x = minCol; x < cols + minCol; x++){
       let colLetter = toExcelColName(x + 1);
-      console.log(showHeaderLetters)
       headers.push(
         <Header 
           key={x} 
