@@ -4,4 +4,4 @@ import './sprd.css';
 import SprdContainer from './SprdContainer';
 import Store from './Store';
 
-export default {SprdContainer, Store};
+export {SprdContainer, Store};
