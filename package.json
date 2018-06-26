@@ -1,6 +1,6 @@
 {
   "name": "sprd",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "An excel like spread sheet from the future",
   "main": "build/index.js",
   "scripts": {
@@ -13,6 +13,7 @@
     "type": "git",
     "url": "git+https://github.com/constantoduol/sprd.git"
   },
+  "keywords": ["excel", "reactjs", "copy & paste", "grid", "spreadsheet"],
   "author": "Constant Oduol <oduolconstant@gmail.com>",
   "bugs": {
     "url": "https://github.com/constantoduol/sprd/issues"
